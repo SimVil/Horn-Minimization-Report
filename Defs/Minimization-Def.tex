@@ -2,3 +2,65 @@
 
 Duquenne Guigues basis, redundancy, completeness, etc. Define our meaning of
 minimality (in terms of bodies). 
+
+\begin{definition}[\belemp{Completeness}] $\I$ over $\Sg$ is called 
+	\belemp{complete} with respect to a closure system if every implication 
+	holding
+	in the closure system follows from $\I$.
+	
+\end{definition}
+
+Given $\I$, we denote by $\I(M)$ the closure of $M$ in $\I$, that is the 
+smallest model of $\I$ containing $M$.
+
+\begin{definition}[\belemp{Properties of $\I$}] Let $\I$ be a set of 
+	implications over $\Sg$, and $(\Sg, \phi)$ be a closure system. $\I$ is:
+	\begin{itemize}
+		\item[(i)] \belemp{sound} if each implications of $\I$ holds in 
+		$\Sg_\phi$
+		\item[(ii)] \belemp{complete} if each implications holding in 
+		$\Sg_\phi$ 
+		follows from $\I$
+		\item[(iii)] \belemp{nonredundant} if no implication in $\I$ follows 
+		from 
+		other implications of $\I$.
+	\end{itemize}
+	
+\end{definition}
+
+So our goal is to find such an implication basis which concentrates all possible
+knowledge in the minimal number of implications. Finding (and minimizing!) such
+an implication set can be very Time-Consuming.
+
+\begin{definition}[\belemp{Pseudo-closed set}] Let $(\Sg, \phi)$ be a closure 
+	system. A subset $M \subseteq \Sg$ is \belemp{pseudo-closed} iff 
+	\begin{itemize}
+		\item $\phi(M) \neq M$ ($M$ is not closed),
+		\item if $Q \subset M$ is pseudo-closed, then $\phi(Q) \subseteq M$.
+	\end{itemize}
+	
+\end{definition}
+
+Note that the empty set $\emptyset$ is pseudo-closed iff it is not closed. One 
+can also define pseudo-closed set with help of \midemp{quasi-closed} sets. We
+can prove that a pseudo-closed set is some kind of discontinuous structure 
+within a lattice.
+
+\begin{definition}[\belemp{Duquenne-Guigues Basis}] Let $(\Sg, \phi)$ be a 
+	closure system. The \belemp{Duquenne-Guigues} basis or \belemp{canonical} 
+	basis
+	$\I$ is:
+	
+	\[ \I = \{ M \imp \phi(M) \; | \; M \subseteq \Sg, \, M \;
+	\text{pseudo-closed} \} \]
+	
+	\noindent and $\I$ is complete, sound and nonredundant.
+\end{definition}
+
+
+\begin{definition}[\belemp{Preclosed set}] Given a closure system $(\Sg, \phi)$,
+	a subset $M \subseteq \Sg$ is \belemp{preclosed} iff it contains the 
+	closure of
+	all its proper preclosed subsets.
+	
+\end{definition}

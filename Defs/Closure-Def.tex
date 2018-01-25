@@ -1,12 +1,132 @@
-\section{Order theory, Closure systems pov}
+\section{Introduction to implications through closure systems}
 
-In this part, we will be considering definitions of set theory, with relation to
-closure systems. The reader may refer to \cite{CExp}, \cite{Lat&Ord} for more 
-details and further definitions.
+In this section, we will establish basic definitions and provide some examples
+to have a sufficient (and strong enough) background to understand the topic of
+Horn minimization. We assume some knowledge of set theory. For more complete
+and detailed introduction to our topic, the reader may refer to \cite{CExp, 
+Lat&Ord}. Some of the most practical applications of the following material 
+dwell into artificial intelligence, with \belemp{Formal Concept Analysis} and
+\belemp{Attribute Exploration}. We can find other applications within database
+field (see ). For now, let us begin with an example to 
+illustrate implications.
 
-\begin{definition}[\belemp{Closure operator}, \belemp{closure system}] Let
+\vspace{1.2em}
+
+\paragraph{Example} Let us imagine we are provided with a set of music 
+genres: \textit{shoegaze, electronic, coldwave, pop, rock, dream-pop,
+jazz, experimental, atmospheric, contemporary jazz}
+ Assume we can attach various genre to a given music. Our aim is to 
+draw inference of styles with other ones. In other words, say we have a music 
+with tags \textit{rock, pop}, can we deduce other tag? Remind this example aims 
+to 
+illustrate, not to settle any musical knowledge. Let's try to give some ideas:
+\begin{itemize}
+	\item a music being \textit{jazz, experimental} can also be categorized
+	as \textit{contemporary jazz},
+	\item a music called \textit{coldwave, rock} is likely to be tagged 
+	\textit{shoegaze},
+	\item song with \textit{atmospheric} will probably be said to be 
+	\textit{experimental, electronic},
+	\item a last one, \textit{shoegaze, pop} will lead to \textit{dream-pop}.
+\end{itemize}
+\noindent Here we drew what we will call \belemp{implications} because we can
+summarize our sentences by \textit{if a tag is present, then this one is too},
+and denote them:
+\begin{itemize}
+	\item \textit{jazz, experimental} $\imp$ \textit{contemporary jazz},
+	\item \textit{coldwave, rock}  $\imp$ \textit{shoegaze},
+	\item \textit{atmospheric} $\imp$ \textit{experimental, electronic},
+	\item \textit{shoegaze, pop} $\imp$ \textit{dream-pop}.
+\end{itemize}
+\noindent In a sense, those implications describe some possible knowledge of 
+our genre set or \belemp{attributes} set.
+
+\vspace{1.2em}
+
+From our point of view, this example is sufficient to say that an 
+\belemp{attribute set} is simply a set. We call its elements 
+\belemp{attributes} to stick with the literature terminology. If not specified
+in the context, we will call $\Sg$ such a set, and $a, \ b, \ c,\dots$ its 
+elements. Subsets of $\Sg$ we will be denoted by capital letters $A, \ B, 
+\dots$. With the example and $\Sg$, we can go over some more definitions
+
+\begin{definition}[Implication basis] Let $\Sg$ be an attribute set. An 
+\belemp{implication basis} $\I$ over $\Sg$ is a set of \belemp{implications} 
+where implications are pairs ($A$, $B$), denoted $A \imp B$, with $A, B 
+\subseteq \Sg$.
+	
+\end{definition}
+
+\noindent Usually, given an implication $A \imp B$, $A$ is called \belemp{body}
+or \belemp{premise} while $B$ is called \belemp{head} or \belemp{consequence}.
+
+\paragraph{Examples} Let $\Sg = \{a, \ b, \ c, \ d, \ e \}$. Some 
+possible implication basis are (for the sake of readability, a subset of 
+$\Sg$ we will be written as a concatenation of its elements):
+\begin{itemize}
+	\item $\{ab \imp de, \ a \imp c, ce \imp b \}$
+	\item $\emptyset$
+	\item $ \{ abc \imp ab, \ d \imp abcde \}$
+\end{itemize}
+
+Back to the musical example, the implication basis we described is of course 
+$\{$ \textit{jazz, experimental} $\imp$ \textit{contemporary 
+jazz}, \textit{coldwave, rock}  $\imp$ \textit{shoegaze}, \textit{atmospheric} 
+$\imp$ \textit{experimental, electronic}, \textit{shoegaze, pop} $\imp$ 
+\textit{dream-pop} $\}$.
+
+\vspace{1.2em}
+
+Each implication basis describe (possibly different!) knowledge from $\Sg$. Say
+we have $\I$ over $\Sg$, at least two questions arise:
+\begin{itemize}
+	\item[(i)] is $A \subseteq \Sg$ \textit{"coherent"} with respect to $\I$?  
+	\item[(ii)] What can we deduce from $A \subseteq \Sg$?	
+\end{itemize}
+
+\paragraph{Example} Consider again musical example. The first question would be 
+"given our basis, can we imagine having a music with some tags only ?". For 
+instance, consider a music with tags \textit{shoegaze, pop}. In our basis, we 
+cannot have a music with these tags \textit{only} because the implication 
+\textit{shoegaze, pop} $\imp$ \textit{dream-pop} states that if a music has 
+\textit{shoegaze, pop} tags, it \textit{must} also have \textit{dream-pop}. On 
+the other hand, taking only the tag \textit{shoegaze} is possible. 
+
+The second question would be "given a set of tags, which tags will we obtain
+in order to stay coherent with our implications?". Take \textit{coldwave, pop, 
+rock}. Using our implications we will reach two other attributes: 
+\textit{shoegaze, dream-pop}.
+
+\vspace{1.2em}
+
+In this last paragraph we described some of the \textit{most important} basic 
+notions of our problem: \belemp{model} and \belemp{closure}.
+
+\begin{definition}[Model of an implication] Let $\Sg$ be an attribute set, and
+$A \imp B$ an implication over $\Sg$. A subset $M \subseteq \Sg$ is a 
+\belemp{model} of $A \imp B$, written $M \models A \imp B$ if $A \nsubseteq M$ 
+or $B \subseteq M$.
+
+\end{definition}
+
+\begin{definition}[Model of an implication basis] Let $\I$ be a basis over 
+$\Sg$. A subset $M \subseteq \Sg$ is a \belemp{model} of $\I$, $M \models \I$, 
+if $M \models A \imp B$ for each $A \imp B \in \I$.
+
+\end{definition}
+
+In other words, a subset $M$ of $\Sg$ will be a model of an implication if when 
+it contains the body it contains also the head, or the body is not in $M$. An 
+implication $A \in B$ \belemp{follows} from a basis $\I$, denoted $\I \models A 
+\imp B$ if all models of $\I$ are models of $A \imp B$. In the example of 
+musics we talked about, \textit{shoegaze} is a model when \textit{shoegaze, 
+pop} is not. For completeness, we will define closure operators and closure 
+systems in general before applying it to our context.
+
+
+\begin{definition}[Closure operator, closure system] Let
 $\Sigma$ be a set, and define $\phi : \Sigma \longrightarrow \Sigma$ an
-application. $\phi$ is a \belemp{closure} if it has the three following
+application. $\phi$ is a \belemp{closure operator} if it has the three following
 properties for all $X, Y \subseteq \Sigma$:
 \begin{itemize}
 	\item[(i)] $X \subseteq \phi(X)$ (\midemp{extensive})
@@ -15,12 +135,12 @@ properties for all $X, Y \subseteq \Sigma$:
 	\item[(iii)] $\phi(\phi(X)) = \phi(X)$ (\midemp{idempotent})
 \end{itemize}
 
-\noindent Then, the pair $(\Sigma, \phi)$ is called a \belemp{closure system}.
+\noindent The pair $(\Sigma, \phi)$ is called a \belemp{closure system}.
 	
 \end{definition}
 
 
-\begin{definition}[\belemp{Closed set}] Let $(\Sigma, \phi)$ be a closure 
+\begin{definition}[Closed set] Let $(\Sigma, \phi)$ be a closure 
 system. A subset $X$ of $\Sigma$ is a \belemp{closed set} (with respect to 
 $\phi$) if $\phi(X) = X$. We will denote by $\Sigma_{\phi}$ the set of all 
 closed sets of $(\Sigma, \phi)$, that is:
@@ -45,120 +165,129 @@ associated to $X$ is the smallest closed set containing $X$, i.e:
 	\[ \phi(X) = \bigcap \{Y \in \Sigma_\phi \; | \; X \subseteq Y \} \]
 
 \noindent Since $\Sigma_{\phi}$ is closed under intersection, the resultant of
-the intersection is also a closed set. The set of closed sets ordered by 
-inclusion defines a complete lattice as defined previously. 
+the intersection is also a closed set.
 
 
 \paragraph{Example} Let $\Sigma = \llbracket 1 \; ; \; 4 \rrbracket$ and 
 $\phi(X) = X \cup \{4 \}$. The pair $(\Sigma, \phi)$ is a closure system whose
-closed sets are all the subsets containing 4. Let us prove that $\phi$ is indeed
-a closure operator:
-\begin{itemize}
-	\item[(e)] for all subsets $X$ of $\Sigma$, either $4 \in X$ and 
-	$\phi(X) = X \cup \{4 \} = X$ so $X \subseteq \phi(X)$, either $4 \notin X$
-	and $X \subseteq X \cup \{4 \} = \phi(X)$.
-	\item[(m)]
-	\item[(i)] by definition $\phi(X)$ contains 4, so it will not be
-	changed by applying $\phi$ another time.
-\end{itemize}
-
-\noindent Another interesting definition of $\Sigma_{\phi}$ is:
+closed sets are all the subsets containing 4. Another interesting definition of 
+$\Sigma_{\phi}$ is:
 
 	\[ \Sigma_{\phi} = \{ \phi(X) \; | \; X \subseteq \Sigma \} \]
 
-\noindent Then, in our example:
+\noindent Then, in our case:
 
 	\[ \Sigma_{\phi} = \{ \{ 4\}, \{ 1, 4\}, \{ 2, 4\},
 		\{ 3, 4\}, \{ 1, 2, 4\}, \{ 1, 3, 4\},\{ 2, 3, 4\}, 
 		\{ 1, 2, 3, 4\} \}
 	\]
-	
-\noindent The lattice $(\Sigma_{\phi}, \subseteq)$ is:
 
+\vspace{1.2em}
 
+\noindent Now we have defined closure systems, let's get back to our 
+implicational context. Let $\I$ be a basis over an attribute set $\Sg$. Let $
+M \subseteq \Sg$ and define $\I(M)$ as the smallest model of $\I$ containing 
+$M$. In this sens, $\I$ defines a \belemp{closure system} over $\Sg$ for 
+which the closed sets are exactly the models of $\I$. The point is: how to 
+define $\I(M)$ by computations? We rely on \cite{CExp} for this purpose. Let 
 
-	 
-\section{Implication Basis}
+	\[ M^{\I} = M \cup \{ B \ | \ A \imp B \in \I, \ A \subset M \land
+			B \nsubseteq M \} 
+	\]
 
-\begin{definition}[\belemp{Implication}] Let $\Sg$ be a set, and $A, B 
-\subseteq 
-\Sg$. An \belemp{implication} over $\Sg$ is a relation/pair between $A$ and 
-$B$, denoted by $A \imp B$. $A$ is the \belemp{premise}, $B$ the 
-\belemp{conclusion}. 	
-\end{definition}
+\noindent Then $\I(M)$ is obtained by repeated application of the operator 
+$M^{\I}$, that is $\I(M) = M^{\I \I \dots \I}$ until the computed $M$ is 
+unchanged. For readers with background in SAT-solving or graph theory, this is
+equivalent to \textit{marking procedure, forward chaining}. In words, if we can 
+find an implication $A \imp B$
+with the body included in $M$, but not the head $B$, we add $B$ to $M$. Let us 
+give an 
+example to set things clear.
 
-\begin{definition}[\belemp{Model of an implication}] A subset $M \subseteq 
-\Sg$ is a model of $A \imp B$, written $M \models A 
-\imp B$ if $B \subseteq M \lor A \nsubseteq M$ (think of logical 
-approach).
-\end{definition}
-
-\begin{definition}[\belemp{Model of an implication basis}] Let $\I$ be
-a set of implication (or an \midemp{implication basis}) over $\Sg$. A subset
-$M \subseteq \Sg$ is a model of $\I$ if $M \models A \imp
-B$ for each $A \imp B$ in $\I$. It is denoted by $M \models \I$.
-\end{definition}
-
-The set of models of $\I$ over $\Sg$ describes a closure system $(\Sg, \phi)$. 
-Then, An implication $A \imp B$ holds in $\I$ iff $B \subseteq \phi(A)$. 
-Conversely, if $(\Sg, \phi)$ is a closure system, then we can define an 
-implication basis $\I$ such that the models $M(\I)$ of $\I$ are the closed sets
-$\Sg_\phi$ of $(\Sg, \phi)$. An implication $A \imp B$ \belemp{semantically 
-follows} from $\I$ if for all $M \subseteq \Sg$ s.t $M \models \I$, we also have
-$M \models A \imp B$. Then we write $\I \models A \imp B$.
-
-\begin{definition}[\belemp{Completeness}] $\I$ over $\Sg$ is called 
-\belemp{complete} with respect to a closure system if every implication holding
-in the closure system follows from $\I$.
-	
-\end{definition}
-
-Given $\I$, we denote by $\I(M)$ the closure of $M$ in $\I$, that is the 
-smallest model of $\I$ containing $M$.
-
-\begin{definition}[\belemp{Properties of $\I$}] Let $\I$ be a set of 
-implications over $\Sg$, and $(\Sg, \phi)$ be a closure system. $\I$ is:
+\paragraph{Example} As usual, let's stick to our musical example. For the 
+recall, our set $\Sg$ is: \textit{shoegaze, electronic, coldwave, pop, rock, 
+dream-pop, jazz, experimental, atmospheric, contemporary jazz} and the basis
+we are working on $\I$ being:
 \begin{itemize}
-	\item[(i)] \belemp{sound} if each implications of $\I$ holds in $\Sg_\phi$
-	\item[(ii)] \belemp{complete} if each implications holding in $\Sg_\phi$ 
-	follows from $\I$
-	\item[(iii)] \belemp{nonredundant} if no implication in $\I$ follows from 
-	other implications of $\I$.
-\end{itemize}
-	
-\end{definition}
-
-So our goal is to find such an implication basis which concentrates all possible
-knowledge in the minimal number of implications. Finding (and minimizing!) such
-an implication set can be very Time-Consuming.
-
-\begin{definition}[\belemp{Pseudo-closed set}] Let $(\Sg, \phi)$ be a closure 
-system. A subset $M \subseteq \Sg$ is \belemp{pseudo-closed} iff 
-\begin{itemize}
-	\item $\phi(M) \neq M$ ($M$ is not closed),
-	\item if $Q \subset M$ is pseudo-closed, then $\phi(Q) \subseteq M$.
+	\item[ ] \textit{jazz, experimental} $\imp$ \textit{contemporary jazz},
+	\item[ ] \textit{coldwave, rock}  $\imp$ \textit{shoegaze},
+	\item[ ] \textit{atmospheric} $\imp$ \textit{experimental, electronic},
+	\item[ ] \textit{shoegaze, pop} $\imp$ \textit{dream-pop}.
 \end{itemize}
 
-\end{definition}
+\noindent In previous examples, we were talking about two subsets of $\Sg$:
+\begin{itemize}
+	\item $ A = $\textit{coldwave, pop, rock}
+	\item $B = $\textit{shoegaze}
+\end{itemize}
 
-Note that the empty set $\emptyset$ is pseudo-closed iff it is not closed. One 
-can also define pseudo-closed set with help of \midemp{quasi-closed} sets. We
-can prove that a pseudo-closed set is some kind of discontinuous structure 
-within a lattice.
+\noindent Let us try to compute their closure with respect to $\I$. $A$ is not
+a model of $\I$ because of the implication \textit{coldwave, rock}  $\imp$ 
+\textit{shoegaze}.  Indeed \textit{coldwave, rock} is included in $A$ but not
+\textit{shoegaze} so we add it, thus $A = $\textit{coldwave, pop, 
+rock, shoegaze}. The new $A$ is still not a model of $\I$, see the implication
+\textit{shoegaze, pop} $\imp$ \textit{dream-pop}. We must also add 
+\textit{dream-pop}. Finally, $\I(A) = $\textit{coldwave, pop, rock, 
+shoegaze, dream-pop} will be the smallest model (closed set) containing $A$.
 
-\begin{definition}[\belemp{Duquenne-Guigues Basis}] Let $(\Sg, \phi)$ be a 
-closure system. The \belemp{Duquenne-Guigues} basis or \belemp{canonical} basis
-$\I$ is:
+On the other hand, $B$ does respect all the implications so that it is already 
+a model of $\I$, hence $\I(B) = B$.
 
-	\[ \I = \{ M \imp \phi(M) \; | \; M \subseteq \Sg, \, M \;
-	 	\text{pseudo-closed} \} \]
-	
-\noindent and $\I$ is complete, sound and nonredundant.
-\end{definition}
+\vspace{1.2em}
+
+Before concluding this section, we would like to introduce an useful result as
+much as some remarks on the use of closure systems and implications. First 
+a proposition (admitted here):
+
+\begin{proposition} Let $\I$ be an implication basis over an attribute set 
+$\Sg$. An implication $A \imp B$ follows from $\I$ if and only if $B \subseteq 
+\I(A)$.
+\end{proposition}
+
+\begin{proof} \textit{if part}. Suppose $B \subseteq \I(A)$. $\I(A)$ is the
+smallest model of $\I$ containing $A$. Therefore, for all models $M$ of $\I$
+such that $A \subseteq M$ we also have $\I(A) \subseteq \I(M) = M$ (because
+closed sets are models) and $B \subseteq M$ by extension. Therefore for all
+models $M$ of $\I$, $A \nsubseteq M$ or $B \subseteq M$ holds. That is 
+$\I \models A \imp B$.
+
+\vspace{1.2em}
+
+\textit{only if part}. Suppose $\I \models A \imp B$. By definition, all models
+$M$ of $\I$ satisfy $A \nsubseteq M$ or $B \subseteq M$. In particular, it must
+hold for the smallest model (inclusion wise) containing $A$ being $\I(A)$ which
+yields $A \nsubseteq \I(A) \lor B \subseteq \I(A)$. Because this formula holds 
+also
+for $\I(A)$ (as it is a model) and A $\nsubseteq \I(A)$ being a contradiction
+with respect to the definition of a closure operator, we conclude that 
+necessarily $B \subseteq \I(A)$ must be true.
+
+\end{proof}
 
 
-\begin{definition}[\belemp{Preclosed set}] Given a closure system $(\Sg, \phi)$,
-a subset $M \subseteq \Sg$ is \belemp{preclosed} iff it contains the closure of
-all its proper preclosed subsets.
-	
-\end{definition}
+\vspace{1.2em}
+
+To conclude this short introduction on closure and implications terminology, we 
+would like to say that these objects model an intuitive way of representing
+knowledge and inference (see music example). More than this, they are mainly 
+used because they can be checked easily, namely in linear time in the size of
+our implication basis (see algorithm linclosure, \cite{CExp}, \cite{FD}, 
+\cite{Maier1980}).
+
+	In this section we went over general definitions of closure systems, and 
+implication basis. The reader may find a more exhaustive presentation in 
+\cite{CExp, Lat&Ord}. Note that these are not all the definitions from closure 
+terminology we shall use. Nevertheless, we prefer to give them when required as 
+they are more closely related to specific problems, while the aim of this 
+section is to be general. The next part is dedicated to a review of 
+propositional logic in accordance to our needs.
+
+% Personal: find the algorithm of bernstein. 
+
+
+
+
+
+
+
+
