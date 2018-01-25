@@ -1,0 +1,272 @@
+\section{Minimum Covers in the Relational Database Model}
+
+
+This part relies mainly on \cite{FD}, \cite{Maier1980} in which an algorithm for
+minimizing set of functional dependencies (FD). Because FDs behave as
+implications in implicational basis, we will adopt the latter terminology.
+
+\subsection{Notations}
+
+We consider being somehow familiar with the next notations, so that we don't 
+spend time on definitions.
+
+\begin{itemize}
+	\item $\Sg$ is a set of attributes $a$, $b$, $c$, $\dots$
+	\item $\I$ is a set of implications over $\Sg$
+	\item given $X \subseteq \Sg$, $\I(X)$ is the closure of $X$ under $\I$
+	\item 
+\end{itemize}
+
+\subsection{Definitions}
+
+Before diving into the algorithm, we may need some definitions. Indeed, the 
+minimization procedure in this case relies on a criterion for minimality using
+specific objects. 
+
+\begin{definition}[Equivalent sets] Two subsets $E, F \subseteq \Sigma$ are 
+	\belemp{equivalent under $\I$} if $\I \models E \imp F$ and $\I \models F 
+	\imp 
+	E$. In other words, two sets are equivalent if $\I(E) = \I(F)$. It is 
+	denoted 
+	by $E \equiv F$. 
+	
+\end{definition}
+
+\begin{definition}[Equivalence classes] Let $X \subseteq \Sigma$. The set
+	
+	\[ E_{\I}(X) = \{ A \imp B | A \imp B \in \I, A \equiv X \} \]
+	
+	\noindent is the \belemp{equivalence class} of $X$ under $\I$. In fact, it 
+	is
+	the set of implications of $\I$ with body equivalent to $X$. The set of all 
+	non-empty such classes is denoted $\bar{E}_{\I}$.
+	
+\end{definition}
+
+One should note in order to get $\bar{E}_{\I}$, there is no need to check all
+the subsets of $\Sigma$. Because $\bar{E}_{\I}$ defines a partition of $\I$ 
+based on implication bodies, it is sufficient to go over implications of $\I$.
+
+\vspace{1.2em}
+
+Next we focus on particular implications
+
+
+\subsection{Algorithm}
+
+The algorithm relies on a criterion for minimality given equivalence classes. 
+The set 
+
+
+
+\begin{algorithm}[H]
+	\KwIn{An implicational basis $\I$}
+	\KwOut{$\I$ with redundant implications removed}
+	
+	\Begin{
+		\ForEach{$A \imp B \in \I$}{
+			$\I^{-} := \I - \{ A \imp B \}$ \;
+			\If{$\I^{-}(A) = \I(A)$}{
+				$\I := \I - \{ A \imp B \}$ \;
+			}
+		}
+	}
+	
+	\caption{Non-Redundant}
+	\label{alg:Nonredun}
+\end{algorithm}
+
+\vspace{1.2em}
+
+\begin{algorithm}[H]
+	\KwIn{A nonredundant implicational basis $\I$}
+	\KwOut{set of equivalence classes $\bar{E}_{\I}$}
+	
+	\Begin{
+		return \;
+	}	
+	
+	\caption{Equivalence classes}
+	\label{alg:Equiv}
+	
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\KwIn{$\phi$ an implicational basis}
+	\KwOut{$\psi$ a body-minimal representation of $\phi$}
+	
+	\Begin{
+		$\psi := \emptyset$ \;
+		\While{$\exists X \in \mathcal{B}(\phi): \; \phi(X) \neq \psi(X)$}{
+			$A := \min(\psi(X): \; X \in \mathcal{B}(\phi) \land 
+			\phi(X) \neq \psi(X))$ \;
+			$B := \phi(X)$ \;
+			$\psi := \psi \cup \{ A \imp B - A \}$ \;
+			
+		}
+		
+		return $\psi$ \;	
+	}
+	
+	\caption{BodyMinimal}
+\end{algorithm}	
+
+
+\subsection{Elements of proofs}
+
+In this section we write various claims which help us prove correctness and 
+equivalence of Maier/Ausiello's algorithms. Knowledge about FD-graphs is 
+assumed. Equivalence of redundancy elimination is not shown (1st step of 
+the algorithm). We place ourselves in a non-redundant context to match
+definitions of direct determination. Non-redundancy does not affect superfluous
+definition.
+
+\begin{claim}
+	A node $i$ in a FD-graph is superfluous with respect to $j$ if and only if 
+	$i \equiv j$ and there exists a proper subset (non-empty) $k$ of $i$ such 
+	that $\I \models k \imp j$. 
+\end{claim}
+
+\begin{proof} This is a translation of the definition of superfluous node in 
+	terms of implications.	
+\end{proof}
+
+\begin{claim} the following statements are equivalent, for $A, B$ bodies of
+	$\I$:
+	\begin{itemize}
+		\item[(i)] $A \ddv B$,
+		\item[(ii)] the node $A$ is superfluous with respect to $B$, and there 
+		exists 
+		a dotted FD-path from $A$ to $B$ not using any outgoing full arcs of
+		nodes equivalent to $A$.
+	\end{itemize}
+	
+\end{claim}
+
+\begin{proof} (i) $\imp$ (ii). We will use claim 1 to help us. Suppose $ A \ddv 
+	B$. By 
+	definition of direct determination, we have that the nodes $A$ and $B$ are 
+	equivalent. By hypothesis, we have $ \I^{*} = \I - E_{\I}(A) \models A \imp 
+	B$.
+	We will distinguish two cases, either $B \subseteq A$, or $B \nsubseteq A$.
+	
+	\vspace{1.2em}
+	
+	\paragraph{$B \subseteq A$.} In this case, direct determination is straight 
+	forward, and if $A$ and $B$ are bodies of $\I$, there exists dotted arcs 
+	between
+	$A$ and $B$ forming a dotted FD-path. Then $A$ is indeed superfluous with 
+	respect to $B$. Furthermore, because we used only dotted arcs from $A$, we 
+	did 
+	not use any full arcs outgoing from $A$.
+	
+	\paragraph{$B \nsubseteq A$.} Since we don't use any implications with left 
+	side
+	equivalent to $A$ in direct determination, but still have $A \imp B$, we 
+	must 
+	be able to find a non-equivalent proper subset $X$ of $A$ such that $X \imp 
+	B$,
+	otherwise we would contradict direct determination (because we would not 
+	have
+	$B \subseteq \I^{~}(A)$ ). Using claim 1, we can conclude that $A$ is 
+	indeed 
+	superfluous with respect to $B$. Moreover, notice that using an outgoing 
+	full 
+	arc from a node equivalent $C$ to $A$ is exactly using an implication with 
+	left
+	hand side equivalent to $A$. Therefore, if there is not dotted FD-path from 
+	$A$
+	to $B$ not using those arcs, we would contradict direct determination.
+	
+	\vspace{1.2em}
+	
+	(ii) $\imp$ (i) Suppose $A$ is superfluous with respect to $B$ and there 
+	exists
+	a dotted FD-path from $A$ to $B$ not using any outgoing full arcs from 
+	nodes 
+	equivalent to $A$. Those full arcs represent exactly the implications 
+	contained
+	in $E_{\I}(A)$. Since we don't use them, the path still holds in $\I^{*}$ 
+	(we 
+	would remove compound nodes without outgoing full arcs of course, but this 
+	would
+	only make the path stops to attributes instead of compound node). Having 
+	this 
+	path in $\I^{~}$ means that $\I^{*} \models A \imp B$.
+	
+	
+\end{proof} 
+
+\begin{claim} The following two statement are equivalent, given the FD-graph of
+	$\I$:
+	\begin{itemize}
+		\item[(i)] $A$ is a superfluous node,
+		\item[(ii)] $A$ is superfluous with respect to $B$, and there exists a
+		dotted path from $A$ to $B$ not using any outgoing full arcs from nodes
+		equivalent to $A$.
+	\end{itemize}
+	
+\end{claim}
+
+\begin{proof} (ii) $\imp$ (i) is trivial. let's focus on (i) $\imp$ (ii). If 
+	$A$ is superfluous, then there exists $B$ such that $A \equiv B$ and there 
+	has a dotted path from $A$ to $B$.
+	
+	\vspace{1.2em}
+	
+	If $B \subseteq A$, the dotted path is straight forward. If it is not the 
+	case,
+	path from $A$ to $B$ uses outgoing full arcs from nodes equivalent to $A$, 
+	or
+	it does not. If it does not we are done. Now Suppose this
+	path uses an outgoing full arc from a node $C$ equivalent to $A$. This 
+	means,
+	that $A \equiv B \equiv C$ by definition and therefore, there exists a
+	dotted path from $A$ to $C$ (because we need to reach $C$, so to derive it,
+	to use its outgoing arcs). We can reiterate this reasoning until reaching 
+	$A$.
+	Getting to $A$ or one of its subset would contradict our assumptions 
+	meaning 
+	that we stopped finding used equivalent arcs earlier.
+	
+\end{proof}
+
+From the previous claims, we can yield the following one
+
+\begin{claim} The following states are equivalent:
+	\begin{itemize}
+		\item[(i)] $A \ddv B$,
+		\item[(ii)] $A$ is superfluous,
+		\item[(iii)] $A \equiv B$ and there exists $X \subset A$ such that $\I 
+		\models X \imp B$.
+	\end{itemize}
+\end{claim}
+
+\begin{proof} (i) $\longleftrightarrow$ (ii) comes from claim 2 and 3. 
+	(ii) $\longleftrightarrow$ (iii) comes from claim 1.
+	
+\end{proof}
+
+Those claims help to see the relation between operations of the algorithms. 
+Indeed, the last claim states that finding a direct determination is the same
+as finding a superfluous node, therefore the two algorithms are looking for
+the same structures in different terminologies. This emphasizes the fact they
+work on the same computations. Remark: Maier algorithm do it in a special 
+order (some kinds of minimal paths in terms of FD-graph. Can we remove them in 
+any order? It seems to since this is what the Ausiello algorithm does.
+
+\vspace{1.2em}
+
+The next claim provides an argument in this way. It also explains in what 
+extent the operation of removal in those algorithm is exact.
+
+\begin{claim} Let $A, B$ be bodies of $\I$. If $A \equiv B$ and
+	there exists $X \subset A$ such that $\I \models X \imp B$ then $\I$ is not
+	minimum.
+	
+\end{claim}
+
+\begin{proof} We can remove $A \imp C$ and replace $B \imp D$ by $B \imp CD$
+	while keeping the same closure system.	
+\end{proof}
+

@@ -1,0 +1,255 @@
+\section{Minimal Representation of Directed Hypergraphs}
+
+This section is dedicated to a minimization algorithm relying on Hypergraphs. 
+It is derived from \cite{Hyp}, \cite{FD-graph}, \cite{Hyp-Intro}. We need to
+define few notions to be able to work on the algorithm. 
+
+\begin{definition}[\belemp{Hypergraph}] An \belemp{hypergraph} is a pair $H = 
+(V, E)$ 
+where $V$ is a set of vertices (as in a graph) and $E$ a set of subsets of $V$
+describing hyperarcs.
+
+\end{definition}
+
+\noindent In fact, hypergraphs are an extension of graphs. 
+
+\begin{definition}[\belemp{Directed Hypergraph}] A \belemp{directed hypergraph} 
+$H = (V, E)$ is a pair with $V$ a set of vertices (nodes) and $E$ a set of 
+elements of $2^V \times 2^V$, denoting edges going from a subset of $V$ to 
+another subset of $V$.
+	
+\end{definition}
+
+Directed hypergraphs are useful to graphically represent implication basis.
+
+\paragraph{Example} Let us consider the following implication basis $\I$:
+
+	\[ \I = \{ 1 \imp 2, 2 \imp 34, 3 \imp 12, 41 \imp 3 \} \]
+
+\noindent Then we can define an hyper graph $L = (V, E)$ where
+	\begin{itemize}
+		\item $V = \{1, 2, 3, 4 \}$
+		\item $E = \{ (\{ 1 \}, \{ 2\}), (\{ 2 \}, \{3, 4\}),
+			(\{ 3 \}, \{ 1, 2\}), (\{1, 4\}, \{ 3\}) \}$
+	\end{itemize}
+
+\noindent To be clearer, we can see the graphical representation of this figure
+in \ref{fig:DHyp1}
+
+\begin{center}
+	\input{Pictures/2.2-1-Dir_Hyp-1.tex}
+\end{center}
+
+The next definition is taken from the previous references.
+
+
+\begin{definition}[\belemp{FD-Graph}]
+	contenu...
+\end{definition}
+
+
+
+\begin{algorithm}[H]
+	\KwIn{$\I$ an implication basis}
+	\KwResult{$\I_c$ a minimal cover for $\I$}
+	
+	\Begin{
+		Find the \emeemp{FD-Graph} of $\I$ \;
+		Remove \emeemp{redundant} nodes \;
+		Remove \emeemp{superfluous} nodes \;
+		Remove \emeemp{redundant} arc \;
+		Derive $\I_c$ from the new graph \;
+	}
+
+	\caption{Minimize (Hypergraphs)}
+\end{algorithm}
+
+\vspace{1.2em}
+
+The result is not compelled to be the canonical basis.
+\\
+This document relies on \cite{FD-graph}, \cite{Hyp}. The idea is to represent
+implicational basis $\I$ through directed graphs. For this document we consider 
+a basis $\I$ over an attribute set $\Sg$, such that:
+
+\begin{itemize}
+	\item there is no $A \imp B$, $A' \imp B'$ in $\I$ such that $A = A'$ when
+	$B \neq B'$,
+	\item for all $A \imp B$ of $\I$, $A \cap B = \emptyset$
+\end{itemize}
+
+\noindent it is some kind of \midemp{reduced} form. Recall that the premises of
+implications are also called \belemp{bodies} and consequences \belemp{head}.
+Denote by $\mathcal{B}(\I)$ the set of $\I$'s bodies. 
+
+\newpage
+
+\section{FD-graphs}
+
+FD-graph stands for \belemp{functional dependency graph}. We define the 
+associated FD-graph $G_{\I} = (V, E)$ with 
+
+\begin{itemize}
+	\item $V = \Sg \cup \mathcal{B}(\I)$,
+	\item $E = E_f \cup E_d$ where $E_f$ is the set of \belemp{full edges} and
+	and $E_d$ the set of \belemp{dotted edges}:
+	\begin{itemize}
+		\item For each $A \imp B$ we draw a \belemp{full} arc from the node
+		$A$ to every attribute of $B$,
+		\item For each compound node $A$, we draw a \belemp{dotted} arc from
+		$A$ to all of its attribute.
+	\end{itemize}
+\end{itemize}
+
+\noindent Simple examples are shown in \ref{fig:FD-Graph-1}
+
+\begin{center}
+	\input{Pictures/Graph.1-FD-Ex.tex}
+\end{center}
+
+\noindent An important notion is the one of \belemp{FD-Path}. An FD-path 
+from a node $i$ to $j$ describes the implications we use to derive $i \imp j$
+(with Armstrong rules, especially transitivity). Since it is not a strictly
+rigorous document, we will provide examples of FD-path to give an idea. 
+Intuitively, directed paths are FD-paths. But there is also one case in which
+we can go "backward" in the graph. The examples relies on the figure
+\ref{fig:FD-Graph-2}.
+
+\newpage
+
+\begin{center}
+	\input{Pictures/Graph.1-FD-Ex-2.tex}
+\end{center}
+
+There are either \belemp{dotted} or \belemp{full} paths. A path $(i, j)$ is 
+dotted if all arcs leaving $i$ are dotted, it is full otherwise. An FD-path is
+then a \textbf{minimal} subgraph of the FD-graph.
+
+\begin{center}
+	\input{Pictures/Graph.1-FD-Ex-3.tex}
+\end{center}
+
+\newpage
+
+\section{Algorithm}
+
+The algorithm studied in the sources, aims to minimize an implicational basis 
+in terms of bodies. As with the Duquenne-Guigues basis. It uses 3 steps. Two
+to remove redundancy, the third one aims to lighten bodies and heads of 
+remaining implications. We will try to express each of these steps in terms of
+sets, closure, and so forth. 
+
+\subsection{Removing redundant nodes}
+
+The first step is about removing redundant implications (without right
+maximization). In terms of FD-graphs, we remove \belemp{redundant} nodes. A
+compound node (only) $i$ is said redundant if for each full arc $ij$ leaving $i$
+there exists a dotted path $(i, j)$. We give an example in the figure
+\ref{fig:FD-Graph-4}.
+
+\input{Pictures/Graph.2-FD-Ex.tex}
+
+In this example, the basis associated basis is $\I = { ab \imp cd \, ; \, 
+	a \imp c \, ; \, b \imp d}$. Indeed, in this case, $ab \imp cd$ is 
+	redundant 
+because $\I - {ab \imp cd} \models ab \imp cd$. So removing a redundant node is
+removing exactly one implication in $\I$ since $\I$ is reduced. In details, let
+$A \imp B$ be an implication of $\I$ with $A = a_1 a_2 \dots a_n$ and $B = b_1
+b_2 \dots b_m$. $A \imp B$ will be redundant in terms of FD-Graph if for each 
+$b_i$ there exists $X_i \subset A$ such that $X_i \imp b_i$. That is:
+
+\[ \bigcup_i X_i \subseteq A \imp B \]
+
+\noindent Which may be rewritten in terms of $\I$ closure as 
+
+\[ \bigcup_i \I(X_i) = \I(A) \]
+
+\noindent Thinking of opposite direction, $A \imp B$ will be nonredundant if
+there exists $b \in B$ such that $((b \in \I(X)) \land (X \subseteq A)) \imp 
+(X = A)$.
+
+\vspace{1.2em}
+
+\noindent To sum up: \aliemp{the first step is about considering each $A \imp 
+	B$ where $|A| > 1$, and removing it of $\I$ if $\I^{-}(A) = \I(A)$}. Note:
+$\I^{-} = \I - {A \imp B}$.  
+
+
+\subsection{Removing superfluous nodes}
+
+Next, we remove from the nonredundant FD-Graph \belemp{superfluous} nodes. A 
+node $i$ is \belemp{superfluous} if there is an equivalent node $j$ and a 
+dotted path from $i$ to $j$. Two nodes $i, j$ are \belemp{equivalent} if there
+are paths $(i, j)$ and $(j, i)$. 
+
+\vspace{1.2em}
+
+In terms of sets and closure, two attribute sets $A, B \subseteq \Sg$ are 
+equivalent in $\I$ if $\I \models A \imp B, B \imp A$, that is, if $\I(A) = 
+\I(B)$. 
+
+\input{Pictures/Graph.2-FD-Ex-2.tex}
+
+\noindent The algorithm suggests the following:
+\begin{itemize}
+	\item find a superfluous node $i$, and an equivalent node $j$ with a dotted
+	path from $i$ to $j$
+	\item for each full arc $ik$, we add a full arc $jk$
+	\item then we remove the node $i$ and all of its outgoing arcs from the 
+	graph
+	\item repeat until no more superfluous nodes exist
+\end{itemize}
+\noindent An example of this procedure is given in the figure
+\ref{fig:FD-Graph-5}. In this example $\I = {ab \imp e \, ; \, a \imp c
+	\, ; \, b \imp d \, ; \, cd \imp ab}$. The node $ab$ is superfluous. Since 
+	our
+basis are reduced, note that removing a superfluous node is removing exactly 
+one implication in $\I$. In this case, the resulting $\I$ will be
+
+\[ \I = {a \imp c, b \imp d, cd \imp abe} \] 
+
+\noindent Now we may rewrite this operation in our terms. Let $A \imp B$ and 
+for instance $C \imp D$ be part of $\I$ to be general. Then $A$ is superfluous
+body if
+
+\[ \I \models A \imp C, C \imp A \land \exists X \subset A \; s.t \;
+\I \models X \imp C \]
+
+\noindent In this case, we apply the following operations
+\begin{itemize}
+	\item $C \imp D$ becomes $C \imp (D \cup B)$
+	\item we remove $A \imp B$ from $\I$
+\end{itemize}
+
+\noindent We exhibit some arguments to convince ourselves that this is a valid
+operation. Let us call temporarily $\I^{-}$ the basis we obtain after the 
+previous operations. We would like to show that $\I^{-} \models A \imp B$, i.e
+that $\I^{-} \equiv \I$. We removed $A \imp B$ but we still have $\I^{-} \models
+X \imp C$ and then $X \imp B$ because $C \imp D \cup B$. That is, $B \subset 
+\I^{-}(X)$. Because $X \subset A$, we have $B \subset \I^{-}(A)$ which is what
+we wanted. 
+
+
+\subsection{Removing redundant arcs}
+
+Finally, we remove from a minimum nonredundant FD-Graph, \belemp{redundant 
+	arcs}:
+\begin{itemize}
+	\item dotted case: a dotted arc $ij$ is redundant if there is a dotted 
+	path $(i, j)$ not using $ij$,
+	\item full case: a full arc $ij$ is redundant if there is a dotted/full 
+	path $(i, j)$ not using $ij$.
+\end{itemize}
+
+\noindent we can think of eliminating redundant arcs as explicit transitivity
+elimination. If we remove a full arc in $A \imp B$ then we are minimizing $B$.
+If we remove a dotted arc, we are minimizing $A$. We have examples in 
+\ref{fig:FD-Graph-6}. 
+
+\input{Pictures/Graph.2-FD-Ex-3.tex}
+
+In terms of sets, consider an implication $A \imp B$. Removing a dotted arc is
+saying that given $a \in A$, and substituting $A \imp B$ by $A - a \imp B$ in
+$\I$ preserves $\I \models A \imp a_i$. On the other side, removing a full arc
+is, given $b \in B$ and replacing by $A \imp B - b$, we preserve $\I \models 
+A \imp b$.

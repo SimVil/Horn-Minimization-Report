@@ -1,0 +1,45 @@
+\begin{figure}[ht]\centering
+\subfloat[][FD-Graph with superfluous node ($ab$)]{
+\begin{tikzpicture}
+\node[Vertex, label=below:{ab}] (ab) at (0, 0) {};
+\node[Vertex, label=above:{a}] (a) at (1, 1) {};
+\node[Vertex, label=above:{b}] (b) at (1, -1) {};
+\node[Vertex, label=below:{c}] (c) at (2, 1) {};
+\node[Vertex, label=below:{d}] (d) at (2, -1) {};
+\node[Vertex, label=right:{cd}] (cd) at (3, 0) {};
+\node[Vertex, label=left:{e}] (e) at (-1, 0) {};
+
+\draw[->, dotted] (ab) -- (a);
+\draw[->, dotted] (ab) -- (b);
+\draw[->, dotted] (cd) -- (c);
+\draw[->, dotted] (cd) -- (d);
+\draw[->] (a) -- (c);
+\draw[->] (b) -- (d);
+\draw[->] (cd) -- (a);
+\draw[->] (cd) -- (b);
+\draw[->] (ab) -- (e);
+
+\end{tikzpicture}
+}\qquad
+\subfloat[][FD-Graph with superfluous node removed]{
+\begin{tikzpicture}
+\node[Vertex, label=above:{a}] (a) at (1, 1) {};
+\node[Vertex, label=above:{b}] (b) at (1, -1) {};
+\node[Vertex, label=below:{c}] (c) at (2, 1) {};
+\node[Vertex, label=below:{d}] (d) at (2, -1) {};
+\node[Vertex, label=right:{cd}] (cd) at (3, 0) {};
+\node[Vertex, label=left:{e}] (e) at (-1, 0) {};
+
+\draw[->, dotted] (cd) -- (c);
+\draw[->, dotted] (cd) -- (d);
+\draw[->] (a) -- (c);
+\draw[->] (b) -- (d);
+\draw[->] (cd) -- (a);
+\draw[->] (cd) -- (b);
+\draw[->] (cd) -- (e);
+\end{tikzpicture}		
+}
+
+\caption{Elimination of superfluous node}
+\label{fig:FD-Graph-5}
+\end{figure}

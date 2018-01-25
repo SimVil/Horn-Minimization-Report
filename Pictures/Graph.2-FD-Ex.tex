@@ -1,0 +1,33 @@
+\begin{figure}[ht]\centering
+\subfloat[][FD-Graph with redundant node ($ab$)]{
+\begin{tikzpicture}
+\node[Vertex, label=left:{ab}] (ab) at (0, 0) {};
+\node[Vertex, label=below:{a}] (a) at (-1, 1) {};
+\node[Vertex, label=below:{b}] (b) at (-1, -1) {};
+\node[Vertex, label=below:{c}] (c) at (1, 1) {};
+\node[Vertex, label=below:{d}] (d) at (1, -1) {};
+
+\draw[->, dotted] (ab) -- (a);
+\draw[->, dotted] (ab) -- (b);
+\draw[->] (a) -- (c);
+\draw[->] (b) -- (d);
+\draw[->] (ab) -- (c);
+\draw[->] (ab) -- (d);
+
+\end{tikzpicture}
+}\qquad
+\subfloat[][FD-Graph with redundant node removed]{
+\begin{tikzpicture}
+\node[Vertex, label=below:{a}] (a) at (-1, 1) {};
+\node[Vertex, label=below:{b}] (b) at (-1, -1) {};
+\node[Vertex, label=below:{c}] (c) at (1, 1) {};
+\node[Vertex, label=below:{d}] (d) at (1, -1) {};
+
+\draw[->] (a) -- (c);
+\draw[->] (b) -- (d);
+\end{tikzpicture}		
+}
+
+\caption{Elimination of redundant nodes}
+\label{fig:FD-Graph-4}
+\end{figure}

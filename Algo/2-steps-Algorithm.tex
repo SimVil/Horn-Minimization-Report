@@ -1,0 +1,42 @@
+\section{"Usual" Algorithm}
+
+Compute the canonical (or Duquenne-Guigues) basis $\I_c$ given $\I$. \cite{Duq},
+\cite{CExp}. 
+
+\begin{algorithm}[H]
+	\KwIn{$\I$ an implication basis}
+	\KwResult{$\I_c$ the canonical basis derived from $\I$}
+	
+	\ForEach{$A \imp B$ in $\I$}{
+		$\I$ = $\I - \{A \imp B \}$ \;
+		$B$ = $\I(A \cup B)$ \;
+		$\I$ = $\I \cup \{A \imp B \}$ \;
+	}
+
+	\ForEach{$A \imp B$}{
+		$\I$ = $\I - \{A \imp B \}$ \;
+		$A$ = $\I(A)$ \;
+		
+		\If{$A \neq B$}{
+			$\I$ = $\I \cup \{ A \imp B \}$ \;
+		}
+	}
+	
+	\caption{Canonical Cover}	
+\end{algorithm}
+
+
+\vspace{1.2em}
+
+\noindent The first loop maximizes each heads, that is $A \imp B$ becomes $A 
+\imp \I(A)$. We summarize the knowledge. The second loop maximizes left side
+of implications with $\I^{-}(A)$. The second step kills redundancy.
+
+\vspace{1.2em}
+
+\noindent Notes: few tips to see that the resulting basis is equivalent to the 
+input. By the end of the first loop, since we replaced $A \imp B$ by $A \imp 
+\I(A)$, and by definition of $A \imp B$ , $A \imp B$ still holds for all $B$
+($B \subseteq \I(A)$). For the second loop, observe that we omit only redundant
+implications from the basis, because if $\I^{-}(A) = \I(A)$ it means that all
+the implications $A \imp B$ true in $\I$ are true in $\I^{-}$. 

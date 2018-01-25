@@ -1,0 +1,31 @@
+\begin{figure}[ht]\centering
+\begin{tikzpicture}
+\node[Vertex, label=left:{ab}] (ab) at (-2, 0) {};
+\node[Vertex, label=left:{f}] (f) at (-2, 2) {};
+\node[Vertex, label=right:{af}] (af) at (-1, 3) {};
+\node[Vertex, label=above:{g}] (g) at (-1, 4) {};
+\node[Vertex, label=below:{a}] (a) at (-1, 1) {};
+\node[Vertex, label=below:{b}] (b) at (-1, -1) {};
+\node[Vertex, label=below:{c}] (c) at (0, 1) {};
+\node[Vertex, label=below:{d}] (d) at (0, -1) {};
+\node[Vertex, label=above:{h}] (h) at (1, 2) {};
+\node[Vertex, label=left:{cd}] (cd) at (1, 0) {};
+\node[Vertex, label=below:{e}] (e) at (2, 0) {};
+
+\draw[->, dotted] (af) -- (f);
+\draw[->, dotted] (af) -- (a);
+\draw[->, dotted] (ab) -- (a);
+\draw[->, dotted] (ab) -- (b);
+\draw[->, dotted] (cd) -- (c);
+\draw[->, dotted] (cd) -- (d);
+\draw[->] (af) -- (g);
+\draw[->] (ab) -- (f);
+\draw[->] (a) -- (c);
+\draw[->] (b) -- (d);
+\draw[->] (c) -- (h);
+\draw[->] (cd) -- (e);
+\end{tikzpicture}
+
+\caption{FD-Graph of some implicational basis}
+\label{fig:FD-Graph-2}
+\end{figure}
