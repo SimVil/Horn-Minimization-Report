@@ -21,193 +21,23 @@ to \cite{Lat&Ord}, \cite{CExp}. The aim of this chapter is to give various
 aspects of a same object, namely an implication basis. We first go through 
 logical definitions, then we move to set theoretic aspect (with closure) 
 
-\section{Logic pov}
 
-Note that we consider the reader to have a few background in mathematical logic,
-so that the following definitions just stand as a summary and refresher. The 
-reminder is only about propositional logic up to our needs.
-
-\begin{definition}[\belemp{clause}]
-	Pouet et pouf sont sur un bateau.
-\end{definition}
-
-\begin{definition}[\belemp{Horn formula}]
-	
-\end{definition}
-
-\begin{definition}[\belemp{semantic entailment}]
-	
-\end{definition}
-
-\section{Order theory pov}
-
-\section{FCA pov}
-
-\section{Closure systems pov}
-
-In this part, we will be considering definitions of set theory, with relation to
-closure systems. The reader may refer to \cite{CExp}, \cite{Lat&Ord} for more 
-details and further definitions.
-
-\begin{definition}[\belemp{Closure operator}, \belemp{closure system}] Let
-$\Sigma$ be a set, and define $\phi : \Sigma \longrightarrow \Sigma$ an
-application. $\phi$ is a \belemp{closure} if it has the three following
-properties for all $X, Y \subseteq \Sigma$:
-\begin{itemize}
-	\item[(i)] $X \subseteq \phi(X)$ (\midemp{extensive})
-	\item[(ii)] $X \subseteq Y \longrightarrow \phi(X) \subseteq \phi(Y)$ 
-		(\midemp{monotone})
-	\item[(iii)] $\phi(\phi(X)) = \phi(X)$ (\midemp{idempotent})
-\end{itemize}
-
-\noindent Then, the pair $(\Sigma, \phi)$ is called a \belemp{closure system}.
-	
-\end{definition}
+% BD, Implicational Basis and stuff
+\input{Defs/Closure-Def.tex}
 
 
-\begin{definition}[\belemp{Closed set}] Let $(\Sigma, \phi)$ be a closure 
-system. A subset $X$ of $\Sigma$ is a \belemp{closed set} (with respect to 
-$\phi$) if $\phi(X) = X$. We will denote by $\Sigma_{\phi}$ the set of all 
-closed sets of $(\Sigma, \phi)$, that is:
-	
-	\[ \Sigma_{\phi} = \left\{ X \subseteq \Sigma \; | \; \phi(X) = X 
-	\right\}  \]
-
-\noindent and $\Sigma_{\phi}$ has the following properties:
-\begin{itemize}
-	\item[(i)] $\Sigma \in \Sigma_{\phi}$,
-	\item[(ii)] if $X, Y \in \Sigma_{\phi}$, so does $X \cap Y$ 
-		(\midemp{$\Sigma_{\phi}$ is closed under intersection}).
-\end{itemize}
-	
-\end{definition}
-
-\noindent Note that a closure system can be characterized either by its closure
-operator, or by its set of closed sets. In other words, we can derive 
-$\Sigma_{\phi}$ from $\phi$, as $\phi$ from $\Sigma_{\phi}$. The closed set 
-associated to $X$ is the smallest closed set containing $X$, i.e:
-
-	\[ \phi(X) = \bigcap \{Y \in \Sigma_\phi \; | \; X \subseteq Y \} \]
-
-\noindent Since $\Sigma_{\phi}$ is closed under intersection, the resultant of
-the intersection is also a closed set. The set of closed sets ordered by 
-inclusion defines a complete lattice as defined previously. 
+% Logical POV
+\input{Defs/Logic-Def.tex}
 
 
-\paragraph{Example} Let $\Sigma = \llbracket 1 \; ; \; 4 \rrbracket$ and 
-$\phi(X) = X \cup \{4 \}$. The pair $(\Sigma, \phi)$ is a closure system whose
-closed sets are all the subsets containing 4. Let us prove that $\phi$ is indeed
-a closure operator:
-\begin{itemize}
-	\item[(e)] for all subsets $X$ of $\Sigma$, either $4 \in X$ and 
-	$\phi(X) = X \cup \{4 \} = X$ so $X \subseteq \phi(X)$, either $4 \notin X$
-	and $X \subseteq X \cup \{4 \} = \phi(X)$.
-	\item[(m)]
-	\item[(i)] by definition $\phi(X)$ contains 4, so it will not be
-	changed by applying $\phi$ another time.
-\end{itemize}
-
-\noindent Another interesting definition of $\Sigma_{\phi}$ is:
-
-	\[ \Sigma_{\phi} = \{ \phi(X) \; | \; X \subseteq \Sigma \} \]
-
-\noindent Then, in our example:
-
-	\[ \Sigma_{\phi} = \{ \{ 4\}, \{ 1, 4\}, \{ 2, 4\},
-		\{ 3, 4\}, \{ 1, 2, 4\}, \{ 1, 3, 4\},\{ 2, 3, 4\}, 
-		\{ 1, 2, 3, 4\} \}
-	\]
-	
-\noindent The lattice $(\Sigma_{\phi}, \subseteq)$ is:
+% (Hyper)-graphs POV
 
 
 
-	 
-\section{Implication Basis}
-
-\begin{definition}[\belemp{Implication}] Let $\Sg$ be a set, and $A, B 
-\subseteq 
-\Sg$. An \belemp{implication} over $\Sg$ is a relation/pair between $A$ and 
-$B$, denoted by $A \imp B$. $A$ is the \belemp{premise}, $B$ the 
-\belemp{conclusion}. 	
-\end{definition}
-
-\begin{definition}[\belemp{Model of an implication}] A subset $M \subseteq 
-\Sg$ is a model of $A \imp B$, written $M \models A 
-\imp B$ if $B \subseteq M \lor A \nsubseteq M$ (think of logical 
-approach).
-\end{definition}
-
-\begin{definition}[\belemp{Model of an implication basis}] Let $\I$ be
-a set of implication (or an \midemp{implication basis}) over $\Sg$. A subset
-$M \subseteq \Sg$ is a model of $\I$ if $M \models A \imp
-B$ for each $A \imp B$ in $\I$. It is denoted by $M \models \I$.
-\end{definition}
-
-The set of models of $\I$ over $\Sg$ describes a closure system $(\Sg, \phi)$. 
-Then, An implication $A \imp B$ holds in $\I$ iff $B \subseteq \phi(A)$. 
-Conversely, if $(\Sg, \phi)$ is a closure system, then we can define an 
-implication basis $\I$ such that the models $M(\I)$ of $\I$ are the closed sets
-$\Sg_\phi$ of $(\Sg, \phi)$. An implication $A \imp B$ \belemp{semantically 
-follows} from $\I$ if for all $M \subseteq \Sg$ s.t $M \models \I$, we also have
-$M \models A \imp B$. Then we write $\I \models A \imp B$.
-
-\begin{definition}[\belemp{Completeness}] $\I$ over $\Sg$ is called 
-\belemp{complete} with respect to a closure system if every implication holding
-in the closure system follows from $\I$.
-	
-\end{definition}
-
-Given $\I$, we denote by $\I(M)$ the closure of $M$ in $\I$, that is the 
-smallest model of $\I$ containing $M$.
-
-\begin{definition}[\belemp{Properties of $\I$}] Let $\I$ be a set of 
-implications over $\Sg$, and $(\Sg, \phi)$ be a closure system. $\I$ is:
-\begin{itemize}
-	\item[(i)] \belemp{sound} if each implications of $\I$ holds in $\Sg_\phi$
-	\item[(ii)] \belemp{complete} if each implications holding in $\Sg_\phi$ 
-	follows from $\I$
-	\item[(iii)] \belemp{nonredundant} if no implication in $\I$ follows from 
-	other implications of $\I$.
-\end{itemize}
-	
-\end{definition}
-
-So our goal is to find such an implication basis which concentrates all possible
-knowledge in the minimal number of implications. Finding (and minimizing!) such
-an implication set can be very Time-Consuming.
-
-\begin{definition}[\belemp{Pseudo-closed set}] Let $(\Sg, \phi)$ be a closure 
-system. A subset $M \subseteq \Sg$ is \belemp{pseudo-closed} iff 
-\begin{itemize}
-	\item $\phi(M) \neq M$ ($M$ is not closed),
-	\item if $Q \subset M$ is pseudo-closed, then $\phi(Q) \subseteq M$.
-\end{itemize}
-
-\end{definition}
-
-Note that the empty set $\emptyset$ is pseudo-closed iff it is not closed. One 
-can also define pseudo-closed set with help of \midemp{quasi-closed} sets. We
-can prove that a pseudo-closed set is some kind of discontinuous structure 
-within a lattice.
-
-\begin{definition}[\belemp{Duquenne-Guigues Basis}] Let $(\Sg, \phi)$ be a 
-closure system. The \belemp{Duquenne-Guigues} basis or \belemp{canonical} basis
-$\I$ is:
-
-	\[ \I = \{ M \imp \phi(M) \; | \; M \subseteq \Sg, \, M \;
-	 	\text{pseudo-closed} \} \]
-	
-\noindent and $\I$ is complete, sound and nonredundant.
-\end{definition}
 
 
-\begin{definition}[\belemp{Preclosed set}] Given a closure system $(\Sg, \phi)$,
-a subset $M \subseteq \Sg$ is \belemp{preclosed} iff it contains the closure of
-all its proper preclosed subsets.
-	
-\end{definition}
 
+% Chapter II: A review on algorithms for horn minimization
 \chapter{Algorithms}
 
 In the first chapter we introduced the aim of our study, our working procedure
@@ -215,96 +45,36 @@ and the main tools for us to understand the next explanations. In this part, we
 will focus on reviewing the existing algorithms for the Horn minimization task. 
 
 
-%Maier Algorithm
+% History / soa of the problem.
+% Start from explaining the applications in real life, come to implications, 
+% explain the various existing problems, come to ours, explain that it is 
+% polynomial, develop the sens of various algorithms in various terminologies.
+% Explain (again) that our task is to compare those algorithms in both
+% theoretical and practical aspects.
+
+
+% Maier Algorithm
 \input{Algo/Maier-Algorithm.tex}
+
 
 % Ausiello Graph algorithm (FD-Graph)
 \input{Algo/FD-Graph-Algorithm.tex}
 
 
+% 2-steps algorithm
+\input{Algo/2-steps-Algorithm.tex}
 
 
-\section{Strong duality in Horn Minimization}
-
-Pure Horn function (PHF). Implicates. Subsuming. Given $h$ a PHF, denote by 
-$\mathcal{I}(h)$ the set of implicates of $h$. $\cal{P} \subseteq \cal{I}$ is
-the set of prime implicates of $h$. Forward chaining is the closure operator. 
-
-The essential set $\cal{E}_S$ of a subset $S$ of variables $V$ is defined as
-follows:
-
-	\[ \cal{E}_S = \{ A \imp B | A \subseteq S, B \nsubseteq S \} \]
-	
-It describes a subset of $h$ for which $S$ is a false point. In fact, it points
-out the clauses falsified by $S$. So more than indicating whether $S$ is a model
-or not of the function, it also says where does it falsify the function.
-
-Lemma 4 states that a CNF $\phi$ represents a function $h$ if for each non-model
-$S$ of $h$, $\phi$ contains at least one of the clause falsified by $h$. That is
-$h$ and $\phi$ are false at the same points.
-
-$ess(h)$ allows to partition the non-models of $h$. It is the number of maximum
-pairwise disjoint essential sets of $h$. This can be viewed as the number of
-subsets sufficient to disjointly describes false point of $h$. Body-disjoint 
-essential set is a stronger criterion. Two essential sets $\cal{E}$, $\cal{E}'$
-are body-disjoint if the intersection of the left sides they contain is empty.
-
-sketch of proof for lemma 5. 
-
-\begin{lemma} Let $h$ be PHF over $V$. For $P, Q \subseteq V$, we have the 
-following equivalences:
-
-\begin{itemize}
-	\item[(i)] $\mathcal{E}_P$ and $\mathcal{E}_Q$ are disjoint iff $F_h(P \cap
-		Q) \subseteq P \cup Q$,
-	
-	\item[(ii)] $\cal{E}_P$ and $\cal{E}_Q$ are body-disjoint iff $F_h(P
-	 	\cap Q) \subseteq P xor Q$.
-\end{itemize}
-	
-\end{lemma} 
-
-\begin{proof}
-(i), $\imp$. Note that for $P \subseteq V$, $F_h(P)$ is exactly the set of
-variables contained in $\mathcal{E}_P \cup P$. Also, note that if $P, Q$, 
-$\mathcal{E}_{P \cap Q} \subseteq \mathcal{E}_P \cap \mathcal{E}_Q$. If the
-two last essential sets are disjoint, then their intersection is empty, 
-leading to $\mathcal{E}_{P \cap Q} = \emptyset$. In other words, $P \cap Q$ is
-a model of $h$, and by definition $F_h(P \cap Q) = P \cap Q \subseteq P \cup Q$
-
-\vspace{1.2em}
-
-(i), $\rimp$. Let us denote by $V(\mathcal{E}_P)$ the variables contained in 
-$\mathcal{E}_P$. We reason by contraposition. Suppose $V(\mathcal{E}_{P \cap Q})
-\neq \emptyset$. Then, 
-
-\begin{align*}
-	F_h(P \cap Q) & = V(\mathcal{E}_{P \cap Q}) \cup (P \cap Q) \\
-	& = (V(\mathcal{E}_{P \cap Q}) \cup P) \cap
-		(V(\mathcal{E}_{P \cap Q}) \cup Q) \\
-	& = (A \cup X \cup P) \cap (A \cup X \cup Q) \\
-	& = (P \cup X) \cap (Q \cup X) \\
-	& = (P \cap Q) \cup X \nsubseteq P \cup Q
-\end{align*}
+% Letter algorithm
+\input{Algo/Letter-Algorithm.tex}
 
 
-\noindent where $X$ is a non-empty set derived from the definition of 
-$\mathcal{E}_{P \cap Q}$ if it is non-empty. Indeed if $\mathcal{E}$ is 
-non-empty then it contains at least one implication $B \imp u$ such that $B 
-\subseteq P \cap Q$ and $u \notin P \cap Q$. The set of such $u$ is $X$. Note
-that in this case, since $\mathcal{E}$ is derived from the essential sets of
-$P$ and $Q$, $X$ does belong neither to $P$ nor $Q$. In other words $X 
-\nsubseteq P \cup Q$. 
+% Angluin Algorithm
+\input{Algo/Angluin-Algorithm.tex}
 
-$A$ is a subset of $P \cap Q$. Indeed, it is possible not to have $P \cap Q
-\subseteq V$ if the implications in $V$ only use parts of $P \cap Q$. $A$ is 
-non-empty, and is be absorbed by $P$ or $Q$ in the previous derivations, 
-through $P \cup A$ and $Q \cup A$. 
 
-\vspace{1.2em}
+\chapter{Efficiency, comparison}
 
-(ii) $\imp$.
-\end{proof}
 
 
 \bibliographystyle{acm}
