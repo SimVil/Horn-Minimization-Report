@@ -1,12 +1,57 @@
-\section{Logic pov}
+\section{Propositional logic and Horn formulas}
 
-Note that we consider the reader to have a few background in mathematical logic,
-so that the following definitions just stand as a summary and refresher. The 
-reminder is only about propositional logic up to our needs.
+This section is dedicated to the introduction of some propositional logic 
+notations and notions. Again, we assume the reader has some background in
+propositional logic anyway (we are not going to cover the meaning of 
+disjunction, conjunction and so forth). The reader can refer to 
+\cite{cori_mathematical_2000} for an introduction out of our scope.
 
-\begin{definition}[\belemp{clause}]
-	Pouet et pouf sont sur un bateau.
+\vspace{1.2em}
+
+Before going into definitions, we set up some notations. Let us denote by
+$\Sg$ the set of propositional variables. Disjunction is written with $\lor$,
+conjunction with $\land$, and negation $\lnot$. Truth values are 0 (resp. 
+$\bot$) and 1 (resp. $\top$).
+
+Our aim is to build so called Horn formulas. To this purpose we must first 
+introduce what we call clauses, and Horn clauses. 
+
+\begin{definition}[clause] Let $x_1, \ dots, \ x_n$, $n \in \Ens{N}$
+be variables of $\Sg$. A \belemp{clause} $\mathcal{C}$ over $x_i$'s is a 
+\belemp{disjunction} of literals $p_i$:
+
+	\[ \mathcal{C} = \bigvee_{i = 1}^{n} p_i \]
+
+\noindent where $p_i \in \{x_i, \lnot x_i \}$.
 \end{definition}
+
+\begin{definition}[(pure) Horn clause] A clause $C$ over variables of $\Sg$
+is said \belemp{Horn} (resp. \belemp{pure Horn}) if it contains at most (resp. 
+exactly one) positive literal.
+
+\end{definition}
+
+\paragraph{Example} To clarify our idea let us give a simple example. Let $x_1,
+x_2, \dots, x_n$ be boolean variables. We have the following:
+\begin{itemize}
+	\item $\emptyset$ is a clause (true),
+	\item $(x_1 \lor x_2 \lor \lnot x_3 \lor \lnot x_4)$ is a clause,
+	\item $(\lnot x_1 \lor \lnot x_2)$ is a Horn clause,
+	\item $(\lnot x_1 \lor \lnot x_2 \lor x_3)$ is pure Horn.
+\end{itemize}
+
+
+\vspace{1.2em}
+
+TO begin to draw a link with the previous section, one can note that we can 
+write Horn clauses with disjunction, or with logical implication $\imp$. Indeed
+remind that ($x_1 \lor \lnot x_2 $) can be equivalently rewritten as $x2 \imp 
+x_1$. Hence, the Horn clauses defined in the previous examples become:
+\begin{itemize}
+	\item $(x_1 \land x_2) \imp \bot$,
+	\item $(x_1 \land x_2) \imp x_3$.
+\end{itemize}
+
 
 \begin{definition}[\belemp{Horn formula}]
 	
