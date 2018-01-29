@@ -243,9 +243,9 @@ Before concluding this section, we would like to introduce an useful result as
 much as some remarks on the use of closure systems and implications. First 
 a proposition (admitted here):
 
-\begin{proposition} Let $\I$ be an implication basis over an attribute set 
-$\Sg$. An implication $A \imp B$ follows from $\I$ if and only if $B \subseteq 
-\I(A)$.
+\begin{proposition} \label{prop:def.equiv_imp_clos} 
+Let $\I$ be an implication basis over an attribute set $\Sg$. An implication $A 
+\imp B$ follows from $\I$ if and only if $B \subseteq \I(A)$.
 \end{proposition}
 
 \begin{proof} \textit{if part}. Suppose $B \subseteq \I(A)$. $\I(A)$ is the
@@ -261,10 +261,9 @@ $\I \models A \imp B$.
 $M$ of $\I$ satisfy $A \nsubseteq M$ or $B \subseteq M$. In particular, it must
 hold for the smallest model (inclusion wise) containing $A$ being $\I(A)$ which
 yields $A \nsubseteq \I(A) \lor B \subseteq \I(A)$. Because this formula holds 
-also
-for $\I(A)$ (as it is a model) and A $\nsubseteq \I(A)$ being a contradiction
-with respect to the definition of a closure operator, we conclude that 
-necessarily $B \subseteq \I(A)$ must be true.
+also for $\I(A)$ (as it is a model) and A $\nsubseteq \I(A)$ being a 
+contradiction with respect to the definition of a closure operator, we conclude 
+that necessarily $B \subseteq \I(A)$ must be true.
 
 \end{proof}
 
@@ -275,17 +274,16 @@ To conclude this short introduction on closure and implications terminology, we
 would like to say that these objects model an intuitive way of representing
 knowledge and inference (see music example). More than this, they are mainly 
 used because they can be checked easily, namely in linear time in the size of
-our implication basis (see algorithm linclosure, 
+our implication basis (see algorithm linclosure,  
 \cite{b._ganter_conceptual_2016, david_minimum_1980,maier_theory_1983}).
 
 	In this section we went over general definitions of closure systems, and 
 implication basis. The reader may find a more exhaustive presentation in 
 \cite{b._ganter_conceptual_2016, davey_introduction_2002}. Note that these are 
-not all the definitions from closure 
-terminology we shall use. Nevertheless, we prefer to give them when required as 
-they are more closely related to specific problems, while the aim of this 
-section is to be general. The next part is dedicated to a review of 
-propositional logic in accordance to our needs.
+not all the definitions from closure terminology we shall use. Nevertheless, we 
+prefer to give them when required as they are more closely related to specific 
+problems, while the aim of this section is to be general. The next part is 
+dedicated to a review of propositional logic in accordance to our needs.
 
 % Personal: find the algorithm of bernstein. 
 

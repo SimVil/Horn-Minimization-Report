@@ -90,7 +90,8 @@ as in \ref{alg:MinMax}
 
 \subsubsection{Elements of proof of correctness}
 
-\begin{proposition} Let $P_1, P_2$ be pseudo-closed with respect to $\I$ over 
+\begin{proposition} \label{prop:let.pc_inter}
+ Let $P_1, P_2$ be pseudo-closed with respect to $\I$ over 
 $\Sg$. If their intersection is a false point of $\I$, then it is pseudo-closed.
 	
 \end{proposition}
@@ -128,8 +129,8 @@ all their subsets are true points. Since false points represent a partial order
 under inclusion, every elements of this poset contains at least one 
 pseudo-closed set.
 
-\begin{proposition} If two distinct sets $P_1, P_2$ are pseudo-closed, their 
-essential 
+\begin{proposition} \label{prop:let.imp_pc_bd}
+If two distinct sets $P_1, P_2$ are pseudo-closed, their essential 
 sets are body disjoint. 
 	
 \end{proposition}
@@ -169,8 +170,8 @@ greatest false point of $\I$ within $P_1 \cap P_2$:
 \begin{itemize}
 	\item[(i)] if $A \subset P_1 \cap P_2$, then $\I(P_1 \cap P_2) = P_1 \cap 
 	P_2$.
-	\item[(ii)] if $A = P_1 \cap P_2$, then by proposition 2, $P_1 \cap P_2$ 
-	must be	pseudo-closed. 
+	\item[(ii)] if $A = P_1 \cap P_2$, then by proposition 
+	\ref{prop:let.pc_inter}, $P_1 \cap P_2$ must be	pseudo-closed. 
 \end{itemize}
 \noindent case (i). Suppose $A \imp b_1 \in \mathcal{E}_{P_1}$ and $A \imp b_2
 \in \mathcal{E}_{P_2}$. Again either $b = b_1 = b_2$ or $b_1 \neq b_2$. If $b_1 
@@ -195,7 +196,8 @@ using pseudo-closed sets. The claim is that the algorithm end up with the
 Duquenne-Guigues basis. Therefore we will show that in the procedure, if we
 add an implication, its premise is pseudo-closed.
 
-\begin{proposition} In the algorithm BodyMinimal, we add an implication 
+\begin{proposition} \label{prop:let.algo_min}
+In the algorithm BodyMinimal, we add an implication 
 $\I_c(X) \imp \I(X) - \I_c(X)$ only if $\I_c(X)$ is pseudo-closed.
 	
 \end{proposition}
@@ -249,8 +251,8 @@ step $n$, we conclude that it is true in general, which proves the property.
 
 \end{proof} 
 
-This proposition shows that the algorithm produces indeed a body minimal basis
-from $\I$ and in particular, the Duquenne-Guigues basis. 
+Proposition \ref{prop:let.algo_min} shows that the algorithm produces indeed a 
+body minimal basis from $\I$ and in particular, the Duquenne-Guigues basis. 
 
 \subsubsection{Complexity analysis}
 
