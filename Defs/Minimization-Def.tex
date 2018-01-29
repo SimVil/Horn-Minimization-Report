@@ -2,49 +2,107 @@
 
 Previously we settled down mathematical tools we shall use. In the next 
 paragraphs we will focus on describing "with hands" the problem of Horn 
-minimization in our sense. 
+minimization in our sense. Here we suppose $\I$ is in so-called \belemp{reduced
+form}, that is for all distinct implications $A \imp B, C \imp D$ of $\I$,
+$A \neq C$. That is we do not have distinct implications with same bodies. This
+said, we state one of the \aliemp{most important} of our problem.
 
+\begin{definition}[\midn{Minimality of $\I$}] Let $\I$ be a set of 
+implications over $\Sg$, and $(\Sg, \phi)$ be a closure system. $\I$ is:
 \begin{itemize}
-	\item rappeler closure systems tout ça
-	\item notre minimalité c'est body-minimality
-	\item Pseudo-closed sets
-	\item Duquenne-Guigues basis
-	\item exemple musique
+	\item[(i)] \belemp{sound} if each implications of $\I$ holds in 
+	$\Sg_\phi$
+	\item[(ii)] \belemp{complete} if each implications holding in 
+	$\Sg_\phi$ follows from $\I$
+	\item[(iii)] \belemp{nonredundant} if no implication in $\I$ follows 
+	from other implications of $\I$.
 \end{itemize}
+\noindent An implicational basis with such properties is called 
+\belemp{minimal}.
+\end{definition}
 
-Duquenne Guigues basis, redundancy, completeness, etc. Define our meaning of
-minimality (in terms of bodies). 
+Note that here, minimality is defined with relation to a closure system. In
+our case we will just be given $\Sg$ and $\I$, without an associated $(\Sg, 
+\phi)$. Therefore, our basis will automatically be sound and complete because
+the closure system we will consider is the set of models of $\I$. Hence, we
+can provide a simpler definition of minimality (which is in fact nonredundancy):
 
-\begin{definition}[\belemp{Completeness}] $\I$ over $\Sg$ is called 
-	\belemp{complete} with respect to a closure system if every implication 
-	holding
-	in the closure system follows from $\I$.
+\begin{definition}[\midn{Mimimality}] A reduced implicational basis $\I$ is
+said \belemp{minimal} if we cannot remove any implication without altering
+its closure.
 	
 \end{definition}
 
-Given $\I$, we denote by $\I(M)$ the closure of $M$ in $\I$, that is the 
-smallest model of $\I$ containing $M$.
 
-\begin{definition}[\belemp{Properties of $\I$}] Let $\I$ be a set of 
-	implications over $\Sg$, and $(\Sg, \phi)$ be a closure system. $\I$ is:
-	\begin{itemize}
-		\item[(i)] \belemp{sound} if each implications of $\I$ holds in 
-		$\Sg_\phi$
-		\item[(ii)] \belemp{complete} if each implications holding in 
-		$\Sg_\phi$ 
-		follows from $\I$
-		\item[(iii)] \belemp{nonredundant} if no implication in $\I$ follows 
-		from 
-		other implications of $\I$.
-	\end{itemize}
-	
-\end{definition}
+As we shall see later, there exists several definition of minimality. Our 
+point of view could also be called \belemp{body minimality}. More intuitively, 
+our aim is to concentrate all the knowledge in a minimal number of implications.
 
-So our goal is to find such an implication basis which concentrates all possible
-knowledge in the minimal number of implications. Finding (and minimizing!) such
-an implication set can be very Time-Consuming.
+\paragraph{Example} Let us recall our music example. We had music styles:
+\textit{shoegaze, electronic, coldwave, pop, rock, dream-pop, jazz, 
+experimental, atmospheric, contemporary jazz} and some implications:
+\begin{itemize}
+	\item[ ] \textit{jazz, experimental} $\imp$ \textit{contemporary jazz},
+	\item[ ] \textit{coldwave, rock}  $\imp$ \textit{shoegaze},
+	\item[ ] \textit{atmospheric} $\imp$ \textit{experimental, electronic},
+	\item[ ] \textit{shoegaze, pop} $\imp$ \textit{dream-pop}.
+\end{itemize}
+\noindent Unfortunately, because all the bodies are disjoint, this basis is 
+already minimal. But let's imagine we have the following implications instead:
+\begin{itemize}
+	\item[ ] \textit{coldwave} $\imp$ \textit{rock},
+	\item[ ] \textit{shoegaze}  $\imp$ \textit{rock, coldwave, dream-pop},
+	\item[ ] \textit{shoegaze, dream-pop} $\imp$ \textit{rock, coldwave},
+	\item[ ] \textit{rock, dream-pop} $\imp$ \textit{atmospheric, shoegaze, 
+	coldwave}.
+\end{itemize}
+\noindent Here, the third implication can be removed. Indeed, from tags 
+\textit{shoegaze, dreampop} following the implications we can reach 
+\textit{rock, coldwave, atmospheric}. But say we remove the third implication,
+and thus keep:
+\begin{itemize}
+	\item[ ] \textit{coldwave} $\imp$ \textit{rock},
+	\item[ ] \textit{shoegaze}  $\imp$ \textit{rock, coldwave, dream-pop},
+	\item[ ] \textit{rock, dream-pop} $\imp$ \textit{atmospheric, shoegaze, 
+	coldwave}.
+\end{itemize}
+What can we reach starting from \textit{shoegaze, dreampop}? Using the second
+implication we get \textit{rock, coldwave}, and because we have \textit{rock, 
+dreampop}, we also get \textit{atmospheric}. That is, we can get the same 
+knowledge than in the previous case but with one less implication.
 
-\begin{definition}[\belemp{Pseudo-closed set}] Let $(\Sg, \phi)$ be a closure 
+\vspace{0.5em}
+
+Let us present a less practical but more visual example. Suppose $\Sg = \{ a, 
+\  s,\  c, \  r, \  d\}$
+and $\I$ as follows:
+
+	\[ c \imp r, \; s \imp rcd, \; rd \imp asc, \; sd \imp rc \]
+
+\noindent This basis is not minimal. Indeed, let us remove the fourth 
+implication and call $\I^{-}$ the new basis. We want to know whether the 
+implication we removed still holds in $\I^{-}$ so that its closure is kept (and
+therefore its "knowledge"). To show that $\I^{-} \models sd \imp rc$, it is
+enough to show that $rc \subseteq \I^{-}(sd)$ (see proposition 
+\ref{prop:def.equiv_imp_clos}). Because we have $s \imp rcd$, then $rd \imp 
+asc$ we conclude that $\I^{-}(sd) = acdrs$. Thus $\I^{-} \models sd \imp rc$ 
+and $\I^{-}$ is smaller than $\I$, with $\I^{-} \equiv \I$. Also, $\I^{-}$ is 
+minimal.
+
+\vspace{0.5em}
+
+Note that the latter example is in fact the same as the musical one. Take the 
+first letter of each style and we end up with the basis described in the second
+paragraph.
+
+
+\vspace{1.2em}
+
+To go in details, we will introduce some elements and objects related to body 
+minimality, namely \belemp{Pseudo-closed sets} and \belemp{Duquenne-Guigues 
+basis}.
+
+\begin{definition}[\midn{Pseudo-closed set}] Let $(\Sg, \phi)$ be a closure 
 	system. A subset $M \subseteq \Sg$ is \belemp{pseudo-closed} iff 
 	\begin{itemize}
 		\item $\phi(M) \neq M$ ($M$ is not closed),
@@ -53,26 +111,23 @@ an implication set can be very Time-Consuming.
 	
 \end{definition}
 
-Note that the empty set $\emptyset$ is pseudo-closed iff it is not closed. One 
-can also define pseudo-closed set with help of \midemp{quasi-closed} sets. We
-can prove that a pseudo-closed set is some kind of discontinuous structure 
-within a lattice.
+Note that the empty set $\emptyset$ is pseudo-closed if and only if it is not 
+closed. Also, one can note that if $P$ is pseudo-closed and $P'$ is covered
+(inclusion wise, in terms of partial ordering) then $P'$ cannot be 
+pseudo-closed. For the next definition, one can refer to 
+\cite{b._ganter_conceptual_2016, guigues_familles_1986}.
 
-\begin{definition}[\belemp{Duquenne-Guigues Basis}] Let $(\Sg, \phi)$ be a 
-	closure system. The \belemp{Duquenne-Guigues} basis or \belemp{canonical} 
-	basis
-	$\I$ is:
-	
+\begin{definition}[\midn{Duquenne-Guigues Basis}] Let $(\Sg, \phi)$ be a 
+closure system. The \belemp{Duquenne-Guigues} basis or \belemp{canonical} 
+basis $\I$ is:
+
 	\[ \I = \{ M \imp \phi(M) \; | \; M \subseteq \Sg, \, M \;
-	\text{pseudo-closed} \} \]
-	
-	\noindent and $\I$ is complete, sound and nonredundant.
+		\text{pseudo-closed} \} \]
+
+\noindent and $\I$ is complete, sound and nonredundant.
 \end{definition}
 
-
-\begin{definition}[\belemp{Preclosed set}] Given a closure system $(\Sg, \phi)$,
-	a subset $M \subseteq \Sg$ is \belemp{preclosed} iff it contains the 
-	closure of
-	all its proper preclosed subsets.
-	
-\end{definition}
+\noindent Thus, the Duquenne-Guigues basis is body-minimal. In this section 
+we presented the minimization problem we will stick to for all this report. 
+Another remark, as we shall see in the next chapter, this problem is solvable
+in polynomial time
