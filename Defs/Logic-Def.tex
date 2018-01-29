@@ -11,12 +11,13 @@ disjunction, conjunction and so forth). The reader can refer to
 Before going into definitions, we set up some notations. Let us denote by
 $\Sg$ the set of propositional variables. Disjunction is written with $\lor$,
 conjunction with $\land$, and negation $\lnot$. Truth values are 0 (resp. 
-$\bot$) and 1 (resp. $\top$).
+$\bot$) and 1 (resp. $\top$). 
 
 Our aim is to build so called Horn formulas. To this purpose we must first 
 introduce what we call clauses, and Horn clauses. 
 
-\begin{definition}[clause] Let $x_1, \ dots, \ x_n$, $n \in \Ens{N}$
+
+\begin{definition}[\midn{clause}] Let $x_1, \ dots, \ x_n$, $n \in \Ens{N}$
 be variables of $\Sg$. A \belemp{clause} $\mathcal{C}$ over $x_i$'s is a 
 \belemp{disjunction} of literals $p_i$:
 
@@ -25,7 +26,8 @@ be variables of $\Sg$. A \belemp{clause} $\mathcal{C}$ over $x_i$'s is a
 \noindent where $p_i \in \{x_i, \lnot x_i \}$.
 \end{definition}
 
-\begin{definition}[(pure) Horn clause] A clause $C$ over variables of $\Sg$
+\begin{definition}[\midn{(pure) Horn clause}] A clause $C$ over variables of 
+$\Sg$
 is said \belemp{Horn} (resp. \belemp{pure Horn}) if it contains at most (resp. 
 exactly one) positive literal.
 
@@ -43,7 +45,7 @@ x_2, \dots, x_n$ be boolean variables. We have the following:
 
 \vspace{1.2em}
 
-TO begin to draw a link with the previous section, one can note that we can 
+To begin to draw a link with the previous section, one can note that we can 
 write Horn clauses with disjunction, or with logical implication $\imp$. Indeed
 remind that ($x_1 \lor \lnot x_2 $) can be equivalently rewritten as $x2 \imp 
 x_1$. Hence, the Horn clauses defined in the previous examples become:
@@ -51,12 +53,91 @@ x_1$. Hence, the Horn clauses defined in the previous examples become:
 	\item $(x_1 \land x_2) \imp \bot$,
 	\item $(x_1 \land x_2) \imp x_3$.
 \end{itemize}
+\noindent We can use terms body, head the same way as with implicational basis. 
+Before going any further, remind that any boolean formula $h$ can be 
+rewritten in terms of \belemp{Conjunctive Normal Form} (or CNF). 
 
+\begin{definition}[\midn{(pure) Horn CNF}] A \belemp{Horn CNF} (resp. 
+\belemp{pure 
+Horn CNF}) $\I$ over $\Sg$ is a conjunction of Horn clauses (resp. pure Horn
+clauses) $\mathcal{C}_i$, $i \in \Ens{N}$:
 
-\begin{definition}[\belemp{Horn formula}]
+	\[ \I = \bigwedge_{i} \mathcal{C}_i\]
 	
 \end{definition}
 
-\begin{definition}[\belemp{semantic entailment}]
+\begin{definition}[\midn{(pure) Horn formula}] A boolean function $h$ over 
+$\Sg$
+is a \belemp{Horn formula} (resp. \belemp{pure Horn formula}) if it can be 
+represented with a Horn CNF $\I$ (resp. pure Horn CNF).
 	
 \end{definition}
+
+Here is the link with our implication basis. A Horn CNF $\I$ can be seen as an
+implicational basis. This relies on some notes:
+\begin{itemize}
+	\item for $P, Q, R$ propositional formulas, $(P \imp Q) \land (P \imp R)$ 
+	is equivalent to $P \imp (Q \land R)$,
+	\item representing sets with their \belemp{characteristic vectors} (or 
+	bitmaps), translating $\cup$ by $\lor$ and $\cap$ by $\land$ give almost
+	a one-to-one correspondence between sets and boolean formulas and their 
+	models.
+\end{itemize}
+
+\paragraph{Example} To clarify let's think of short example taken from the 
+previous section: $\Sg = \{ a, b, c, d, e \}$ and 
+
+\[ \I = \{ ab \imp de, \ a \imp c, \ ce \imp b  \} \]
+
+\noindent If we think of \textit{a, b, c, d, e} as boolean variables indicating
+their presence into a set, we can derive the following translation of $\I$:
+
+	\[ ((a \land b) \imp (d \land e)) \land (a \imp c) \land
+		 ((c \land e) \imp b) \]
+
+\noindent which can be represented by a (pure) Horn CNF, say $\I_h$:
+
+\begin{align*}
+	\I_h & = ((a \land b) \imp d) \land ((a \land b) \imp e) \land (a \imp c) 
+	\land ((c \land e) \imp b) \\
+	& \equiv (d \lor \lnot a \lor \lnot b) \land (e \lor \lnot a \lor \lnot b) 
+	\land 
+	(c \lor \lnot a) \land (b \lor \lnot e \lor \lnot c) 
+\end{align*}
+
+\noindent We could also have gone from $\I_h$ to $\I$.
+
+\vspace{1.2em}
+
+For this reason, we can also represent a Horn CNF as a set of clauses and 
+clauses as pairs (body, head).
+
+\begin{definition}[\midn{semantic entailment}] A formula $Q$ 
+\belemp{semantically follows} from a formula $F$, denoted $F \models Q$ if 
+every model of $F$ satisfies $Q$.
+	
+\end{definition}
+
+Since the meaning of semantic entailment is the same as encountered with sets,
+we can use the $\models$ the same way for both. This concludes our overview of
+logical needs. We have seen the strong link between sets and logic which will 
+allow us to go from one representation to another without any requirements. The
+next section is dedicated to a short presentation of hypergraphs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

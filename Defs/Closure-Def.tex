@@ -51,7 +51,7 @@ in the context, we will call $\Sg$ such a set, and $a, \ b, \ c,\dots$ its
 elements. Subsets of $\Sg$ we will be denoted by capital letters $A, \ B, 
 \dots$. With the example and $\Sg$, we can go over some more definitions
 
-\begin{definition}[Implication basis] Let $\Sg$ be an attribute set. An 
+\begin{definition}[\midn{Implication basis}] Let $\Sg$ be an attribute set. An 
 \belemp{implication basis} $\I$ over $\Sg$ is a set of \belemp{implications} 
 where implications are pairs ($A$, $B$), denoted $A \imp B$, with $A, B 
 \subseteq \Sg$.
@@ -103,14 +103,16 @@ rock}. Using our implications we will reach two other attributes:
 In this last paragraph we described some of the \textit{most important} basic 
 notions of our problem: \belemp{model} and \belemp{closure}.
 
-\begin{definition}[Model of an implication] Let $\Sg$ be an attribute set, and
+\begin{definition}[\midn{Model of an implication}] Let $\Sg$ be an attribute 
+set, and
 $A \imp B$ an implication over $\Sg$. A subset $M \subseteq \Sg$ is a 
 \belemp{model} of $A \imp B$, written $M \models A \imp B$ if $A \nsubseteq M$ 
 or $B \subseteq M$.
 
 \end{definition}
 
-\begin{definition}[Model of an implication basis] Let $\I$ be a basis over 
+\begin{definition}[\midn{Model of an implication basis}] Let $\I$ be a basis 
+over 
 $\Sg$. A subset $M \subseteq \Sg$ is a \belemp{model} of $\I$, $M \models \I$, 
 if $M \models A \imp B$ for each $A \imp B \in \I$.
 
@@ -125,7 +127,7 @@ pop} is not. For completeness, we will define closure operators and closure
 systems in general before applying it to our context.
 
 
-\begin{definition}[Closure operator, closure system] Let
+\begin{definition}[\midn{Closure operator, closure system}] Let
 $\Sigma$ be a set, and define $\phi : \Sigma \longrightarrow \Sigma$ an
 application. $\phi$ is a \belemp{closure operator} if it has the three following
 properties for all $X, Y \subseteq \Sigma$:
@@ -141,7 +143,7 @@ properties for all $X, Y \subseteq \Sigma$:
 \end{definition}
 
 
-\begin{definition}[Closed set] Let $(\Sigma, \phi)$ be a closure 
+\begin{definition}[\midn{Closed set}] Let $(\Sigma, \phi)$ be a closure 
 system. A subset $X$ of $\Sigma$ is a \belemp{closed set} (with respect to 
 $\phi$) if $\phi(X) = X$. We will denote by $\Sigma_{\phi}$ the set of all 
 closed sets of $(\Sigma, \phi)$, that is:

@@ -1,19 +1,259 @@
-\section{Strong duality in Horn Minimization}
+\section{An algorithm relying on a bounding theorem}
 
-\cite{berczi_directed_2017, boros_strong_2017, boros_exclusive_2010}.
+In this section we are going to expose an algorithm using the so-called Boros
+theorem (see \cite{berczi_directed_2017, boros_strong_2017, 
+boros_exclusive_2010}). Depending on our needs we will state some definitions 
+and some propositions of the sources cited. The algorithm exposed in this part
+can be found in \cite{berczi_directed_2017}.
 
-Pure Horn function (PHF). Implicates. Subsuming. Given $h$ a PHF, denote by 
-$\mathcal{I}(h)$ the set of implicates of $h$. $\cal{P} \subseteq \cal{I}$ is
-the set of prime implicates of $h$. Forward chaining is the closure operator. 
+\subsection{Some more definitions}
 
-The essential set $\cal{E}_S$ of a subset $S$ of variables $V$ is defined as
-follows:
+Again, all the terms we are going to define here can be found in 
+\cite{berczi_directed_2017, boros_strong_2017, boros_exclusive_2010}. The 
+articles from Boros use the logical terminology. The context is pure Horn 
+functions, and by Horn function, Horn CNF, we will mean pure.
 
-	\[ \cal{E}_S = \{ A \imp B | A \subseteq S, B \nsubseteq S \} \]
+\begin{definition}[\midn{Implicates}] Let $\I$ be a Horn CNF. A clause 
+$\mathcal{C}$ is an \belemp{implicate} of $\I$ if $\I \models \mathcal{C}$.
+$\mathcal{I}(\I)$ is the set of implicates of $\I$.
+\end{definition}
+
+In fact, $\mathcal{I}(\I)$ can be seen as the closure of $\I$, the set of all
+implications following from $\I$.
+
+\begin{definition}[\midn{Essential sets}] Let $\I$ be a Horn CNF, and $X 
+\subseteq \Sg$. The \belemp{essential set} associated to $X$, $\mathcal{E}_X$
+is the set of clauses of $\mathcal{I}(\I)$ for which $X$ is a false point:
+
+	\[ \mathcal{E}_X = \{ \clause{C} \in \mathcal{I}(\I) \ | 
+		\ \body{\clause{C}} \subseteq X, \head{\clause{C}} \notin X \} \] 
+\end{definition}
+
+A few remark on this definition. It could be extended in terms of implicational
+basis with the following:
+
+	\[ \cal{E}_X = \{ A \imp B | A \subseteq X, B \nsubseteq X \} \]
+
+\noindent with a detail to write down anyway. Remind that a clause $\cal{C}$ 
+can be rewritten as $A \imp b$. If $A \imp b_1$ and $A \imp b_2$ are elements 
+of $\cal{E}_X$ then obviously $A \imp (b_1 \land b_2)$ will be. On the other 
+side, $A \imp B$ being part of $\cal{E}_X$ implies that there is \aliemp{at 
+least} one $b \in B$ such that $A \imp b$ is in $\cal{E}_X$ also. It does not 
+necessarily concern all the elements of $B$. Actually, this detail does not 
+cause any problem for the next discussion because existence of such $b \in B$ 
+is sufficient. 
+
+state MinMax Theorem.
+
+\subsection{Algorithm}
+\subsubsection{Pseudo-code and principle}
+
+The algorithm relies on hypergraph representation. The principle is to construct
+a minimal basis from a pure Horn CNF, by adding successivly implications with 
+pairwise body-disjoint essential sets. Thanks to the theorem of Boros, this can
+be done only a minimal number of times, leading to body minimal representation.
+The pseudo-code is 
+
+\begin{algorithm}
+\KwIn{$\I$ an implicational basis}
+\KwOut{$\I_c$ a body-minimal representation of $\I$}	
 	
-It describes a subset of $h$ for which $S$ is a false point. In fact, it points
-out the clauses falsified by $S$. So more than indicating whether $S$ is a model
-or not of the function, it also says where does it falsify the function.
+\caption{BodyMinimal (Hypergraphs)}
+\label{alg:MinMaxHyp}
+\end{algorithm}
+
+\noindent Actually, the graph representation is not mandatory. Indeed the 
+authors use hypergraphs because of a forward chaining procedure in linear time,
+and also due to their proofs relying on graphs. We could rewrite this algorithm
+as in \ref{alg:MinMax}
+
+\begin{algorithm}[H]
+\KwIn{$\I$ an implicational basis}
+\KwOut{$\I_c$ a body-minimal representation of $\I$}
+
+\Begin{
+	$\I_c := \emptyset$ \;
+	\While{$\exists X \in \mathcal{B}(\I): \; \I(X) \neq \I_c(X)$}{
+		$A := \min(\I_c(X): \; X \in \mathcal{B}(\I) \land 
+		\I(X) \neq \I_c(X))$ \;
+		$B := \I(X)$ \;
+		$\I_c := \I_c \cup \{ A \imp B - A \}$ \;
+		
+	}
+	
+	return $\I_c$ \;	
+}
+
+\caption{BodyMinimal)}
+\label{alg:MinMax}
+\end{algorithm}	
+
+\subsubsection{Elements of proof of correctness}
+
+\begin{proposition} Let $P_1, P_2$ be pseudo-closed with respect to $\I$ over 
+$\Sg$. If their intersection is a false point of $\I$, then it is pseudo-closed.
+	
+\end{proposition}
+
+\begin{proof} Let $P_1, P_2$ be two pseudo-closed sets of $\I$ over $\Sg$. If
+$P_1 \subset P_2$ (or vice-versa) the result is straightforward. Let consider
+then $P_1 \nsubseteq P_2$, $P_2 \nsubseteq P_1$. If $P_1 \cap P_2 = \emptyset$, 
+$\emptyset$ being a false point of $\I$, by  definition $\emptyset$ will be 
+pseudo-closed.
+
+Suppose $P_1 \cap P_2 \neq \emptyset$ is a false point of $\I$. Then it must 
+exist $A \subset P_1 \cap P_2$ pseudo-closed. Thus
+\begin{itemize}
+	\item $A \subset P_1 \cap P_2 \imp A \subset P_1$ 
+	\item $A \subset P_1 \cap P_2 \imp A \subset P_2$
+\end{itemize}
+\noindent Because $A, P_1, P_2$ are pseudo-closed we have
+\begin{itemize}
+	\item $A \subset P_1 \imp \I(A) \subseteq P_1$
+	\item $A \subset P_2 \imp \I(A) \subseteq P_2$
+\end{itemize}
+\noindent Therefore $\I(A) \subseteq P_1 \cap P_2$. Since this reasoning holds 
+for any pseudo-closed $A \subset P_1 \cap P_2$, we end-up with $P_1 \cap P_2$ 
+being pseudo-closed.
+
+
+	
+\end{proof}
+
+\paragraph{Remark} The previous proposition does \aliemp{NOT} state that
+pseudo-closed sets are a closure system. Indeed, the intersection of two 
+pseudo-closed sets can also be a true point of $\I$. Also note that the minimal
+(inclusionwise) false point of an implication basis are pseudo-closed because
+all their subsets are true points. Since false points represent a partial order
+under inclusion, every elements of this poset contains at least one 
+pseudo-closed set.
+
+\begin{proposition} If two distinct sets $P_1, P_2$ are pseudo-closed, their 
+essential 
+sets are body disjoint. 
+	
+\end{proposition}
+
+\begin{proof} We are going to consider various cases. First suppose $P_1 
+\subset P_2$. Denote $\mathcal{E}_{P_1}, \mathcal{E}_{P_2}$ their essential 
+sets. Suppose there exists $A \imp b_1$ in $\mathcal{E}_{P_1}$, and $A \imp b_2 
+\in \mathcal{E}_{P_2}$. If $b_2 \neq b_1$, we would have $b_2 \notin P_2$ and 
+$b_2 \in P_1$ because $A \imp b_2 \notin \mathcal{E}_{P_1}$ contradicting $P_1 
+\subset P_2$. Then, let $b = b_1 = b_2$. We have $A \imp b \in 
+\mathcal{E}_{P_1}$ and $A \imp b \in \mathcal{E}_{P_2}$. Hence:
+\begin{itemize}
+	\item $b \notin P_1$ and $b \notin P_2$
+	\item $A \imp b \in \mathcal{E}_{P_1}$ implies $\I \models A \imp b$. 
+	Because 
+	$A 
+	\subseteq P_1$, $\I \models P_1 \imp b$ holds too. That is $b \in \I(P_1)$
+\end{itemize}
+\noindent Recall that $P_1 \subset P_2$ and $P_1, P_2$ are pseudo-closed. Thus,
+$\I(P_1) \subseteq P_2$. But $b \in \I(P_1)$ and $b \notin P_2$ which is a 
+contradiction. So, if $P_1 \subset P_2$ their essential sets are indeed body
+disjoint. Note that this case holds also if $P_1 = \emptyset$.
+
+\vspace{1.2em}
+
+Suppose now $P_1 \cap P_2 = \emptyset$. If one of them is empty, the paragraph 
+shows the result. Otherwise, their essential sets can obviously not contain 
+implication with same bodies, contradicting the empty intersection. 
+
+\vspace{1.2em}
+
+Finally, consider the case $P_1 \cap P_2 \neq \emptyset$. If there is no false
+point in their intersection, then there is np $A \imp b$ with $b \notin A$,
+$A \subset P_1 \cap P_2$ holding. Thus their essential sets cannot share any
+implications with same body. Hence, let $A \subseteq P_1 \cap P_2$ be the 
+greatest false point of $\I$ within $P_1 \cap P_2$:
+\begin{itemize}
+	\item[(i)] if $A \subset P_1 \cap P_2$, then $\I(P_1 \cap P_2) = P_1 \cap 
+	P_2$.
+	\item[(ii)] if $A = P_1 \cap P_2$, then by proposition 2, $P_1 \cap P_2$ 
+	must be	pseudo-closed. 
+\end{itemize}
+\noindent case (i). Suppose $A \imp b_1 \in \mathcal{E}_{P_1}$ and $A \imp b_2
+\in \mathcal{E}_{P_2}$. Again either $b = b_1 = b_2$ or $b_1 \neq b_2$. If $b_1 
+= b_2 = b$ then $b \notin P_1 \cap P_2$ but $b \in \I(A) \subseteq \I(P_1 \cap 
+P_2) = P_1 \cap P_2$ which is a contradiction. If $b_1 \neq b_2$ we have $b_1 
+\notin P_1$ but $b_1 \in \I(A) \subseteq \I(P_1 \cap P_2) = P_1 \cap P_2 
+\subseteq P_1$ which is a contradiction. The same goes for $b_2$. In fact we 
+implicitly used the notion of separation used in \cite{berczi_directed_2017}.
+
+case (ii). $P_1, P_2$ and $P_1 \cap P_2$ being pseudo-closed leads to:
+\begin{itemize}
+	\item $P_1 \cap P_2 \subset \I(P_1 \cap P_2) \subset P_1$,
+	\item $P_1 \cap P_2 \subset \I(P_1 \cap P_2) \subset P_2$
+\end{itemize}
+\noindent which can be used the same way as in case (i), concluding the proof.
+
+\end{proof}
+
+Several elements of proofs have been given in \cite{berczi_directed_2017} for
+the algorithm \ref{alg:MinMax}. Here we shall exhibit another kind of proof, 
+using pseudo-closed sets. The claim is that the algorithm end up with the 
+Duquenne-Guigues basis. Therefore we will show that in the procedure, if we
+add an implication, its premise is pseudo-closed.
+
+\begin{proposition} In the algorithm BodyMinimal, we add an implication 
+$\I_c(X) \imp \I(X) - \I_c(X)$ only if $\I_c(X)$ is pseudo-closed.
+	
+\end{proposition}
+
+\begin{proof} Let us prove this proposition by induction. Our hypothesis that
+for all $0 \leq n \leq | \body{\I} |$, at step $n$, taking $A = \min(\I_c(X): 
+\; X \in \mathcal{B}(\I) \land \I(X) \neq \I_c(X))$ implies that $A$ is
+pseudo-closed.
+
+\vspace{1.2em}
+
+\paragraph{Initial case} At $n = 0$, taking $A$ in $min(I_c(X))$ among bodies 
+of $\I$ is taking $A$ in $min(\body{\I})$ since $I_c = \emptyset$. Then, because
+minimal bodies of $\I$ are minimal false points of $\I$, $A = min(\body{\I})$
+will be pseudo-closed.
+
+\vspace{1.2em}
+
+\paragraph{Induction} Suppose that the hypothesis is valid up to step $n$. Let
+us prove it for the step $n + 1$. Consider taking $A$ as in the algorithm. We
+have some cases:
+\begin{itemize}
+	\item[(i)] $\I_c(X) = X$
+	\item[(ii)] $X \subset \I_c(X)$
+\end{itemize}
+\noindent case (i). For all implications $E \imp F$ of $\I_c$ we have two 
+possibilities, either $E \subseteq A$ or $E \nsubseteq A$. We cannot have
+$A \subset E$, because we would contradict the minimality constraint over 
+closures of bodies. If for all implications $E \nsubseteq A$ we are in the
+initial case, because there is no subset of $A$ being a false point of $\I$,
+then $A$ is pseudo-closed. Now let $E \imp F$ be an implication such of the 
+basis we are building such that $E \subset A$. Recall that $E$ is a 
+pseudo-closed set of $\I$ by induction hypothesis. Then since $A = \I_c(X) = X$,
+we conclude that $\I_c(E) = \I(E) \subseteq A$. In other word, $E$ is 
+pseudo-closed and its closure is included in $A$. Also, note that thanks to
+minimality constraint we must have taken all pseudo-closed sets included in $A$
+before the $n+1$-th iteration of the algorithm. Because this reasoning holds
+for all such implications, we can conclude that $A$ is indeed pseudo-closed.
+
+case (ii) Suppose $X \subset \I_c(X)$. Then there exists at least one 
+pseudo-closed set $E$ such that $E \imp \I(E)$ is in $\I_c$. Therefore $\I(E) 
+\subset \I_c(X)$. Hence thanks to minimality constraint and induction 
+hypothesis, all the pseudo-closed included in $\I_c(E)$ are in $\I_c$. $\I_c(X)$
+being a false point of $\I$, we conclude that $\I_c(X) = A$ is indeed 
+pseudo-closed.
+
+\vspace{1.2em}
+
+Since the induction hypothesis is true for the initial step and for a general 
+step $n$, we conclude that it is true in general, which proves the property.
+
+\end{proof} 
+
+This proposition shows that the algorithm produces indeed a body minimal basis
+from $\I$ and in particular, the Duquenne-Guigues basis. 
+
+\subsubsection{Complexity analysis}
+
 
 Lemma 4 states that a CNF $\phi$ represents a function $h$ if for each non-model
 $S$ of $h$, $\phi$ contains at least one of the clause falsified by $h$. That is
