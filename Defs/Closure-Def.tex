@@ -235,7 +235,56 @@ rock, shoegaze}. The new $A$ is still not a model of $\I$, see the implication
 shoegaze, dream-pop} will be the smallest model (closed set) containing $A$.
 
 On the other hand, $B$ does respect all the implications so that it is already 
-a model of $\I$, hence $\I(B) = B$.
+a model of $\I$, hence $\I(B) = B$. One interesting point about closure of a 
+subset with respect to an implicational basis can be computed in linear time
+(in the size of the basis). Of course there exists various algorithms for
+computing the closure, but since it is not the object of our study we give
+only the procedure we will use. To have more details on other algorithms
+to compute the closure of a set with relation to an implicational basis, the
+reader may refer to \cite{bazhanov_optimizations_2014, 
+b._ganter_conceptual_2016}.
+
+\begin{algorithm}
+\KwIn{A basis $\I$, $X \subseteq \Sg$}
+\KwOut{The closure $\I(X)$ of $X$ in $\I$}
+	
+\Begin{
+	\ForEach{$A \imp B \in \I$}{
+		$count[A \imp B] := |A|$ \;
+		
+		\If{$|A| = 0$}{
+			$X := X \cup B$ \;
+		}
+	
+		\ForEach{$a \in A$}{
+			$list[a] += A \imp B$ \;
+		}
+	}
+
+	$update := X$ \;
+	
+	\While{$update \neq \emptyset$}{
+		choose $m \in update$ \;
+		$update := update \ \{m\}$ \;
+		
+		\ForEach{$A \imp B \in list[m]$}{
+			$count[A \imp B] -= 1$ \;
+			\If{$count[A \imp B] = 0$}{
+				$add := B \ X$ \;
+				$X := X \cup add$ \;
+				$update := update \cup add$ \;
+			}
+			
+		}
+	}
+
+	return $X(\I)$ \;
+	
+}
+	
+\caption{LinClosure}
+\label{alg:linclosure}
+\end{algorithm}
 
 \vspace{1.2em}
 

@@ -1,4 +1,102 @@
 \section{Angluin Algorithm}
 
-Include two refs, the Angluin paper, and the one on poylnomial explanation of
-it. \cite{angluin_learning_1992, arias_canonical_2009}.
+In this section we are interested in the Angluin algorithm (1992). 
+\cite{angluin_learning_1992, arias_canonical_2009}.
+
+\subsection{Query Learning}
+
+Here, the method for building a minimal base is slightly different. We use 
+so-called \belemp{query learning}. The idea is we formulate \belemp{queries}
+to an \belemp{oracle} knowing the basis we are trying to learn. The oracle 
+is assumed to provide an answer to our query in constant time. Depending on 
+the query, it might also provide informations on the object we are looking for.
+For the Angluin algorithm, we need 2 types of queries. Say we want to learn
+a basis $\I$ over $\Sg$:
+\begin{enumerate}
+	\item \belemp{membership} query: is $M \subseteq \Sg$ a model of $\I$? The
+	oracle may answer "yes", or "no".
+	\item \belemp{equivalence} query: is a basis $\I'$ equivalent to $\I$? Again
+	the answers are "yes", or "no". In the second case, the oracle provides a
+	\belemp{counterexample} either positive or negative:
+		\begin{itemize}
+			\item[(i)] \belemp{positive}: a model $M$ of $\I$ which is not a
+			model of $\I'$,
+			\item[(ii)] \belemp{negative}: a non-model $M$ of $\I$ being a model
+			of $\I'$. 
+		\end{itemize}
+\end{enumerate}
+\noindent To clarify, the terms negative/positive are related to the base $\I$
+we want to learn.
+
+\subsection{Algorithm}
+
+The algorithm has been proved to end up with the Duquenne-Guigue Basis, again 
+we can refer to \cite{angluin_learning_1992, arias_canonical_2009} for further
+explanations. The first algorithm provided by Angluin et al. relies on clauses
+with unitary heads. It uses two operations allowing to reduce implications:
+\begin{itemize}
+	\item $refine(A \imp B, M)$: produces $M \imp \Sg$ if $B = \Sg$, 
+	$M \imp B \cup A - M$ otherwise,
+	\item $reduce(A \imp B, M)$: produces $A \imp M - A$ if $B = \Sg$, 
+	$A \imp B \cap M$ otherwise.
+\end{itemize}
+
+\begin{algorithm}
+\KwIn{$\I$}
+\KwOut{$\I_c$}
+
+\BlankLine
+
+$\I_c = \emptyset$ \;
+\While{not equivalence($\I_c$)}{
+	$M$ is the counterexample \;
+	\If{$M$ is positive}{
+		\ForEach{$A \imp B \in \I_c$ such that $M \not\models A \imp B$}{
+			replace $A \imp B$ by $reduce(A \imp B, M)$ \;	
+		}
+
+	} \Else {
+		\ForEach{$A \imp B \in \I_c$ such that $A \cap M \models A$}{
+			 membership($M \cap A$) \;	
+		}
+	
+		\If{Oracle replied "no" for at least one $A \imp B$}{
+			Take the first such $A \imp B$ in $\I_c$ \;	
+			replace $A \imp B$ by $refine(A \imp B, A \cap M)$ \;
+			
+		} \Else {
+			add $M \imp \Sg$ to $\I_c$ \;
+			
+		}
+
+	}
+
+}
+return $\I_c$ \;
+	
+\caption{Angluin Algorithm}
+\label{alg:Angluin}
+\end{algorithm}
+
+\paragraph{Some Observations} Of course, the aim of the algorithm is to produce 
+a basis equivalent to the one we are trying to learn. Since the main stopping 
+condition is equivalence between our hypothesis and the basis. So if the 
+algorithm terminates, it does on correct answer. 
+
+\vspace{1.2em} 
+
+We could wonder on the modifications we bring to $\I_c$ with the
+functions $reduce$ and $refine$. Let us focus first on $reduce$ and its use.
+First, notice we use it only in the case $M$ is a positive counterexample, 
+meaning that $M = \I(M)$. Thus, if $M$ violates some $A \imp B$ in $\I_c$ then
+$I(A) \subseteq M$. Hence, in the case $A \imp M - A$ we reduce the implication
+to at most $A \imp \I(A) - A$. In the case $A \imp B \cap M$ ($B \cap A = 
+\emptyset$ by construction) also tends toward $\I(A) - A$. In both cases, we 
+changed $A \imp B$ so that $M$ becomes a model of $\I_c$ as it is a model of
+$\I$.
+
+\vspace{1.2em}
+
+
+
+

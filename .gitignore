@@ -7,4 +7,6 @@ Ref/*
 *.out
 *synctex.gz
 *.toc
+*.loa
+*.lof
 *.pdf
