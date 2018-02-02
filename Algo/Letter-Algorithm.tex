@@ -71,18 +71,19 @@ as in \ref{alg:MinMax}
 \KwIn{$\I$ an implicational basis}
 \KwOut{$\I_c$ a body-minimal representation of $\I$}
 
-\Begin{
-	$\I_c := \emptyset$ \;
-	\While{$\exists X \in \mathcal{B}(\I): \; \I(X) \neq \I_c(X)$}{
-		$A := \min(\I_c(X): \; X \in \mathcal{B}(\I) \land 
-		\I(X) \neq \I_c(X))$ \;
-		$B := \I(X)$ \;
-		$\I_c := \I_c \cup \{ A \imp B - A \}$ \;
-		
-	}
+\BlankLine
+\BlankLine
+
+$\I_c := \emptyset$ \;
+\While{$\exists X \in \mathcal{B}(\I): \; \I(X) \neq \I_c(X)$}{
+	$A := \min(\I_c(X): \; X \in \mathcal{B}(\I) \land 
+	\I(X) \neq \I_c(X))$ \;
+	$B := \I(X)$ \;
+	$\I_c := \I_c \cup \{ A \imp B - A \}$ \;
 	
-	return $\I_c$ \;	
 }
+
+return $\I_c$ \;	
 
 \caption{BodyMinimal)}
 \label{alg:MinMax}

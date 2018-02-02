@@ -248,39 +248,40 @@ b._ganter_conceptual_2016}.
 \KwIn{A basis $\I$, $X \subseteq \Sg$}
 \KwOut{The closure $\I(X)$ of $X$ in $\I$}
 	
-\Begin{
-	\ForEach{$A \imp B \in \I$}{
-		$count[A \imp B] := |A|$ \;
-		
-		\If{$|A| = 0$}{
-			$X := X \cup B$ \;
-		}
+\BlankLine
+\BlankLine
+
+\ForEach{$A \imp B \in \I$}{
+	$count[A \imp B] := |A|$ \;
 	
-		\ForEach{$a \in A$}{
-			$list[a] += A \imp B$ \;
-		}
+	\If{$|A| = 0$}{
+		$X := X \cup B$ \;
 	}
 
-	$update := X$ \;
-	
-	\While{$update \neq \emptyset$}{
-		choose $m \in update$ \;
-		$update := update \ \{m\}$ \;
-		
-		\ForEach{$A \imp B \in list[m]$}{
-			$count[A \imp B] -= 1$ \;
-			\If{$count[A \imp B] = 0$}{
-				$add := B \ X$ \;
-				$X := X \cup add$ \;
-				$update := update \cup add$ \;
-			}
-			
-		}
+	\ForEach{$a \in A$}{
+		$list[a] += A \imp B$ \;
 	}
-
-	return $X(\I)$ \;
-	
 }
+
+$update := X$ \;
+
+\While{$update \neq \emptyset$}{
+	choose $m \in update$ \;
+	$update := update \ \{m\}$ \;
+	
+	\ForEach{$A \imp B \in list[m]$}{
+		$count[A \imp B] -= 1$ \;
+		\If{$count[A \imp B] = 0$}{
+			$add := B \ X$ \;
+			$X := X \cup add$ \;
+			$update := update \cup add$ \;
+		}
+		
+	}
+}
+
+return $X(\I)$ \;
+
 	
 \caption{LinClosure}
 \label{alg:linclosure}

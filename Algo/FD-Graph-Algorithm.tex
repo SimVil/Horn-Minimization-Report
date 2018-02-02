@@ -1,147 +1,149 @@
-\section{Minimal Representation of Directed Hypergraphs}
+\section{Minimality through directed graphs}
 
-This section is dedicated to a minimization algorithm relying on Hypergraphs. 
-It is derived from \cite{ausiello_directed_2017, ausiello_graph_1983, 
-ausiello_minimal_1986}. We need to
-define few notions to be able to work on the algorithm. 
+This section is dedicated to a minimization algorithm relying on hypergraphs. 
+It has been set up by Ausiello and al. in \cite{ausiello_directed_2017, 
+ausiello_graph_1983, ausiello_minimal_1986}. Starting from a directed hypergraph
+representation, it builds a special kind of DAG, called \belemp{FD-Graph} with
+which it reduces the initial hypergraph. In order, we are going to define what
+is a FD-graph, provide the general idea for the algorithm as explained in 
+\cite{ausiello_minimal_1986} and then go into further details and more precise
+algorithms for such computations as exposed in \cite{ausiello_graph_1983}.
 
-\begin{definition}[\belemp{Hypergraph}] An \belemp{hypergraph} is a pair $H = 
-(V, E)$ 
-where $V$ is a set of vertices (as in a graph) and $E$ a set of subsets of $V$
-describing hyperarcs.
+\subsection{FD-Graphs and minimum covers}
 
+In this part, we assume that our basis $\I$ is represented through the framework
+of hypergraphs (see chapter 1). Again, all the definitions we are going to state
+here are exposed in \cite{ausiello_graph_1983, ausiello_minimal_1986}. First,
+let us define the central object we will work on, FD-Graphs.
+
+
+
+\begin{definition}[\midn{FD-Graph}] Given a hypergraph $\I = (\Sg, C)$ 
+representing an implication basis, the directed graph $G_{\I} = (V, \  E)$ such 
+that:
+\begin{itemize}
+	\item $V = V_0 \cup V_1$ is the set of nodes where:
+		\begin{itemize}
+			\item $V_0 = \Sg$ is the set of \belemp{simple} nodes (a node
+			per attribute in $\Sg$),
+			\item $V_1 = \{X | X \in \body{\I} \}$ is the set of 
+			\belemp{compound} nodes (a node per distinct body in $\I$),
+		\end{itemize}
+
+	\item $E = E_0 \cup E_1$ is the set of arcs where:
+		\begin{itemize}
+			\item $E_0$ is the set of \belemp{full} arcs. We have a full arc 
+			$(X, i)$ in	$E_0$ if $(X, i)$ is an hyperarc of $\I$,
+			\item $E_1$ the set of \belemp{dotted} arcs. For each compound node 
+			$X$ of $V^1$, we have a dotted arc $(X, \ i)$ to every attributes 
+			$i$ of $X$,
+		\end{itemize}
+
+\end{itemize}
+\noindent is the \belemp{Functionnal Dependency Graph} or \belemp{FD-Graph} 
+associated to $\I$.
 \end{definition}
 
-\noindent In fact, hypergraphs are an extension of graphs. 
-
-\begin{definition}[\belemp{Directed Hypergraph}] A \belemp{directed hypergraph} 
-$H = (V, E)$ is a pair with $V$ a set of vertices (nodes) and $E$ a set of 
-elements of $2^V \times 2^V$, denoting edges going from a subset of $V$ to 
-another subset of $V$.
-	
-\end{definition}
-
-Directed hypergraphs are useful to graphically represent implication basis.
-
-\paragraph{Example} Let us consider the following implication basis $\I$:
-
-	\[ \I = \{ 1 \imp 2, 2 \imp 34, 3 \imp 12, 41 \imp 3 \} \]
-
-\noindent Then we can define an hyper graph $L = (V, E)$ where
-	\begin{itemize}
-		\item $V = \{1, 2, 3, 4 \}$
-		\item $E = \{ (\{ 1 \}, \{ 2\}), (\{ 2 \}, \{3, 4\}),
-			(\{ 3 \}, \{ 1, 2\}), (\{1, 4\}, \{ 3\}) \}$
-	\end{itemize}
-
-\noindent To be clearer, we can see the graphical representation of this figure
-in \ref{fig:DHyp1}
+In fact, hypergraph representation is not mandatory to represent a FD-Graph, 
+since as we saw, hypergraphs in our context rely on "usual" implicational 
+basis. To enlighten the definition of FD-Graph, simple examples are shown in 
+\ref{fig:FD-Graph-1}.
 
 \begin{center}
-	\input{Pictures/2.2-1-Dir_Hyp-1.tex}
+	\input{Pictures/Graph.1-FD-Ex.tex}
 \end{center}
 
-The next definition is taken from the previous references.
-
-
-\begin{definition}[\belemp{FD-Graph}]
-	contenu...
-\end{definition}
-
-
-
-\begin{algorithm}[H]
-	\KwIn{$\I$ an implication basis}
-	\KwResult{$\I_c$ a minimal cover for $\I$}
-	
-	\Begin{
-		Find the \emeemp{FD-Graph} of $\I$ \;
-		Remove \emeemp{redundant} nodes \;
-		Remove \emeemp{superfluous} nodes \;
-		Remove \emeemp{redundant} arc \;
-		Derive $\I_c$ from the new graph \;
-	}
-
-	\caption{Minimize (Hypergraphs)}
-\end{algorithm}
-
-\vspace{1.2em}
-
-The result is not compelled to be the canonical basis.
-\\
-This document relies on \cite{ausiello_graph_1983, ausiello_minimal_1986}. The 
-idea is to represent
-implicational basis $\I$ through directed graphs. For this document we consider 
-a basis $\I$ over an attribute set $\Sg$, such that:
-
+We can see in those example that drawing an FD-Graph goes this way:
+\begin{itemize}
+	\item For each $A \imp B$ of $\I$ we draw a \belemp{full} arc from the node
+	$A$ to every attribute of $B$,
+	\item For each compound node $A$, we draw a \belemp{dotted} arc from
+	$A$ to all of its attribute.
+\end{itemize}
+\noindent which is indeed what we formally defined previously. Furthermore, for
+this algorithm, we consider a basis $\I$ over an attribute set $\Sg$, such that:
 \begin{itemize}
 	\item there is no $A \imp B$, $A' \imp B'$ in $\I$ such that $A = A'$ when
 	$B \neq B'$,
 	\item for all $A \imp B$ of $\I$, $A \cap B = \emptyset$
 \end{itemize}
 
-\noindent it is some kind of \midemp{reduced} form. Recall that the premises of
-implications are also called \belemp{bodies} and consequences \belemp{head}.
-Denote by $\mathcal{B}(\I)$ the set of $\I$'s bodies. 
+\vspace{1.2em}
 
-\newpage
+An important notion we may need for all the following is \belemp{FD-paths}.
 
-\section{FD-graphs}
-
-FD-graph stands for \belemp{functional dependency graph}. We define the 
-associated FD-graph $G_{\I} = (V, E)$ with 
+\begin{definition}[\midn{FD-Path}] Given an FD-Graph $G_{\I} = (V, E)$, an
+\belemp{FD-Path} $\langle i, \ j \rangle$ is a minimal subgraph $\bar{G}_{\I} = 
+(\bar{V}, \bar{E})$ of $G_{\I}$ such that $i, j \in \bar{V}$ and either $(i, j)
+\in \bar{E}$ or one of the following holds:
 
 \begin{itemize}
-	\item $V = \Sg \cup \mathcal{B}(\I)$,
-	\item $E = E_f \cup E_d$ where $E_f$ is the set of \belemp{full edges} and
-	and $E_d$ the set of \belemp{dotted edges}:
-	\begin{itemize}
-		\item For each $A \imp B$ we draw a \belemp{full} arc from the node
-		$A$ to every attribute of $B$,
-		\item For each compound node $A$, we draw a \belemp{dotted} arc from
-		$A$ to all of its attribute.
-	\end{itemize}
+	\item $j$ is a simple node and there exists $k \in \bar{V}$ such that $(k, 
+	j) \in \bar{E}$ and there exists a FD-Path $\langle i, \ k \rangle$ included
+	in $\bar{G}$,  
+	\item $j = \bigcup_{k = 1}^n j_k$ is a compound node and there exists 
+	FD-paths $\langle i, \ j_k \rangle$ included in $\bar{G}$, for all $k = 1, 
+	\ \dots, \ n$.
 \end{itemize}
+	
+\end{definition}
 
-\noindent Simple examples are shown in \ref{fig:FD-Graph-1}
-
-\begin{center}
-	\input{Pictures/Graph.1-FD-Ex.tex}
-\end{center}
-
-\noindent An important notion is the one of \belemp{FD-Path}. An FD-path 
+\noindent As is, the definition may not seems clear. Informally, a FD-path 
 from a node $i$ to $j$ describes the implications we use to derive $i \imp j$
-(with Armstrong rules, especially transitivity). Since it is not a strictly
-rigorous document, we will provide examples of FD-path to give an idea. 
-Intuitively, directed paths are FD-paths. But there is also one case in which
-we can go "backward" in the graph. The examples relies on the figure
+(with Armstrong rules, especially transitivity and union). Intuitively, 
+directed paths are FD-paths. But there is also one case in which
+we can go "backward" in the graph. For better understanding, see examples of
+figure \ref{fig:FD-Graph-3} based on the basis described in figure 
 \ref{fig:FD-Graph-2}.
-
-\newpage
 
 \begin{center}
 	\input{Pictures/Graph.1-FD-Ex-2.tex}
 \end{center}
 
-There are either \belemp{dotted} or \belemp{full} paths. A path $(i, j)$ is 
-dotted if all arcs leaving $i$ are dotted, it is full otherwise. An FD-path is
-then a \textbf{minimal} subgraph of the FD-graph.
+There are either \belemp{dotted} or \belemp{full} paths. A path $\langle i, j
+\rangle$ is dotted if all arcs leaving $i$ are dotted, it is full otherwise.
 
 \begin{center}
 	\input{Pictures/Graph.1-FD-Ex-3.tex}
 \end{center}
 
-\newpage
+\vspace{1.2em}
 
-\section{Algorithm}
+Having explained FD-Graphs, we will now move to explanations of the algorithm
+developed by Ausiello and al.
 
+\subsection{Ausiello algorithm: general point of view}
+
+The following procedure (\ref{alg:ausiello_86}) finds from a given basis its
+\belemp{minimal cover}. 
+
+\begin{algorithm}[H]
+\KwIn{$\I$ an implication basis}
+\KwOut{$\I_c$ a minimal cover for $\I$}
+
+\BlankLine
+\BlankLine
+
+Find the \belemp{FD-Graph} of $\I$ \;
+Remove \belemp{redundant} nodes \;
+Remove \belemp{superfluous} nodes \;
+Remove \belemp{redundant} arc \;
+Derive $\I_c$ from the new graph \;
+
+\caption{Ausiello algorithm (1986)}
+\label{alg:ausiello_86}
+\end{algorithm}
+
+\vspace{1.2em}
+
+Let us emphasize on the meaning of those removal steps.
 The algorithm studied in the sources, aims to minimize an implicational basis 
 in terms of bodies. As with the Duquenne-Guigues basis. It uses 3 steps. Two
 to remove redundancy, the third one aims to lighten bodies and heads of 
 remaining implications. We will try to express each of these steps in terms of
 sets, closure, and so forth. 
 
-\subsection{Removing redundant nodes}
+\subsubsection{Removing redundant nodes}
 
 The first step is about removing redundant implications (without right
 maximization). In terms of FD-graphs, we remove \belemp{redundant} nodes. A
@@ -177,7 +179,7 @@ there exists $b \in B$ such that $((b \in \I(X)) \land (X \subseteq A)) \imp
 $\I^{-} = \I - {A \imp B}$.  
 
 
-\subsection{Removing superfluous nodes}
+\subsubsection{Removing superfluous nodes}
 
 Next, we remove from the nonredundant FD-Graph \belemp{superfluous} nodes. A 
 node $i$ is \belemp{superfluous} if there is an equivalent node $j$ and a 
@@ -232,7 +234,7 @@ X \imp C$ and then $X \imp B$ because $C \imp D \cup B$. That is, $B \subset
 we wanted. 
 
 
-\subsection{Removing redundant arcs}
+\subsubsection{Removing redundant arcs}
 
 Finally, we remove from a minimum nonredundant FD-Graph, \belemp{redundant 
 	arcs}:
@@ -254,7 +256,344 @@ In terms of sets, consider an implication $A \imp B$. Removing a dotted arc is
 saying that given $a \in A$, and substituting $A \imp B$ by $A - a \imp B$ in
 $\I$ preserves $\I \models A \imp a_i$. On the other side, removing a full arc
 is, given $b \in B$ and replacing by $A \imp B - b$, we preserve $\I \models 
-A \imp b$.
+A \imp b$. It appears that this steps goes beyond our scope, because it aims
+to minimize implication itself, not the number of implications. So, in our 
+minimization context, we can stick to the first two operations to obtain a 
+minimal representation in our terms. The algorithm we have to follow becomes
+the procedure \ref{alg:ausiello_redux_86}
 
-\subsection{Algorithm}
+\vspace{1.2em}
+
+\begin{algorithm}[H]
+	\KwIn{$\I$ an implication basis}
+	\KwOut{$\I_c$ a minimal cover for $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	Find the \belemp{FD-Graph} of $\I$ \;
+	Remove \belemp{redundant} nodes \;
+	Remove \belemp{superfluous} nodes \;
+	Derive $\I_c$ from the new graph \;
+	
+	\caption{Ausiello algorithm (1986, reduced)}
+	\label{alg:ausiello_redux_86}
+\end{algorithm}
+
+\vspace{1.2em}
+
+In fact, this algorithm stands for a high-level principle of what has to be done
+to minimize a given basis. The question we are going to investigate in the next
+paragraphs is how to do such computations.
+
+
+\subsection{Ausiello algorithm: effective procedure}
+
+In this part we will focus on how the algorithm proposed by Ausiello in 
+\cite{ausiello_minimal_1986} performs redundancy and superfluousness 
+elimination. Actually, those operations are detailed in 
+\cite{ausiello_graph_1983}. But in order to stick to our subject (reviewing 
+the existing algorithms) we study it here. Also, note that we will consider
+that the mapping step from $\I$ to $G_{\I}$ is already done. Also, as mentioned
+in the related articles, going from one representation to another can be done
+in linear time.
+
+\vspace{1.2em}
+
+The algorithm relies on closure of a FD-Graph. Of course the idea of closure is
+similar to the one we encountered before. Nevertheless, Ausiello and al. 
+introduce a notion of priority in the way they determine the closure. Because
+we cannot represent to different arcs with same nodes (two arcs $(i, \ j)$), me 
+must provide priority between dotted and full arcs. The authors decided to 
+stress on dotted arcs since they are more likely to be a criterion for removal 
+during minimization.
+
+\subsubsection{Closure of a FD-Graph}
+
+The closure is based on the following data structures:
+\begin{itemize}
+	\item $V_0$: set of \belemp{simple} nodes,
+	\item $V_1$: set of \belemp{compound} nodes,
+	\item $D_i$ ($\forall i \in V$): nodes from \belemp{incoming dotted} arcs
+		$\{j \in V \ | \ (j, \  i) \text{ is a dotted arc} \}$,
+	\item $L_{i}^0$ ($\forall i \in V$): nodes from \belemp{outgoing full} arcs
+		$\{j \in V \ | \ (i, \  j) \text{ is a full arc} \}$,
+	\item $L_{i}^1$ ($\forall i \in V$): nodes from \belemp{outgoing dotted} 	
+		arcs $\{j \in V \ | \ (i, \  j) \text{ is a dotted arc} \}$,
+	\item $L_{i}^{0+}, L_{i}^{1+}$ ($\forall i \in V$): the respective closures
+		of $L_i^0, L_i^1$,
+	\item $q_m$ ($\forall m \in V^1$): counter of nodes in $m$ belonging to 
+	$L_i^{0+} \cup L_i^{1+}$ for some $i \in V$.
+\end{itemize}
+
+\noindent To make understanding easier, we first give pseudo-code closer from
+principle than algorithms. From a general point of view, to determine the 
+closure of a FD-graph, we must compute the closure of all its nodes. The 
+closure of a node is described by its full and dotted outgoing arcs. Because we
+put a priority on dotted possibilities, they will be computed before. Principle
+are given in algorithmic/pseudo-code form so that identification between steps
+of procedures and ideas of principle are easier to see.
+
+\vspace{1.2em}
+
+First, we introduce the procedure NodeClosure which computes the closure of a
+node with respect to a type of arc. In other words, to compute the full closure
+of a node, we must first apply NodeClosure to its dotted arcs, then to its full
+arcs. The principle and algorithm for Nodeclosure are 
+\ref{alg:FD-NodeClosure-Principle}, \ref{alg:FD-NodeClosure}. 
+
+\vspace{1.2em}
+
+\begin{algorithm}
+\KwIn{
+$L_i$: set of nodes for which there exists dotted (resp. full) arcs $(i, j)$}
+\KwOut{$L_i^+$: the dotted (resp. full) closure of $i$}
+
+\BlankLine
+\BlankLine
+
+Initialize a list of nodes to treat $S_i$ to $L_i$ \;
+\While{there is a node $j$ to treat in $S_i$}{
+	remove $j$ from $S_i$ \;
+	\If{$j$ is simple node}{
+		\ForAll{compound node $m$ \belemp{except $i$}, $j$ appears in}{
+			increase $q_m$ by 1 \;
+			\If {$q_m$ = number of outgoing \belemp{dotted} arcs from $m$}{
+				$m$ is reachable from $i$ by \aliemp{union} \;
+				$m$ must be treated, add it to $S_i$ \;
+			}
+		}
+		
+	}
+
+	add $j$ to the closure $L_i^+$ \;
+	
+	\ForAll{nodes $k$ for each there is an arc $(j, \ k)$}{
+		\If{$k$ is not yet in the closure $L_i^+$ or in the \belemp{dotted}
+			closure $L_i^{1+}$ of $i$}{
+			$k$ is reachable from $i$ by \aliemp{transitivity} \;
+			$k$ must be treated, add it to $S_i$ \;
+		}
+	}
+
+return $L_i^{+}$ \;
+}
+
+
+\caption{NodeClosure (Principle)}
+\label{alg:FD-NodeClosure-Principle}
+\end{algorithm}
+
+We would like to provide some observations on top of their description. Namely 
+on the \aliemp{union} step and $q_m$ counters. Say $i \imp m$ where $m$ is a 
+compound node is a valid implication in a FD-graph. Furthermore say $m = 
+\bigcup_i m_i$ where $m_i$'s are simple nodes. The union step models the fact 
+that if we have $i \imp m_i$ for all $m_i$ in $m$, then we must have $i \imp m$ 
+also. The counter $q_m$ ensures that we indeed reached all $m_i$'s in $m$. 
+Also, the algorithm has access to all the structures we described above (nodes, 
+sets of arcs, and so forth). Parameters are thus lists we are going to modify 
+somewhat.
+
+\newpage
+
+\begin{algorithm}
+\KwIn{
+$L_i$: set of nodes for which there exists dotted (resp. full) arcs $(i, j)$}
+\KwOut{$L_i^+$: the dotted (resp. full) closure of $i$}
+
+\BlankLine
+\BlankLine	
+
+$S_i := L_i$ \;
+
+\While{$S_i \neq \emptyset$}{
+	select $j$ from $S_i$ \;
+	\If{$j \in V^0$}{
+		\ForAll{$m \in D_j - \{ i \}$}{
+			$q_m := q_m + 1$ \;
+			\If{$q_m = |L_m^1|$}{
+				$S_i := S_i \cup \{ m \}$ \;
+			}
+			
+		}
+	}
+
+	$S_i^+ := S_i^+ \cup \{ j \}$ \;
+	
+	\ForAll{$k \in L_j^0 \cup L_j^1$}{
+		\If{$k \not\in S_i^+ \cup L_i^{1+} \cup \{ i\}$}{
+			$S_i := S_i \cup \{ k \}$ \;
+		}
+	}
+}
+return $L_i^+$ \;
+\caption{NodeClosure}
+\label{alg:FD-NodeClosure}
+\end{algorithm}
+
+\vspace{1.2em}
+
+Next, we present the principle and pseudo-code for the closure of an FD-graph
+\ref{alg:FD-Closure-Principle}, \ref{alg:FD-Closure}. Mostly, the principle is 
+the idea we described previously. There is just one observation to make about 
+setting a counter $q_m$ to 1. This variable helps to see whether we can use 
+union rule as we saw in procedure NodeClosure 
+(\ref{alg:FD-NodeClosure-Principle}, \ref{alg:FD-NodeClosure}). We initialize it
+in case $i$ is indeed part of some compound node so that we do not omit to count
+it when dealing with $S_i$ (because $S_i$ does not contain $i$). 
+
+\begin{algorithm}
+\KwIn{$V_0$, $V_1$ and $\forall i \in V$ $D_i$, $L_i^0$, $L_i^1$}
+\KwOut{$\forall i \in V$ $L_i^{0+}$, $L_i^{1+}$}
+
+\BlankLine
+\BlankLine
+
+\ForAll{node $i$ in $V$ with outgoing arcs}{
+	
+	\If{$i$ is an attribute of a compound node $m$}{
+		set a counter $q_m$ to $1$ \;	
+	}
+	
+	initialize the closure of $i$ to $\emptyset$ \;
+	
+	\If{$i$ is a compound node}{
+		determine \belemp{dotted} arcs in the closure of $i$ \;
+	}
+	
+	determine \belemp{full} arcs in the closure of $i$ \;
+	
+}
+
+\caption{Closure (Principle)}
+\label{alg:FD-Closure-Principle}
+\end{algorithm}
+
+\begin{algorithm}
+\KwIn{$V_0$, $V_1$ and $\forall i \in V$ $D_i$, $L_i^0$, $L_i^1$}
+\KwOut{$\forall i \in V$ $L_i^{0+}$, $L_i^{1+}$}
+
+\BlankLine
+\BlankLine
+
+\ForAll{$i \in V$ with $L_i^0  \cup L_i^1 \neq \emptyset$}{
+
+	\ForAll{$m \in V^1$}{
+		\uIf{$m \in D_i$}{
+			$q_m := 1$ \;
+			
+		} \Else {
+			$q_m := 0$ \;
+			
+		}
+	}
+
+	$L_i^{1+} := \emptyset$ \;
+	$L_i^{0+} := \emptyset$ \;
+	
+	\If{$i \in V^1$}{
+		$L_i^{1+} := $ NodeClosure($L_i^{1}$) \;	
+	}
+
+	$L_i^{0+} := $ NodeClosure($L_i^{0} - L_i^{1+}$) \;
+
+} 
+
+\caption{Closure}
+\label{alg:FD-Closure}
+\end{algorithm}
+
+\vspace{1.2em}
+
+Now that algorithms for computing the closure of a FD-graph have been set, we
+can move to the minimization part.
+
+\subsubsection{Minimization algorithm for FD-Graphs}
+
+We have two steps in this algorithm. First, we need to remove redundant nodes, 
+then superfluous nodes. To delete redundant nodes, the claim of 
+\cite{ausiello_graph_1983, ausiello_minimal_1986} is that removing nodes with
+dotted arcs only in the closure of an FD-Graph is sufficient. Indeed, if a node
+$i$ has only dotted paths in the closure of an FD-graph, it means that for every
+$i \imp j$ holding, we can find a subset of $k$ of $i$ such that $k \imp j$. In
+our terms, it is saying that $\I(i) = \I^{-}$ where $\I^{-}$ denotes $\I$ from
+which we removed the implication having $i$ as a body.
+
+
+\begin{algorithm}
+\KwIn{$G_{\I}$: the FD-Graph of some basis $\I$}
+\KwOut{$G_{\I_c}$: the associated minimum FD-Graph}
+
+\BlankLine
+\BlankLine
+
+$G_{\I}^{+} = Closure(G_{\I})$ \;
+
+\BlankLine
+
+\midemp{Redundancy Elimination} \\
+\ForAll{$i \in V^1$}{
+	\If{$L_i^{1+} = \emptyset$}{
+		remove $i$ and its outgoing arcs from $G_{\I}$ \;	
+	}
+} 
+
+\BlankLine
+
+\midemp{Superfluousness Elimination} \\
+\ForAll{$i \in V^1$}{
+	find an equivalent node $j$ \;
+	\If{$j$ exists}{
+		$L_j^{0+} := L_j^{0+} \cup (L_i^{0+} \cap L_j^{1+})$ \;
+		$L_j^{1+} := L_j^{1+} - (L_i^{0+} \cap L_j^{1+})$ \;
+	}
+
+	remove $i$ from the closure \;
+	add $(i, j)$ to a list $L$ \; 
+}
+
+\ForAll{$(i, j) \in L$}{
+	$L_j^0 := L_j^0 \cup (L_i^0 - L_j^1)$ \;
+	remove $i$ from $G_{\I}$ \;
+}	
+
+\caption{Ausiello Minimization Algorithm}
+\label{alg:ausiello-min}
+\end{algorithm}
+
+\vspace{1.2em} 
+
+Let us try to investigate the complexity of this algorithm. According to the 
+article, Closure is achieved in $O(|\body{\I}| \cdot |\I|)$. If the graph is
+represented as adjacency lists, deleting a node and its outgoing arc can be
+$O(1)$ (it consists in freeing the node and its associated two lists). Running 
+over all compound nodes is $O(|\body{\I}|)$. In the case we would have to 
+remove arcs one by one, note that we would have at most $O(|\Sg|)$ arcs to 
+delete. This would yield a $O(|\body{\I}| \cdot |\Sg|) = O(|\I|)$
+complexity. \aliemp{How to remove compound nodes that have disappeared from the
+closure of other nodes ? It is time consuming}. It is $O(|\body{\I}| \cdot 
+|\I^{+}|)$. We don't count for intern data structure operation. We can consider
+that adding and removing can be done in $O(1)$. The first loop of 
+superfluousness elimination goes over all compounds nodes, and finding an 
+equivalent node is $O(V)$ Moving elements in lists associated to $j$ is also
+$O(V)$ thus the first loop is $O(V^1 \cdot V)$. The second loop may need to 
+go over all the full arcs of the FD-graph, which account for a $O(|\I|)$ 
+complexity. As a consequence the whole algorithm may run in $O(|\body{\I}| 
+\cdot |\I|)$ (because of the closure computation).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

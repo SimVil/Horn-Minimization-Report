@@ -62,14 +62,16 @@ The set
 \KwIn{An implicational basis $\I$}
 \KwOut{$\I$ with redundant implications removed}
 
-\Begin{
-	\ForEach{$A \imp B \in \I$}{
-		$\I^{-} := \I - \{ A \imp B \}$ \;
-		\If{$\I^{-}(A) = \I(A)$}{
-			$\I := \I - \{ A \imp B \}$ \;
-		}
+\BlankLine
+\BlankLine
+
+\ForEach{$A \imp B \in \I$}{
+	$\I^{-} := \I - \{ A \imp B \}$ \;
+	\If{$\I^{-}(A) = \I(A)$}{
+		$\I := \I - \{ A \imp B \}$ \;
 	}
 }
+
 
 \caption{Non-Redundant}
 \label{alg:Nonredun}
@@ -81,9 +83,11 @@ The set
 \KwIn{A nonredundant implicational basis $\I$}
 \KwOut{set of equivalence classes $\bar{E}_{\I}$}
 
-\Begin{
-	return \;
-}	
+\BlankLine
+\BlankLine
+
+return \;
+	
 
 \caption{Equivalence classes}
 \label{alg:Equiv}

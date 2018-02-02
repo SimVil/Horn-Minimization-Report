@@ -1,1 +1,39 @@
 \section{Directed graphs and Hypergraphs}
+
+\begin{definition}[\belemp{Hypergraph}] An \belemp{hypergraph} is a pair $H = 
+	(V, E)$ 
+	where $V$ is a set of vertices (as in a graph) and $E$ a set of subsets of 
+	$V$
+	describing hyperarcs.
+	
+\end{definition}
+
+\noindent In fact, hypergraphs are an extension of graphs. 
+
+
+\begin{definition}[\belemp{Directed Hypergraph}] A \belemp{directed hypergraph} 
+	$H = (V, E)$ is a pair with $V$ a set of vertices (nodes) and $E$ a set of 
+	elements of $2^V \times 2^V$, denoting edges going from a subset of $V$ to 
+	another subset of $V$.
+	
+\end{definition}
+
+Directed hypergraphs are useful to graphically represent implication basis.
+
+\paragraph{Example} Let us consider the following implication basis $\I$:
+
+\[ \I = \{ 1 \imp 2, 2 \imp 34, 3 \imp 12, 41 \imp 3 \} \]
+
+\noindent Then we can define an hyper graph $L = (V, E)$ where
+\begin{itemize}
+	\item $V = \{1, 2, 3, 4 \}$
+	\item $E = \{ (\{ 1 \}, \{ 2\}), (\{ 2 \}, \{3, 4\}),
+	(\{ 3 \}, \{ 1, 2\}), (\{1, 4\}, \{ 3\}) \}$
+\end{itemize}
+
+\noindent To be clearer, we can see the graphical representation of this figure
+in \ref{fig:DHyp1}
+
+\begin{center}
+	\input{Pictures/2.2-1-Dir_Hyp-1.tex}
+\end{center}

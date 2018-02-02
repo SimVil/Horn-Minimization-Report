@@ -4,25 +4,28 @@ Compute the canonical (or Duquenne-Guigues) basis $\I_c$ given $\I$.
 \cite{guigues_familles_1986, b._ganter_conceptual_2016}. 
 
 \begin{algorithm}[H]
-	\KwIn{$\I$ an implication basis}
-	\KwResult{$\I_c$ the canonical basis derived from $\I$}
-	
-	\ForEach{$A \imp B$ in $\I$}{
-		$\I$ = $\I - \{A \imp B \}$ \;
-		$B$ = $\I(A \cup B)$ \;
-		$\I$ = $\I \cup \{A \imp B \}$ \;
-	}
+\KwIn{$\I$ an implication basis}
+\KwOut{$\I_c$ the canonical basis derived from $\I$}
 
-	\ForEach{$A \imp B$}{
-		$\I$ = $\I - \{A \imp B \}$ \;
-		$A$ = $\I(A)$ \;
-		
-		\If{$A \neq B$}{
-			$\I$ = $\I \cup \{ A \imp B \}$ \;
-		}
-	}
+\BlankLine
+\BlankLine
+
+\ForEach{$A \imp B$ in $\I$}{
+	$\I$ = $\I - \{A \imp B \}$ \;
+	$B$ = $\I(A \cup B)$ \;
+	$\I$ = $\I \cup \{A \imp B \}$ \;
+}
+
+\ForEach{$A \imp B$}{
+	$\I$ = $\I - \{A \imp B \}$ \;
+	$A$ = $\I(A)$ \;
 	
-	\caption{Canonical Cover}	
+	\If{$A \neq B$}{
+		$\I$ = $\I \cup \{ A \imp B \}$ \;
+	}
+}
+
+\caption{Canonical Cover}	
 \end{algorithm}
 
 

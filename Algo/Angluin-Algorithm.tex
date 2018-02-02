@@ -46,6 +46,7 @@ with unitary heads. It uses two operations allowing to reduce implications:
 \KwOut{$\I_c$}
 
 \BlankLine
+\BlankLine
 
 $\I_c = \emptyset$ \;
 \While{not equivalence($\I_c$)}{
@@ -56,7 +57,7 @@ $\I_c = \emptyset$ \;
 		}
 
 	} \Else {
-		\ForEach{$A \imp B \in \I_c$ such that $A \cap M \models A$}{
+		\ForEach{$A \imp B \in \I_c$ such that $A \cap M \subset A$}{
 			 membership($M \cap A$) \;	
 		}
 	
@@ -81,7 +82,9 @@ return $\I_c$ \;
 \paragraph{Some Observations} Of course, the aim of the algorithm is to produce 
 a basis equivalent to the one we are trying to learn. Since the main stopping 
 condition is equivalence between our hypothesis and the basis. So if the 
-algorithm terminates, it does on correct answer. 
+algorithm terminates, it does on correct answer. Also, $A \cap M \subset A$ 
+could be strange since by definition $A \cap M \subseteq A$. The important 
+detail is to \aliemp{exclude} $A \cap M = A$.
 
 \vspace{1.2em} 
 
