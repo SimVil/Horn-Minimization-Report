@@ -1,1 +1,35 @@
 \section{Code we are starting from}
+
+The code uses \lil{boost} library for c++. Especially bitsets. The file 
+\lil{config.h} defines the underlying structure we rely on (either 
+\lil{boost} or \lil{bitmagic}). Sets are represented as bitmaps. The 
+corresponding class is \lil{FCA::BitSet} (we use the namespace \lil{FCA}).
+Since the code is not documented, we will provide few remarks to ease
+understanding.
+
+Here is a list with short description of file construction:
+\begin{itemize}
+	\item \lil{config.h}: defines which library to use for bitmaps,
+	\item \lil{biset.h/.cpp}: set representation as bitmaps
+	\item \lil{definition.h}: two operations:
+		\begin{enumerate}
+			\item \lil{IsPrefixIdentical}: check equality of sets up to $n-th$
+			element,
+			\item \lil{Convert}: convert a bitset to its string representation
+			(provided an initial attributes names set)
+		\end{enumerate}
+	\item \lil{implications.h/.cpp}: defines implications. One \lil{Implication}
+	class and one structure \lil{ImplicationInd}. \lil{Implication} is string
+	base, \lil{ImplicationInd} bitset based. Add some conversion methods (bitset
+	to string, change attribute set).
+	
+	\item \lil{datastructure.h}: gathers implemented datastructure to lighten
+	inclusions (act as a package).
+	
+	\item \lil{Closure.h/.cpp}: closure is a class (with only one method). In
+	the \lil{apply} function, the \lil{if (false) return false} bloc after 
+	modification of NewClosure (|=) stands for testing whether the given set
+	(\lil{current} is closed or not). The method has thus two uses: computing
+	the closure AND determining whether a set is closed or not.
+	
+\end{itemize}
