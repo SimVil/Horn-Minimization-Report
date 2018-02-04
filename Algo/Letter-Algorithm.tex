@@ -1,4 +1,4 @@
-\section{An algorithm relying on a bounding theorem}
+\subsection{An algorithm relying on a bounding theorem}
 
 In this section we are going to expose an algorithm using the so-called Boros
 theorem (see \cite{berczi_directed_2017, boros_strong_2017, 
@@ -6,7 +6,7 @@ boros_exclusive_2010}). Depending on our needs we will state some definitions
 and some propositions of the sources cited. The algorithm exposed in this part
 can be found in \cite{berczi_directed_2017}.
 
-\subsection{Some more definitions}
+\subsubsection{Theoretical setting}
 
 Again, all the terms we are going to define here can be found in 
 \cite{berczi_directed_2017, boros_strong_2017, boros_exclusive_2010}. The 
@@ -45,8 +45,9 @@ is sufficient.
 
 state MinMax Theorem.
 
-\subsection{Algorithm}
-\subsubsection{Pseudo-code and principle}
+\subsubsection{Algorithm}
+
+\paragraph{Pseudo-code and principle}
 
 The algorithm relies on hypergraph representation. The principle is to construct
 a minimal basis from a pure Horn CNF, by adding successivly implications with 
@@ -89,7 +90,7 @@ return $\I_c$ \;
 \label{alg:MinMax}
 \end{algorithm}	
 
-\subsubsection{Elements of proof of correctness}
+\paragraph{Elements of proof of correctness}
 
 \begin{proposition} \label{prop:let.pc_inter}
  Let $P_1, P_2$ be pseudo-closed with respect to $\I$ over 
@@ -258,69 +259,3 @@ body minimal basis from $\I$ and in particular, the Duquenne-Guigues basis.
 \subsubsection{Complexity analysis}
 
 
-Lemma 4 states that a CNF $\phi$ represents a function $h$ if for each non-model
-$S$ of $h$, $\phi$ contains at least one of the clause falsified by $h$. That is
-$h$ and $\phi$ are false at the same points.
-
-$ess(h)$ allows to partition the non-models of $h$. It is the number of maximum
-pairwise disjoint essential sets of $h$. This can be viewed as the number of
-subsets sufficient to disjointly describes false point of $h$. Body-disjoint 
-essential set is a stronger criterion. Two essential sets $\cal{E}$, $\cal{E}'$
-are body-disjoint if the intersection of the left sides they contain is empty.
-
-sketch of proof for lemma 5. 
-
-\begin{lemma} Let $h$ be PHF over $V$. For $P, Q \subseteq V$, we have the 
-following equivalences:
-
-\begin{itemize}
-	\item[(i)] $\mathcal{E}_P$ and $\mathcal{E}_Q$ are disjoint iff $F_h(P \cap
-		Q) \subseteq P \cup Q$,
-	
-	\item[(ii)] $\cal{E}_P$ and $\cal{E}_Q$ are body-disjoint iff $F_h(P
-	 	\cap Q) \subseteq P xor Q$.
-\end{itemize}
-	
-\end{lemma} 
-
-\begin{proof}
-(i), $\imp$. Note that for $P \subseteq V$, $F_h(P)$ is exactly the set of
-variables contained in $\mathcal{E}_P \cup P$. Also, note that if $P, Q$, 
-$\mathcal{E}_{P \cap Q} \subseteq \mathcal{E}_P \cap \mathcal{E}_Q$. If the
-two last essential sets are disjoint, then their intersection is empty, 
-leading to $\mathcal{E}_{P \cap Q} = \emptyset$. In other words, $P \cap Q$ is
-a model of $h$, and by definition $F_h(P \cap Q) = P \cap Q \subseteq P \cup Q$
-
-\vspace{1.2em}
-
-(i), $\rimp$. Let us denote by $V(\mathcal{E}_P)$ the variables contained in 
-$\mathcal{E}_P$. We reason by contraposition. Suppose $V(\mathcal{E}_{P \cap Q})
-\neq \emptyset$. Then, 
-
-\begin{align*}
-	F_h(P \cap Q) & = V(\mathcal{E}_{P \cap Q}) \cup (P \cap Q) \\
-	& = (V(\mathcal{E}_{P \cap Q}) \cup P) \cap
-		(V(\mathcal{E}_{P \cap Q}) \cup Q) \\
-	& = (A \cup X \cup P) \cap (A \cup X \cup Q) \\
-	& = (P \cup X) \cap (Q \cup X) \\
-	& = (P \cap Q) \cup X \nsubseteq P \cup Q
-\end{align*}
-
-
-\noindent where $X$ is a non-empty set derived from the definition of 
-$\mathcal{E}_{P \cap Q}$ if it is non-empty. Indeed if $\mathcal{E}$ is 
-non-empty then it contains at least one implication $B \imp u$ such that $B 
-\subseteq P \cap Q$ and $u \notin P \cap Q$. The set of such $u$ is $X$. Note
-that in this case, since $\mathcal{E}$ is derived from the essential sets of
-$P$ and $Q$, $X$ does belong neither to $P$ nor $Q$. In other words $X 
-\nsubseteq P \cup Q$. 
-
-$A$ is a subset of $P \cap Q$. Indeed, it is possible not to have $P \cap Q
-\subseteq V$ if the implications in $V$ only use parts of $P \cap Q$. $A$ is 
-non-empty, and is be absorbed by $P$ or $Q$ in the previous derivations, 
-through $P \cup A$ and $Q \cup A$. 
-
-\vspace{1.2em}
-
-(ii) $\imp$.
-\end{proof}

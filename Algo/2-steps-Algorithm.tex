@@ -1,7 +1,11 @@
-\section{"Usual" Algorithm}
+\subsection{Obiedkov and Ganter algorithm: use of saturation}
 
 Compute the canonical (or Duquenne-Guigues) basis $\I_c$ given $\I$. 
-\cite{guigues_familles_1986, b._ganter_conceptual_2016}. 
+\cite{guigues_familles_1986, b._ganter_conceptual_2016}. This algorithm performs
+so called operations of \belemp{left-saturation}, \belemp{right-saturation} and
+\belemp{redundancy elimination}.
+
+\vspace{1.2em}
 
 \begin{algorithm}[H]
 \KwIn{$\I$ an implication basis}
@@ -25,9 +29,9 @@ Compute the canonical (or Duquenne-Guigues) basis $\I_c$ given $\I$.
 	}
 }
 
-\caption{Canonical Cover}	
+\caption{Minimal Cover}	
+\label{alg:Obiedkov-MinCover}
 \end{algorithm}
-
 
 \vspace{1.2em}
 
@@ -43,3 +47,7 @@ input. By the end of the first loop, since we replaced $A \imp B$ by $A \imp
 ($B \subseteq \I(A)$). For the second loop, observe that we omit only redundant
 implications from the basis, because if $\I^{-}(A) = \I(A)$ it means that all
 the implications $A \imp B$ true in $\I$ are true in $\I^{-}$. 
+
+\paragraph{Complexity} the two loops have the same complexity: $O(|\body{\I}| 
+\times |\I|)$ because we run \textsc{LinCLosure} for all implications of $\I$.
+Thus, the complexity of the algorithm is $O(|\body{\I}| \times |\I|)$.

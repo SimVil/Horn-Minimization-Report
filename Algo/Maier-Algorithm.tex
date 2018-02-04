@@ -1,39 +1,19 @@
-\section{Minimum Covers in the Relational Database Model}
+\subsection{Maier Algorithm: using equivalence classes}
 
 
 This part relies mainly on \cite{david_minimum_1980}, \cite{maier_theory_1983} 
-in which an algorithm for
-minimizing set of functional dependencies (FD). Because FDs behave as
-implications in implicational basis, we will adopt the latter terminology.
+in which an algorithm for minimizing set of functional dependencies (FD). 
+Because FDs behave as implications in implicational basis, we will adopt the 
+latter terminology.
 
-\subsection{Notations}
+\subsubsection{Theoretical set up and definitions}
 
-We consider being somehow familiar with the next notations, so that we don't 
-spend time on definitions.
-
-\begin{itemize}
-	\item $\Sg$ is a set of attributes $a$, $b$, $c$, $\dots$
-	\item $\I$ is a set of implications over $\Sg$
-	\item given $X \subseteq \Sg$, $\I(X)$ is the closure of $X$ under $\I$
-	\item 
-\end{itemize}
-
-\subsection{Definitions}
-
+We are going to work in the FD framework, that is first notations we defined. 
 Before diving into the algorithm, we may need some definitions. Indeed, the 
 minimization procedure in this case relies on a criterion for minimality using
 specific objects. 
 
-\begin{definition}[Equivalent sets] Two subsets $E, F \subseteq \Sigma$ are 
-	\belemp{equivalent under $\I$} if $\I \models E \imp F$ and $\I \models F 
-	\imp 
-	E$. In other words, two sets are equivalent if $\I(E) = \I(F)$. It is 
-	denoted 
-	by $E \equiv F$. 
-	
-\end{definition}
-
-\begin{definition}[Equivalence classes] Let $X \subseteq \Sigma$. The set
+\begin{definition}[\midn{Equivalence classes}] Let $X \subseteq \Sigma$. The set
 	
 	\[ E_{\I}(X) = \{ A \imp B | A \imp B \in \I, A \equiv X \} \]
 	
@@ -49,22 +29,50 @@ based on implication bodies, it is sufficient to go over implications of $\I$.
 
 \vspace{1.2em}
 
-Next we focus on particular implications
+The second tool used by Maier in his algorithm is \belemp{direct determination}.
+This notion is extensively discussed in \cite{david_minimum_1980, 
+maier_theory_1983}. Thus, the definition we are going to define is more the 
+result of a very useful necessary and sufficient condition than the definition
+as given at the beginning. Our aim is not to (re)build all the material, but to 
+explain the algorithm.
+
+\begin{definition}[\midn{Direct Determination}] Given a basis $\I$, we say that
+$A$ \belemp{directly determines} $B$ under $\I$, denoted $A \ddv B$, if $\I -
+\bar{E}_{\I} \models A \imp B$. 
+	
+\end{definition}
+
+More intuitively, we say that $A$ directly determines $B$ if we can reach $B$
+without using any implications with body equivalent to $A$ (including $A$). 
+Those definitions are sufficient to understand the algorithm. 
+
+\subsubsection{Algorithm}
+
+In this section we will investigate the Maier Algorithm to minimize a basis 
+$\I$. The principle is short enough to describe it as follows:
+\begin{enumerate}
+	\item remove redundant implications
+	\item remove direct determinations in this sens: if $A \ddv B$ with $A \imp 
+	C$ and $B \imp D$ implications of $\I$, remove $A \imp C$ and replace by 
+	$B \imp D$ by $B \imp D \cup C$. 
+\end{enumerate}
+\noindent Of course, proof of correctness has been given in cite 
+\cite{david_minimum_1980, maier_theory_1983}. Nevertheless, we shall give later
+some different elements for proving the algorithm ends with the right result. 
+We do not give them here, because those elements also provide a proof for an
+another algorithm (namely Ausiello and al. algorithm) through equivalence 
+properties. For now, we send the reader to cited papers. The procedure is 
+presented in algorithm \ref{alg:Maier-Algorithm}.
 
 
-\subsection{Algorithm}
-
-The algorithm relies on a criterion for minimality given equivalence classes. 
-The set 
-
-
-\begin{algorithm}[H]
-\KwIn{An implicational basis $\I$}
-\KwOut{$\I$ with redundant implications removed}
+\begin{algorithm}
+\KwIn{}
+\KwOut{}
 
 \BlankLine
 \BlankLine
 
+\emeemp{// redundancy elimination } \\
 \ForEach{$A \imp B \in \I$}{
 	$\I^{-} := \I - \{ A \imp B \}$ \;
 	\If{$\I^{-}(A) = \I(A)$}{
@@ -72,178 +80,103 @@ The set
 	}
 }
 
+$\bar{E}_{\I} := EquivClasses(\I)$ \;
 
-\caption{Non-Redundant}
-\label{alg:Nonredun}
+\BlankLine
+
+\emeemp{// direct determination elimination} \\
+
+\ForEach{$E_{\I} \in \bar{E}_{\I}$}{
+	\ForEach{$A \imp C \in E_{\I}$}{
+		\If{$\exists B \imp D \in E_{\I}$ such that $A \ddv B$}{
+			remove $A \imp B$ from $\I$ \;
+			replace $B \imp D$ by $B \imp C \cup D$ \;	
+		}
+	}
+}
+
+\caption{Maier minimization algorithm}
+\label{alg:Maier-Algorithm}
 \end{algorithm}
 
 \vspace{1.2em}
 
-\begin{algorithm}[H]
-\KwIn{A nonredundant implicational basis $\I$}
-\KwOut{set of equivalence classes $\bar{E}_{\I}$}
-
-\BlankLine
-\BlankLine
-
-return \;
-	
-
-\caption{Equivalence classes}
-\label{alg:Equiv}
-	
-\end{algorithm}
-
-
-\subsection{Elements of proofs}
-
-In this section we write various claims which help us prove correctness and 
-equivalence of Maier/Ausiello's algorithms. Knowledge about FD-graphs is 
-assumed. Equivalence of redundancy elimination is not shown (1st step of 
-the algorithm). We place ourselves in a non-redundant context to match
-definitions of direct determination. Non-redundancy does not affect superfluous
-definition.
-
-\begin{proposition} \label{prop:maier.equiv_sup_sub}
-A node $i$ in a FD-graph is superfluous with respect to $j$ if and only if 
-$i \equiv j$ and there exists a proper subset (non-empty) $k$ of $i$ such 
-that $\I \models k \imp j$. 
-\end{proposition}
-
-\begin{proof} This is a translation of the definition of superfluous node in 
-terms of implications.	
-\end{proof}
-
-\begin{proposition} \label{prop:maier.equiv_ssup_dd}
-the following statements are equivalent, for $A, B$ bodies of $\I$:
+\paragraph{Observations} There are some observations and questions to answer
+about procedure \ref{alg:Maier-Algorithm}:
 \begin{itemize}
-	\item[(i)] $A \ddv B$,
-	\item[(ii)] the node $A$ is superfluous with respect to $B$, and there 
-	exists 
-	a dotted FD-path from $A$ to $B$ not using any outgoing full arcs of
-	nodes equivalent to $A$.
-\end{itemize}
-	
-\end{proposition}
-
-\begin{proof} (i) $\imp$ (ii). We will use claim 1 to help us. Suppose $ A \ddv 
-B$. By	definition of direct determination, we have that the nodes $A$ and $B$ 
-are equivalent. By hypothesis, we have $ \I^{*} = \I - E_{\I}(A) \models A \imp 
-B$.	We will distinguish two cases, either $B \subseteq A$, or $B \nsubseteq A$.
-
-\vspace{1.2em}
-
-\paragraph{$B \subseteq A$.} In this case, direct determination is straight 
-forward, and if $A$ and $B$ are bodies of $\I$, there exists dotted arcs 
-between $A$ and $B$ forming a dotted FD-path. Then $A$ is indeed superfluous 
-with respect to $B$. Furthermore, because we used only dotted arcs from $A$, we 
-did not use any full arcs outgoing from $A$.
-
-\paragraph{$B \nsubseteq A$.} Since we don't use any implications with left 
-side equivalent to $A$ in direct determination, but still have $A \imp B$, we 
-must be able to find a non-equivalent proper subset $X$ of $A$ such that $X 
-\imp B$, otherwise we would contradict direct determination (because we would 
-not have $B \subseteq \I^{~}(A)$ ). Using claim 1, we can conclude that $A$ is 
-indeed superfluous with respect to $B$. Moreover, notice that using an outgoing 
-full arc from a node equivalent $C$ to $A$ is exactly using an implication with 
-left hand side equivalent to $A$. Therefore, if there is not dotted FD-path 
-from $A$ to $B$ not using those arcs, we would contradict direct determination.
+	\item How do we compute $\bar{E}_{\I}$?
+	\item How do we check for direct determination?
+	\item Does the operation of remove and replace alter an equivalence class 
+	more than removing one of its implications?
+\end{itemize}  
+\noindent Let us take those questions in order. To find $\bar{E}_{\I}$, we 
+will consider applying a variation of \textsc{LinClosure} to each implication
+of $\I$. Thus for each $A \imp B$, instead of returning closure of $A$ under
+$\I$, we will a bit vector of size $|\body{\I}|$ with the $i$-th entry being
+$1$ if the body of this implication is in the closure of $A$, and $0$ otherwise.
+the $i$-th bit of the vector is set if \textit{count}[$i$-th implication] = 0 in
+the procedure. Running this modified version of \textsc{LinClosure} over all
+implications produces a $|\body{\I}| \times |\body{\I}|$ matrix such that
+the entry [$A \imp C, B \imp D$] is 1 if $\I \models A \imp B$. Consequently,
+finding equivalence classes shall take no more than a run over this matrix to 
+be done (after having computed closures).
 
 \vspace{1.2em}
 
-(ii) $\imp$ (i) Suppose $A$ is superfluous with respect to $B$ and there 
-exists a dotted FD-path from $A$ to $B$ not using any outgoing full arcs from 
-nodes equivalent to $A$. Those full arcs represent exactly the implications 
-contained in $E_{\I}(A)$. Since we don't use them, the path still holds in 
-$\I^{*}$ (we would remove compound nodes without outgoing full arcs of course, 
-but this would only make the path stops to attributes instead of compound 
-node). Having this path in $\I^{~}$ means that $\I^{*} \models A \imp B$.
-	
-\end{proof} 
+Direct determination can be considered as well with a modification of 
+\textsc{LinClosure} on $\I - E_{\I}(A)$. In this version, for a given $A \imp 
+C$, we also have to be provided with $E_{\I}(A)$. Then, direct determination 
+will be exposed the first time we reach \textit{count}[$B \imp D$] = 0 in the 
+computation, for $B \imp D$ different from $A \imp C$ and belonging to 
+$E_{\I}(A)$. Because we stop to the first time this will ensure that we did not 
+reach any other body of this equivalence class, otherwise we would have stopped 
+before. Because equivalence classes partition the implications of $\I$ we will 
+proceed to this operation at most once for each implication.
 
-\begin{proposition} \label{prop:maier.equiv_sup_ssup}
-The following two statement are equivalent, given the FD-graph of $\I$:
+\vspace{1.2em}
+
+Finally, we consider the question of whether equivalence classes are altered 
+more than removal during computations. Of course we remove direct determination
+is found. Does replacing $B \imp D$ by $B \imp C \cup D$ has any chances to 
+add other implication to $E_{\I}(A)$? Fortunately the answer is no. Indeed, 
+before removing $A \imp C$ from $E_{\I}(A)$, anything we could reach from $A$
+could be reached from $B$ (because of their equivalence) and thus would have
+implied $C$ from $A$ and $D$ from $B$. Thus anything reachable from $C \cup D$
+would already be in $E_{\I}(A)$.
+
+ 
+ 
+\vspace{1.2em}
+
+
+\paragraph{Complexity} Again, the complexity of this algorithm has been studied
+and discussed in \cite{david_minimum_1980, maier_theory_1983}. It has been 
+challenged (somewhat) in \cite{ausiello_graph_1983, ausiello_minimal_1986}. We
+provide a complexity analysis anyway to adapt previous material to our notations
+(and ease comparison with other algorithms) and to have this report to be 
+self-contained as much as possible. Let us recall few elements to analyse
+complexity:
 \begin{itemize}
-	\item[(i)] $A$ is a superfluous node,
-	\item[(ii)] $A$ is superfluous with respect to $B$, and there exists a
-	dotted path from $A$ to $B$ not using any outgoing full arcs from nodes
-	equivalent to $A$.
+	\item $\body{\I}$ is the number of distinct bodies in $\I$ (therefore the
+	total number of implications for us), and $|\body{\I}|$ its size,
+	\item $|\Sg|$ is the number of attributes in the universe $\Sg$,
+	\item $|\I|$ is the size of $\I$ in memory, that is roughly $|\body{\I}| 
+	\times |\Sg|$.
 \end{itemize}
-	
-\end{proposition}
-
-\begin{proof} (ii) $\imp$ (i) is trivial. let's focus on (i) $\imp$ (ii). If 
-$A$ is superfluous, then there exists $B$ such that $A \equiv B$ and there 
-has a dotted path from $A$ to $B$.
-
-\vspace{1.2em}
-
-If $B \subseteq A$, the dotted path is straight forward. If it is not the 
-case, path from $A$ to $B$ uses outgoing full arcs from nodes equivalent to 
-$A$, or it does not. If it does not we are done. Now Suppose this
-path uses an outgoing full arc from a node $C$ equivalent to $A$. This 
-means, that $A \equiv B \equiv C$ by definition and therefore, there exists a
-dotted path from $A$ to $C$ (because we need to reach $C$, so to derive it,
-to use its outgoing arcs). We can reiterate this reasoning until reaching 
-$A$. Getting to $A$ or one of its subset would contradict our assumptions 
-meaning that we stopped finding used equivalent arcs earlier.
-	
-\end{proof}
-
-From the previous claims, we can yield the following one
-
-\begin{proposition} \label{prop:maier.equiv_sup_dd_sub}
-The following states are equivalent:
-\begin{itemize}
-	\item[(i)] $A \ddv B$,
-	\item[(ii)] $A$ is superfluous,
-	\item[(iii)] $A \equiv B$ and there exists $X \subset A$ such that $\I 
-	\models X \imp B$.
-\end{itemize}
-\end{proposition}
-
-\begin{proof} (i) $\longleftrightarrow$ (ii) comes from propositions 
-\ref{prop:maier.equiv_ssup_dd} and \ref{prop:maier.equiv_sup_ssup}. (ii) 
-$\longleftrightarrow$ (iii) comes from proposition 
-\ref{prop:maier.equiv_sup_sub}.
-	
-\end{proof}
-
-Those claims help to see the relation between operations of the algorithms. 
-Indeed, the last claim states that finding a direct determination is the same
-as finding a superfluous node, therefore the two algorithms are looking for
-the same structures in different terminologies. This emphasizes the fact they
-work on the same computations. Remark: Maier algorithm do it in a special 
-order (some kinds of minimal paths in terms of FD-graph. Can we remove them in 
-any order? It seems to since this is what the Ausiello algorithm does, and
-the previous proposition states that direct determination is equivalent to the
-existence of superfluous nodes.
-
-\vspace{1.2em}
-
-The next claim provides an argument in this way. It also explains in what 
-extent the operation of removal in those algorithm is exact.
-
-\begin{proposition} Let $A, B$ be bodies of $\I$. If $A \equiv B$ and
-there exists $X \subset A$ such that $\I \models X \imp B$ then $\I$ is not
-minimum.
-	
-\end{proposition}
-
-\begin{proof} Let $\I$ be an implication basis with bodies $A, B$ equivalent and
-such that there exists $X \subset A$ with $\I \models X \imp B$. Let us build
-$\I_c$ by removing $A \imp E$ from $\I$, and replacing $B \imp F$ by $B \imp
-E \cup F$. We must show that $I_c \models A \imp E$. Since there exists $X 
-\subset A$ such that $\I \models X \imp B$ and we only removed $A \imp E$, we
-have $\I_c \models X \imp E$ hence $I_c \models X \imp B$. Consequently, 
-$\I_c \models A \imp E$ since $X \subset A \imp \I_c(X) \subseteq \I_c(A)$.
-\end{proof}
-
-\vspace{1.2em}
-
-This proposition can be stated as its contraposition. That is, if a basis is
-minimum then we cannot find equivalent bodies with one to be removed. This 
-states that the second step of Ausiello and Maier algorithms end up with a 
-body minimal basis, with help of equivalences proved in proposition 
-\ref{prop:maier.equiv_sup_sub}.
-
+\noindent Let us proceed by steps. First, non-redundancy elimination. Because 
+the inner \textbf{foreach} loop goes for all implications of $\I$ requiring 
+$O(|\body{\I}|)$ times looping. Then, computing closure of $A$ under $\I$ and 
+$\I^{-}$ requires $O(|\I|)$ operations thanks to \textsc{LinClosure}. Hence,
+redundancy elimination can be done in $O(|\body{\I}| \times |\I|) = 
+O(|\body{\I}|^2 \times |\Sg|)$ time. Secondly, finding equivalence classes as
+mentioned previously can be done by using modified version of 
+\textsc{LinClosure} performing same time as the original one. Since we have to
+go over (at most) all implications to find all implications with bodies implied
+by a given one, this result in $O(|\body{\I}| \times |\I|)$ complexity. Then,
+having the $|\body{\I}| \times |\body{\I}|$ matrix, building equivalence classes
+need a run over the matrix, that is $O(|\body{\I}|^2)$ operations. Finally,
+removing direct determination can be done at most for all implications, and 
+checking for this property is again made through \textsc{LinClosure}. Thus 
+performing the last step of the algorithm is $O(|\body{\I}| \times |\I|) = 
+O(|\body{\I}|^2 \times |\Sg|)$ time. As a conclusion, the whole algorithm works
+in $O(|\body{\I}| \times |\I|)$.

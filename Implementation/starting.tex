@@ -32,4 +32,11 @@ Here is a list with short description of file construction:
 	(\lil{current} is closed or not). The method has thus two uses: computing
 	the closure AND determining whether a set is closed or not.
 	
+	\item \lil{LinClosure.h/.cpp}: two methods \lil{Apply} (overloading). In the
+	first one, the \lil{bool} vector \lil{use} aims to model $update \cup add$
+	because they are not the same structure in code. Thus it ensures that we do
+	not add an element already treated.
+	
+	\item \lil{LinClosure_Improved.h/.cpp}: Wild's Closure.
+	
 \end{itemize}

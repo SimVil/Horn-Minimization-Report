@@ -1,9 +1,9 @@
-\section{Angluin Algorithm}
+\subsection{Angluin Algorithm: Query Learning}
 
 In this section we are interested in the Angluin algorithm (1992). 
 \cite{angluin_learning_1992, arias_canonical_2009}.
 
-\subsection{Query Learning}
+\subsubsection{Query Learning}
 
 Here, the method for building a minimal base is slightly different. We use 
 so-called \belemp{query learning}. The idea is we formulate \belemp{queries}
@@ -28,7 +28,7 @@ a basis $\I$ over $\Sg$:
 \noindent To clarify, the terms negative/positive are related to the base $\I$
 we want to learn.
 
-\subsection{Algorithm}
+\subsubsection{Algorithm}
 
 The algorithm has been proved to end up with the Duquenne-Guigue Basis, again 
 we can refer to \cite{angluin_learning_1992, arias_canonical_2009} for further
@@ -79,27 +79,13 @@ return $\I_c$ \;
 \label{alg:Angluin}
 \end{algorithm}
 
-\paragraph{Some Observations} Of course, the aim of the algorithm is to produce 
-a basis equivalent to the one we are trying to learn. Since the main stopping 
-condition is equivalence between our hypothesis and the basis. So if the 
-algorithm terminates, it does on correct answer. Also, $A \cap M \subset A$ 
-could be strange since by definition $A \cap M \subseteq A$. The important 
-detail is to \aliemp{exclude} $A \cap M = A$.
-
-\vspace{1.2em} 
-
-We could wonder on the modifications we bring to $\I_c$ with the
-functions $reduce$ and $refine$. Let us focus first on $reduce$ and its use.
-First, notice we use it only in the case $M$ is a positive counterexample, 
-meaning that $M = \I(M)$. Thus, if $M$ violates some $A \imp B$ in $\I_c$ then
-$I(A) \subseteq M$. Hence, in the case $A \imp M - A$ we reduce the implication
-to at most $A \imp \I(A) - A$. In the case $A \imp B \cap M$ ($B \cap A = 
-\emptyset$ by construction) also tends toward $\I(A) - A$. In both cases, we 
-changed $A \imp B$ so that $M$ becomes a model of $\I_c$ as it is a model of
-$\I$.
-
-\vspace{1.2em}
-
+\paragraph{Some Observations} \begin{itemize}
+	\item Proved to be polynomial (\cite{angluin_learning_1992})
+	\item Proved to end up on the DG basis (\cite{arias_canonical_2009})
+	\item We can see that (apart from previous remark) that we end up 
+	on implications of the form $A \imp \I(A)$ (induction)
+	\item .
+\end{itemize}
 
 
 

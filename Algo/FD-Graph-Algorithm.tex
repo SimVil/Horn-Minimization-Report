@@ -1,4 +1,4 @@
-\section{Minimality through directed graphs}
+\subsection{Ausiello Algorithm: minimality through directed graphs}
 
 This section is dedicated to a minimization algorithm relying on hypergraphs. 
 It has been set up by Ausiello and al. in \cite{ausiello_directed_2017, 
@@ -9,7 +9,7 @@ is a FD-graph, provide the general idea for the algorithm as explained in
 \cite{ausiello_minimal_1986} and then go into further details and more precise
 algorithms for such computations as exposed in \cite{ausiello_graph_1983}.
 
-\subsection{FD-Graphs and minimum covers}
+\subsubsection{FD-Graphs and minimum covers}
 
 In this part, we assume that our basis $\I$ is represented through the framework
 of hypergraphs (see chapter 1). Again, all the definitions we are going to state
@@ -112,7 +112,7 @@ There are either \belemp{dotted} or \belemp{full} paths. A path $\langle i, j
 Having explained FD-Graphs, we will now move to explanations of the algorithm
 developed by Ausiello and al.
 
-\subsection{Ausiello algorithm: general point of view}
+\subsubsection{Ausiello algorithm: general point of view}
 
 The following procedure (\ref{alg:ausiello_86}) finds from a given basis its
 \belemp{minimal cover}. 
@@ -287,7 +287,7 @@ to minimize a given basis. The question we are going to investigate in the next
 paragraphs is how to do such computations.
 
 
-\subsection{Ausiello algorithm: effective procedure}
+\subsubsection{Ausiello algorithm: effective procedure}
 
 In this part we will focus on how the algorithm proposed by Ausiello in 
 \cite{ausiello_minimal_1986} performs redundancy and superfluousness 
@@ -308,9 +308,8 @@ must provide priority between dotted and full arcs. The authors decided to
 stress on dotted arcs since they are more likely to be a criterion for removal 
 during minimization.
 
-\subsubsection{Closure of a FD-Graph}
-
-The closure is based on the following data structures:
+\paragraph{Closure of a FD-Graph} The closure is based on the following data 
+structures:
 \begin{itemize}
 	\item $V_0$: set of \belemp{simple} nodes,
 	\item $V_1$: set of \belemp{compound} nodes,
@@ -508,7 +507,7 @@ it when dealing with $S_i$ (because $S_i$ does not contain $i$).
 Now that algorithms for computing the closure of a FD-graph have been set, we
 can move to the minimization part.
 
-\subsubsection{Minimization algorithm for FD-Graphs}
+\paragraph{Minimization algorithm for FD-Graphs}
 
 We have two steps in this algorithm. First, we need to remove redundant nodes, 
 then superfluous nodes. To delete redundant nodes, the claim of 
@@ -583,6 +582,173 @@ complexity. As a consequence the whole algorithm may run in $O(|\body{\I}|
 
 
 
+\subsection{Elements of proofs}
+
+In this section we write various claims which help us prove correctness and 
+equivalence of Maier/Ausiello's algorithms. Knowledge about FD-graphs is 
+assumed. Equivalence of redundancy elimination is not shown (1st step of 
+the algorithm). We place ourselves in a non-redundant context to match
+definitions of direct determination. Non-redundancy does not affect superfluous
+definition.
+
+\begin{proposition} \label{prop:maier.equiv_sup_sub}
+	A node $i$ in a FD-graph is superfluous with respect to $j$ if and only if 
+	$i \equiv j$ and there exists a proper subset (non-empty) $k$ of $i$ such 
+	that $\I \models k \imp j$. 
+\end{proposition}
+
+\begin{proof} This is a translation of the definition of superfluous node in 
+	terms of implications.	
+\end{proof}
+
+\begin{proposition} \label{prop:maier.equiv_ssup_dd}
+	the following statements are equivalent, for $A, B$ bodies of $\I$:
+	\begin{itemize}
+		\item[(i)] $A \ddv B$,
+		\item[(ii)] the node $A$ is superfluous with respect to $B$, and there 
+		exists 
+		a dotted FD-path from $A$ to $B$ not using any outgoing full arcs of
+		nodes equivalent to $A$.
+	\end{itemize}
+	
+\end{proposition}
+
+\begin{proof} (i) $\imp$ (ii). We will use claim 1 to help us. Suppose $ A \ddv 
+	B$. By	definition of direct determination, we have that the nodes $A$ and 
+	$B$ 
+	are equivalent. By hypothesis, we have $ \I^{*} = \I - E_{\I}(A) \models A 
+	\imp 
+	B$.	We will distinguish two cases, either $B \subseteq A$, or $B \nsubseteq 
+	A$.
+	
+	\vspace{1.2em}
+	
+	\paragraph{$B \subseteq A$.} In this case, direct determination is straight 
+	forward, and if $A$ and $B$ are bodies of $\I$, there exists dotted arcs 
+	between $A$ and $B$ forming a dotted FD-path. Then $A$ is indeed 
+	superfluous 
+	with respect to $B$. Furthermore, because we used only dotted arcs from 
+	$A$, we 
+	did not use any full arcs outgoing from $A$.
+	
+	\paragraph{$B \nsubseteq A$.} Since we don't use any implications with left 
+	side equivalent to $A$ in direct determination, but still have $A \imp B$, 
+	we 
+	must be able to find a non-equivalent proper subset $X$ of $A$ such that $X 
+	\imp B$, otherwise we would contradict direct determination (because we 
+	would 
+	not have $B \subseteq \I^{~}(A)$ ). Using claim 1, we can conclude that $A$ 
+	is 
+	indeed superfluous with respect to $B$. Moreover, notice that using an 
+	outgoing 
+	full arc from a node equivalent $C$ to $A$ is exactly using an implication 
+	with 
+	left hand side equivalent to $A$. Therefore, if there is not dotted FD-path 
+	from $A$ to $B$ not using those arcs, we would contradict direct 
+	determination.
+	
+	\vspace{1.2em}
+	
+	(ii) $\imp$ (i) Suppose $A$ is superfluous with respect to $B$ and there 
+	exists a dotted FD-path from $A$ to $B$ not using any outgoing full arcs 
+	from 
+	nodes equivalent to $A$. Those full arcs represent exactly the implications 
+	contained in $E_{\I}(A)$. Since we don't use them, the path still holds in 
+	$\I^{*}$ (we would remove compound nodes without outgoing full arcs of 
+	course, 
+	but this would only make the path stops to attributes instead of compound 
+	node). Having this path in $\I^{~}$ means that $\I^{*} \models A \imp B$.
+	
+\end{proof} 
+
+\begin{proposition} \label{prop:maier.equiv_sup_ssup}
+	The following two statement are equivalent, given the FD-graph of $\I$:
+	\begin{itemize}
+		\item[(i)] $A$ is a superfluous node,
+		\item[(ii)] $A$ is superfluous with respect to $B$, and there exists a
+		dotted path from $A$ to $B$ not using any outgoing full arcs from nodes
+		equivalent to $A$.
+	\end{itemize}
+	
+\end{proposition}
+
+\begin{proof} (ii) $\imp$ (i) is trivial. let's focus on (i) $\imp$ (ii). If 
+	$A$ is superfluous, then there exists $B$ such that $A \equiv B$ and there 
+	has a dotted path from $A$ to $B$.
+	
+	\vspace{1.2em}
+	
+	If $B \subseteq A$, the dotted path is straight forward. If it is not the 
+	case, path from $A$ to $B$ uses outgoing full arcs from nodes equivalent to 
+	$A$, or it does not. If it does not we are done. Now Suppose this
+	path uses an outgoing full arc from a node $C$ equivalent to $A$. This 
+	means, that $A \equiv B \equiv C$ by definition and therefore, there exists 
+	a
+	dotted path from $A$ to $C$ (because we need to reach $C$, so to derive it,
+	to use its outgoing arcs). We can reiterate this reasoning until reaching 
+	$A$. Getting to $A$ or one of its subset would contradict our assumptions 
+	meaning that we stopped finding used equivalent arcs earlier.
+	
+\end{proof}
+
+From the previous claims, we can yield the following one
+
+\begin{proposition} \label{prop:maier.equiv_sup_dd_sub}
+	The following states are equivalent:
+	\begin{itemize}
+		\item[(i)] $A \ddv B$,
+		\item[(ii)] $A$ is superfluous,
+		\item[(iii)] $A \equiv B$ and there exists $X \subset A$ such that $\I 
+		\models X \imp B$.
+	\end{itemize}
+\end{proposition}
+
+\begin{proof} (i) $\longleftrightarrow$ (ii) comes from propositions 
+	\ref{prop:maier.equiv_ssup_dd} and \ref{prop:maier.equiv_sup_ssup}. (ii) 
+	$\longleftrightarrow$ (iii) comes from proposition 
+	\ref{prop:maier.equiv_sup_sub}.
+	
+\end{proof}
+
+Those claims help to see the relation between operations of the algorithms. 
+Indeed, the last claim states that finding a direct determination is the same
+as finding a superfluous node, therefore the two algorithms are looking for
+the same structures in different terminologies. This emphasizes the fact they
+work on the same computations. Remark: Maier algorithm do it in a special 
+order (some kinds of minimal paths in terms of FD-graph. Can we remove them in 
+any order? It seems to since this is what the Ausiello algorithm does, and
+the previous proposition states that direct determination is equivalent to the
+existence of superfluous nodes.
+
+\vspace{1.2em}
+
+The next claim provides an argument in this way. It also explains in what 
+extent the operation of removal in those algorithm is exact.
+
+\begin{proposition} Let $A, B$ be bodies of $\I$. If $A \equiv B$ and
+	there exists $X \subset A$ such that $\I \models X \imp B$ then $\I$ is not
+	minimum.
+	
+\end{proposition}
+
+\begin{proof} Let $\I$ be an implication basis with bodies $A, B$ equivalent and
+	such that there exists $X \subset A$ with $\I \models X \imp B$. Let us 
+	build
+	$\I_c$ by removing $A \imp E$ from $\I$, and replacing $B \imp F$ by $B \imp
+	E \cup F$. We must show that $I_c \models A \imp E$. Since there exists $X 
+	\subset A$ such that $\I \models X \imp B$ and we only removed $A \imp E$, 
+	we
+	have $\I_c \models X \imp E$ hence $I_c \models X \imp B$. Consequently, 
+	$\I_c \models A \imp E$ since $X \subset A \imp \I_c(X) \subseteq \I_c(A)$.
+\end{proof}
+
+\vspace{1.2em}
+
+This proposition can be stated as its contraposition. That is, if a basis is
+minimum then we cannot find equivalent bodies with one to be removed. This 
+states that the second step of Ausiello and Maier algorithms end up with a 
+body minimal basis, with help of equivalences proved in proposition 
+\ref{prop:maier.equiv_sup_sub}.
 
 
 
