@@ -64,3 +64,41 @@ through $P \cup A$ and $Q \cup A$.
 
 (ii) $\imp$.
 \end{proof}
+
+
+
+\begin{proof} (i) $\imp$ (ii). We will use \ref{prop:maier.equiv_sup_sub} to 
+help us. Suppose $ A \ddv B$. By definition of direct determination, we have 
+that the nodes $A$ and $B$ are equivalent. By hypothesis, we have $ \I^{*} = \I 
+- E_{\I}(A) \models A \imp B$. We will distinguish two cases, either $B 
+\subseteq A$, or $B \nsubseteq A$. 
+
+\vspace{1.2em}
+
+\paragraph{$B \subseteq A$.} In this case, direct determination is straight 
+forward, and if $A$ and $B$ are bodies of $\I$, there exists dotted arcs 
+between $A$ and $B$ forming a dotted FD-path. Then $A$ is indeed 
+superfluous with respect to $B$. Furthermore, because we used only dotted arcs 
+from $A$, we did not use any full arcs outgoing from $A$.
+
+\paragraph{$B \nsubseteq A$.} Since we don't use any implications with left 
+side equivalent to $A$ (in particular $A$) in direct determination, but still 
+have $A \imp B$, we conclude that $\I - $. Using claim 1, we can conclude that 
+$A$ is indeed superfluous with respect to $B$. Moreover, notice that using an 
+outgoing full arc from a node equivalent $C$ to $A$ is exactly using an 
+implication with left hand side equivalent to $A$. Therefore, if there is not 
+dotted FD-path from $A$ to $B$ not using those arcs, we would contradict direct 
+determination.
+
+\vspace{1.2em}
+
+(ii) $\imp$ (i) Suppose $A$ is superfluous with respect to $B$ and there 
+exists a dotted FD-path from $A$ to $B$ not using any outgoing full arcs 
+from nodes equivalent to $A$. Those full arcs represent exactly the 
+implications contained in $E_{\I}(A)$. Since we don't use them, the path still 
+holds in $\I^{*}$ (we would remove compound nodes without outgoing full arcs of 
+course, but this would only make the path stops to attributes instead of 
+compound node). Having this path in $\I^{~}$ means that $\I^{*} \models A \imp 
+B$.
+
+\end{proof}

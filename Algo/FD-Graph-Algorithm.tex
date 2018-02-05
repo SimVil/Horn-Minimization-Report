@@ -367,7 +367,7 @@ Initialize a list of nodes to treat $S_i$ to $L_i$ \;
 
 	add $j$ to the closure $L_i^+$ \;
 	
-	\ForAll{nodes $k$ for each there is an arc $(j, \ k)$}{
+	\ForAll{nodes $k$ such that there is an arc $(j, \ k)$}{
 		\If{$k$ is not yet in the closure $L_i^+$ or in the \belemp{dotted}
 			closure $L_i^{1+}$ of $i$}{
 			$k$ is reachable from $i$ by \aliemp{transitivity} \;
@@ -391,9 +391,15 @@ that if we have $i \imp m_i$ for all $m_i$ in $m$, then we must have $i \imp m$
 also. The counter $q_m$ ensures that we indeed reached all $m_i$'s in $m$. 
 Also, the algorithm has access to all the structures we described above (nodes, 
 sets of arcs, and so forth). Parameters are thus lists we are going to modify 
-somewhat.
-
-\newpage
+somewhat. The \textsc{NodeClosure} algorithm runs in time $O(|\I|)$. The first 
+nested loop runs in at most $O(|\Sg| \times |\body{\I}|) = O(|L|)$ because 
+$S_i$ contains at most $|\Sg|$ elements, and the block referring to the 
+\textit{union} rule runs over compound nodes, that is bodies of $\I$. For the 
+second loop (transitivity) note that we can at most consider all the edges of 
+the FD-graph. In fact, the cost of transitivity operation for all $j$ is 
+$O(\sum_{j = 1}^n |L_j^0 \cup L_j^1 |)$. But by definition, those sets are 
+disjoints, and therefore we cannot treat more than $| E |$ arcs (the total 
+number of arcs in $G$), that is $|\I|$.
 
 \begin{algorithm}
 \KwIn{
@@ -439,7 +445,12 @@ setting a counter $q_m$ to 1. This variable helps to see whether we can use
 union rule as we saw in procedure NodeClosure 
 (\ref{alg:FD-NodeClosure-Principle}, \ref{alg:FD-NodeClosure}). We initialize it
 in case $i$ is indeed part of some compound node so that we do not omit to count
-it when dealing with $S_i$ (because $S_i$ does not contain $i$). 
+it when dealing with $S_i$ (because $S_i$ does not contain $i$). In terms of
+complexity, we are running \textsc{NodeClosure} on all nodes having outgoing
+edges, that is $|\body{\I}|$ nodes (if a compound node is represented, it must
+have at least one outgoing full arc). Since \textsc{NodeClosure} operates in
+$O(|\I|)$, the whole closure algorithm must run in $O(|\body{\I}| \times |\I|)$
+.
 
 \begin{algorithm}
 \KwIn{$V_0$, $V_1$ and $\forall i \in V$ $D_i$, $L_i^0$, $L_i^1$}
@@ -530,7 +541,7 @@ $G_{\I}^{+} = Closure(G_{\I})$ \;
 
 \BlankLine
 
-\midemp{Redundancy Elimination} \\
+\emeemp{// Redundancy Elimination} \\
 \ForAll{$i \in V^1$}{
 	\If{$L_i^{1+} = \emptyset$}{
 		remove $i$ and its outgoing arcs from $G_{\I}$ \;	
@@ -539,7 +550,7 @@ $G_{\I}^{+} = Closure(G_{\I})$ \;
 
 \BlankLine
 
-\midemp{Superfluousness Elimination} \\
+\emeemp{// Superfluousness Elimination} \\
 \ForAll{$i \in V^1$}{
 	find an equivalent node $j$ \;
 	\If{$j$ exists}{
@@ -551,10 +562,8 @@ $G_{\I}^{+} = Closure(G_{\I})$ \;
 	add $(i, j)$ to a list $L$ \; 
 }
 
-\ForAll{$(i, j) \in L$}{
-	$L_j^0 := L_j^0 \cup (L_i^0 - L_j^1)$ \;
-	remove $i$ from $G_{\I}$ \;
-}	
+remove superfluous nodes \;
+move arcs to their final destination \;	
 
 \caption{Ausiello Minimization Algorithm}
 \label{alg:ausiello-min}
@@ -563,7 +572,8 @@ $G_{\I}^{+} = Closure(G_{\I})$ \;
 \vspace{1.2em} 
 
 Let us try to investigate the complexity of this algorithm. According to the 
-article, Closure is achieved in $O(|\body{\I}| \cdot |\I|)$. If the graph is
+article and previous study, \textsc{Closure} is achieved in $O(|\body{\I}| 
+\times |\I|)$. If the graph is
 represented as adjacency lists, deleting a node and its outgoing arc can be
 $O(1)$ (it consists in freeing the node and its associated two lists). Running 
 over all compound nodes is $O(|\body{\I}|)$. In the case we would have to 
@@ -591,75 +601,84 @@ the algorithm). We place ourselves in a non-redundant context to match
 definitions of direct determination. Non-redundancy does not affect superfluous
 definition.
 
-\begin{proposition} \label{prop:maier.equiv_sup_sub}
-	A node $i$ in a FD-graph is superfluous with respect to $j$ if and only if 
-	$i \equiv j$ and there exists a proper subset (non-empty) $k$ of $i$ such 
-	that $\I \models k \imp j$. 
+\begin{proposition} \label{prop:maier.equiv_sup_sub} The following properties
+are equivalent (let $A \imp C$ be the implication of $\I$ with $A$ as
+body):
+\begin{itemize}
+	\item[(i)] A node $A$ in a FD-graph is superfluous with respect to $B$,
+	\item[(ii)] $A \equiv B$ and $\I - \{A \imp C \} \models A \imp B$.
+\end{itemize}
 \end{proposition}
 
-\begin{proof} This is a translation of the definition of superfluous node in 
-	terms of implications.	
+\begin{proof} (i) $\imp$ (ii). If $A$ is superfluous, we have a dotted FD-Path
+$\langle A, \ B \rangle$. Since it is dotted, let us remove this node $A$ and
+its outgoing arcs. Actually, none of the nodes pointed by dotted arcs of $A$
+have been removed, thus we can still find the nodes $a_i$ (attributes of $a$) 
+used in the dotted path $\langle A, \ B \rangle$ such that $\bigcup_i a_i 
+\models B$. Because $\bigcup_i a_i \subseteq A$, we end up with $\I - \{A \imp 
+C \} \models A \imp B$.
+
+\vspace{1.2em}
+
+(ii) $\imp$ (i). In the FD-Graph associated to $\I - \{A \imp C \}$, the node 
+$A$ is not present. But still, $A \imp B$ holds. This means that we must be
+able to find a list of proper subsets $A_i$ of $A$ (possibly single attributes)
+such that $\bigcup_{i} A_i \models B$. Adding $A \imp C$ will add the node $A$
+and in particular dotted arcs from $A$ to each attributes of $\bigcup_{i} A_i 
+\subseteq A$. Thus, we will have a dotted path from $A$ to $\bigcup_{i} A_i$ and
+consequently, to $B$. $A$ is indeed superfluous.
+\end{proof}
+
+\begin{proposition} \label{prop:maier.equiv_dd_sub} The following statements 
+are equivalent:
+\begin{itemize}
+	\item[(i)] $A\ddv B$,
+	\item[(ii)] $\I - E_{\I}(A) \models A \imp B$.
+\end{itemize}
+	
+\end{proposition}
+
+\begin{proof}
+Translation of notions. $A \ddv B$ means that if we remove all implications
+with left sides equivalent to $A$ we can still derive $A \imp B$ using remaining
+implication, that is $\I - E_{\I}(A) \models A \imp B$.
 \end{proof}
 
 \begin{proposition} \label{prop:maier.equiv_ssup_dd}
-	the following statements are equivalent, for $A, B$ bodies of $\I$:
-	\begin{itemize}
-		\item[(i)] $A \ddv B$,
-		\item[(ii)] the node $A$ is superfluous with respect to $B$, and there 
-		exists 
-		a dotted FD-path from $A$ to $B$ not using any outgoing full arcs of
-		nodes equivalent to $A$.
-	\end{itemize}
+the following statements are equivalent, for $A, B$ bodies of $\I$:
+\begin{itemize}
+	\item[(i)] $A \ddv B$,
+	\item[(ii)] the node $A$ is superfluous with respect to $B$, and there 
+	exists 
+	a dotted FD-path from $A$ to $B$ not using any outgoing full arcs of
+	nodes equivalent to $A$.
+\end{itemize}
 	
 \end{proposition}
 
-\begin{proof} (i) $\imp$ (ii). We will use claim 1 to help us. Suppose $ A \ddv 
-	B$. By	definition of direct determination, we have that the nodes $A$ and 
-	$B$ 
-	are equivalent. By hypothesis, we have $ \I^{*} = \I - E_{\I}(A) \models A 
-	\imp 
-	B$.	We will distinguish two cases, either $B \subseteq A$, or $B \nsubseteq 
-	A$.
+
+\begin{proof} (i) $\imp$ (ii). Using propositions \ref{prop:maier.equiv_dd_sub},
+\ref{prop:maier.equiv_sup_sub}, showing that there is a direct determination 
+starting from $A$ implies $A$ is a superfluous node in the FD-Graph is 
+straightforward. If $\I - E_{\I}(A) \subseteq \I - \{A \imp C \} \models A \imp 
+B$ so does $\I - \{A \imp C \}$. This holds in particular if $B \subseteq A$. 
+Moreover, notice that using an outgoing full arc from a node $D$ equivalent to 
+$A$ is exactly using an implication with left hand side equivalent to $A$. 
+Therefore, if there is not dotted FD-path from $A$ to $B$ not using those arcs, 
+we would contradict direct determination.
+
+\vspace{1.2em}
+
+(ii) $\imp$ (i). Suppose $A$ is superfluous with respect to $B$ and there 
+exists a dotted FD-path from $A$ to $B$ not using any outgoing full arcs 
+from nodes equivalent to $A$. Those full arcs represent exactly the 
+implications contained in $E_{\I}(A)$. Since we don't use them, the path still 
+holds in $\I - E_{\I}(A)$ (we would remove compound nodes without outgoing full 
+arcs of course, but this would only make the path stops to attributes instead 
+of compound node). Having this path in $\I - E_{\I}(A)$ means that $\I - 
+E_{\I}(A) \models A \imp B$.
 	
-	\vspace{1.2em}
-	
-	\paragraph{$B \subseteq A$.} In this case, direct determination is straight 
-	forward, and if $A$ and $B$ are bodies of $\I$, there exists dotted arcs 
-	between $A$ and $B$ forming a dotted FD-path. Then $A$ is indeed 
-	superfluous 
-	with respect to $B$. Furthermore, because we used only dotted arcs from 
-	$A$, we 
-	did not use any full arcs outgoing from $A$.
-	
-	\paragraph{$B \nsubseteq A$.} Since we don't use any implications with left 
-	side equivalent to $A$ in direct determination, but still have $A \imp B$, 
-	we 
-	must be able to find a non-equivalent proper subset $X$ of $A$ such that $X 
-	\imp B$, otherwise we would contradict direct determination (because we 
-	would 
-	not have $B \subseteq \I^{~}(A)$ ). Using claim 1, we can conclude that $A$ 
-	is 
-	indeed superfluous with respect to $B$. Moreover, notice that using an 
-	outgoing 
-	full arc from a node equivalent $C$ to $A$ is exactly using an implication 
-	with 
-	left hand side equivalent to $A$. Therefore, if there is not dotted FD-path 
-	from $A$ to $B$ not using those arcs, we would contradict direct 
-	determination.
-	
-	\vspace{1.2em}
-	
-	(ii) $\imp$ (i) Suppose $A$ is superfluous with respect to $B$ and there 
-	exists a dotted FD-path from $A$ to $B$ not using any outgoing full arcs 
-	from 
-	nodes equivalent to $A$. Those full arcs represent exactly the implications 
-	contained in $E_{\I}(A)$. Since we don't use them, the path still holds in 
-	$\I^{*}$ (we would remove compound nodes without outgoing full arcs of 
-	course, 
-	but this would only make the path stops to attributes instead of compound 
-	node). Having this path in $\I^{~}$ means that $\I^{*} \models A \imp B$.
-	
-\end{proof} 
+\end{proof}
 
 \begin{proposition} \label{prop:maier.equiv_sup_ssup}
 	The following two statement are equivalent, given the FD-graph of $\I$:
@@ -694,12 +713,12 @@ definition.
 From the previous claims, we can yield the following one
 
 \begin{proposition} \label{prop:maier.equiv_sup_dd_sub}
-	The following states are equivalent:
+	The following statements are equivalent:
 	\begin{itemize}
-		\item[(i)] $A \ddv B$,
+		\item[(i)] there exists $B$ such that $A \ddv B$,
 		\item[(ii)] $A$ is superfluous,
-		\item[(iii)] $A \equiv B$ and there exists $X \subset A$ such that $\I 
-		\models X \imp B$.
+		\item[(iii)] there exists $C$ such that $A \equiv C$ and $\I - \{A \imp 
+		D \} \models A \imp C$. (possibly, $C = B$).
 	\end{itemize}
 \end{proposition}
 
@@ -725,21 +744,17 @@ existence of superfluous nodes.
 The next claim provides an argument in this way. It also explains in what 
 extent the operation of removal in those algorithm is exact.
 
-\begin{proposition} Let $A, B$ be bodies of $\I$. If $A \equiv B$ and
-	there exists $X \subset A$ such that $\I \models X \imp B$ then $\I$ is not
-	minimum.
+\begin{proposition} Let $A \imp C, B \imp D$ be implications of $\I$. If $A 
+\equiv B$ and $\I - \{A \imp C \} \models A \imp B$, then $\I$ is not 
+minimum.
 	
 \end{proposition}
 
-\begin{proof} Let $\I$ be an implication basis with bodies $A, B$ equivalent and
-	such that there exists $X \subset A$ with $\I \models X \imp B$. Let us 
-	build
-	$\I_c$ by removing $A \imp E$ from $\I$, and replacing $B \imp F$ by $B \imp
-	E \cup F$. We must show that $I_c \models A \imp E$. Since there exists $X 
-	\subset A$ such that $\I \models X \imp B$ and we only removed $A \imp E$, 
-	we
-	have $\I_c \models X \imp E$ hence $I_c \models X \imp B$. Consequently, 
-	$\I_c \models A \imp E$ since $X \subset A \imp \I_c(X) \subseteq \I_c(A)$.
+\begin{proof} Let $\I$ be an implication basis with implications $A \imp C, B 
+\imp D$, $A \equiv B$, and such that $\I - \{A \imp C \} \models A \imp B$. Let 
+us build $\I_c$ by removing $A \imp C$ from $\I$, and replacing $B \imp D$ by 
+$B \imp C \cup D$. Obviously, $\I_c \models A \imp B$. Moreover, $A \imp C$
+still holds since $A \imp B \imp C \cup D$.
 \end{proof}
 
 \vspace{1.2em}
@@ -748,7 +763,7 @@ This proposition can be stated as its contraposition. That is, if a basis is
 minimum then we cannot find equivalent bodies with one to be removed. This 
 states that the second step of Ausiello and Maier algorithms end up with a 
 body minimal basis, with help of equivalences proved in proposition 
-\ref{prop:maier.equiv_sup_sub}.
+\ref{prop:maier.equiv_sup_dd_sub}.
 
 
 
