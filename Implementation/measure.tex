@@ -1,0 +1,39 @@
+\section{Measuring performance}
+
+This section is dedicated to explain the way we measure and compare algorithms
+implementation. We give the tools we use, and the way we use them. Of course,
+the main point is to compare them on time to see how do they react on various 
+cases, against theoretical complexity. 
+
+\subsection{Timer, profiler}
+
+We use two main tools, timers and profilers. The first one aims to precisely 
+time execution of some functions, as much as comparing wall-clock time and 
+CPU-time spent on a program. The profiler depicts a recursive analysis of time
+spent in each function, resulting in a call-graph, a tree-like structure. 
+Profiling a program helps to understand bottlenecks. In our case, we can use it
+to see where does an algorithm is the most time-consuming, and possibly why.
+
+\subsubsection{Boost timer}
+
+Since the structure of the code relies on \lil{boost} library. We use the 
+\lil{boost_timer} library to time programs. Few details though. The 
+\lil{boost_timer} dependency is not header-only, which means it must be compiled
+to be used and linked at compilation time. see boost doc. 
+
+\subsubsection{\lil{gperftools} CPU-profiler}
+
+\lil{gperftools} is originally provided by Google but has been left to 
+community since 2012. It contains tools such as heap-profiler, faster 
+implementation of \lil{malloc} and a CPU-profiler, which is our interest. It
+uses sampling method to determine time spent in functions scopes. Probably 
+because of the CPU frequency (2.50 GHz), we cannot set a sampling frequency
+higher than 250 samples per second, that is 1 sample each 4 millisecond. Thus,
+the time results of the profiler are not more precise than 10e-3. This is the
+reason why we also use timer to get precise execution time. But as far as we
+are concerned, having this precision for profiling is enough for our purpose 
+of examining bottlenecks. 
+
+\lil{gperftools} is quite easy to use, and does not lead to runtime overhead
+contrary to \lil{callgrind/valgrind} even though the latter one counting 
+assembly instructions is more precise.
