@@ -4,13 +4,18 @@
 \input{../Subfiles/Operators.tex}
 \input{../Subfiles/Languages.tex}
 
+\pagestyle{fancy}
+
 
 \title{Master Thesis: Horn Minimization}
 \author{Simon VILMIN}
 \date{year 2017 - 2018}
 
 \begin{document}
-\maketitle
+	
+\input{Title/Title.tex}
+	
+%\maketitle
 \tableofcontents
 \listoffigures
 \listofalgorithms
@@ -99,6 +104,9 @@ will focus on reviewing the existing algorithms for the Horn minimization task.
 
 % Measuring
 \input{Implementation/measure.tex}
+
+% Ausiello
+\input{Implementation/AusielloImplementation.tex}
 
 \bibliographystyle{acm}
 	\bibliography{Biblio.bib}

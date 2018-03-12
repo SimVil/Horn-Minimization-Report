@@ -1,0 +1,81 @@
+\section{Ausiello Algorithm: Implementation}
+
+\subsection{Data Structure}
+
+\subsubsection{Recall the theoretical structure}
+
+\subsubsection{Code definition}
+
+The algorithms are given in terms of the size of an FD-graph. In 
+\cite{ausiello_minimal_1986}, one can read that this size is assumed to be the
+size of a graph under adjacency list representation. Using a matrix based 
+structure would take a quadratic amount of memory, and would be less efficient
+for adding/removing nodes, unmatching theoretical complexity. In the next
+paragraphs, we will explain more precisely the structure we chosen.
+
+\vspace{1.2em}
+
+An FD-Graph can have two types of nodes (simple, compound), and up to 5 type
+of arcs (full, dotted, closed full, closed dotted, D). Furthermore, for closure
+and marking purposes, each vertex must have a counter embedded. Finally, we
+are supposed to build a graph out of an implication system based on 
+\lil{BitSet}. Hence, to ease conversion and computations, we label each vertex
+by its \lil{BitSet} representation. Eventually, a vertex will be defined as in 
+the following snippet:
+
+\begin{lstlisting}[language=CoreCpp, style=Light, breaklines=true]
+typedef struct vertex vertex_t;
+
+struct vertex{
+  std::map<std::string, std::list<elt_t *>> edges;
+  unsigned int counter;
+};
+
+typedef std::pair<FCA::BitSet, vertex_t> elt_t;
+
+\end{lstlisting}
+
+\noindent Where \lil{elt_t} will be elements stored in the overhaul graph 
+structure, being only a list of \lil{elt_t}:
+
+\begin{lstlisting}[language=CoreCpp, style=Light, breaklines=true]
+typedef std::list<elt_t> graph;
+\end{lstlisting}
+
+\noindent Note that we use pointer on adjacent nodes to represent edges 
+(\lil{std::list<elt_t *>}). This avoids duplication of \lil{BitSet}, ease use 
+of counters and allow for fast access to one node to a given adjacent one. The 
+\lil{map} structure deserves to represent all type of edges a vertex can have.
+We prefered \lil{map} instead of say \lil{list} or \lil{vector} for the 
+trade-off between access and code readability. Having string keys makes the code
+clearer, while keeping a logarithmic access time to a given list. Because the 
+number of list is constant, the excess of computations with respect to a 
+\lil{vector} is negligible. 
+
+\vspace{1.2em}
+
+In order to illustrate, we give an example of a simple basis, 
+
+
+\subsubsection{A quick overview of complexity}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

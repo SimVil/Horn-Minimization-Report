@@ -9,3 +9,6 @@ Ref/*
 *.toc
 *.loa
 *.lof
+*.vrb
+*.snm
+*.nav

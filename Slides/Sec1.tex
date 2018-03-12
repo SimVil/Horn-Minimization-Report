@@ -1,0 +1,65 @@
+% ============================================================================ %
+% Section: Math notions
+% ============================================================================ %
+
+% subsection: Sets, implications, closure system, functional dependency
+
+\subsection{Elements of set theory}
+
+\begin{frame}
+\frametitle{Closure operator and systems}
+
+Set $\Sg$ of attributes. A map $\varphi: 2^{\Sg} \imp 2^{\Sg}$ is a 
+\turemp{closure operator} if, $\forall X, Y, Z \subseteq \Sg$:
+\begin{itemize}
+	\item $X \subseteq \varphi(X)$ \quad \asbemp{(increasing)}
+	\item $X \subseteq Y \imp \varphi(X) \subseteq \varphi(Y)$ 
+	\quad \asbemp{(isotone)}
+	\item $\varphi(\varphi(X)) = \varphi(X)$ \quad \asbemp{(idempotent)}
+\end{itemize}
+
+\vspace{1.2em}
+
+Some details:
+\begin{itemize}
+	\item ($\Sg$, $\varphi$) is a closure space,
+	\item X is \turemp{closed} if $X = \varphi(X)$,
+	\item $\Sg^\varphi$ set of closed sets: \turemp{closure system}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Example of closure operator}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Notations}
+
+\begin{lstlisting}[language=CoreCpp, style=SlideShadow, breaklines=true]
+typedef struct vertex vertex_t;
+typedef std::pair<FCA::BitSet, vertex_t> elt_t;
+std::vector<std:string> sigma = {"a", "b", "c", "d"};
+elt_t *p = NULL;
+void *c = nullptr;
+
+// defines a structure
+struct vertex {
+  std::map<std::string, std::list<elt_t *>> edges;
+  unsigned int counter;
+};
+
+if (p) { exit(0); } else { return "Pouet"; }
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}{title}
+
+\end{frame}
+
+% subsection: hypergraphs
+
+% subsection: logic
+
+% subsection: open to lattice theory and congruences
