@@ -30,27 +30,66 @@ Some details:
 \end{frame}
 
 \begin{frame}
-\frametitle{Example of closure operator}
+\frametitle{Closure Example}
+
+\begin{columns}
+
+\column{0.5\textwidth}
+
+
+
+\begin{itemize}
+	\item Directed graph $G = (V, E)$.
+	\item \turemp{Closure} $\varphi(X)$ of $X \subseteq V$: all the reachable 
+	vertices 
+	starting from $X$.
+	\item $\varphi(\{A, B \}) = \{A, B, C, D \}$.
+	\item $\varphi(\{F \}) = \{F \}$, $\{F \}$ is \turemp{closed}.
+\end{itemize}
+
+
+\column{0.5\textwidth}
+\begin{figure}[h]
+	\centering
+	
+	\begin{tikzpicture}
+	
+	\node[Vertex, label=above:{E}] (e1) at (3, 1.5) {};
+	\node[Vertex, fill=alizarine, label=left:{A}] (a1) at (2, 0.5) {};
+	\node[Vertex, label=right:{D}] (d1) at (4, -0.5) {};
+	\node[Vertex, fill=alizarine, label=left:{B}] (b1) at (2, -0.5) {};
+	\node[Vertex, label=below:{C}] (c1) at (3, -1.5) {};
+	\node[Vertex, fill=emerald, label=below:{F}] (f1) at (4, 0.5) {};
+	
+	\draw[->] (e1) -- (a1);
+	\draw[->] (e1) -- (f1);
+	\draw[->] (a1) -- (b1);
+	\draw[->] (a1) -- (c1);
+	\draw[->] (c1) -- (d1);
+	\draw[->] (c1) -- (b1);
+	
+	\draw[emerald, fill=emerald, fill opacity=0.2] (f1) circle (0.3);
+	
+	\draw[alizarine, 
+		thick,
+		rounded corners,
+		fill=alizarine, 
+		fill opacity=0.21]
+	(2, 0.8) -- (2.3, 0.8) -- (2.3, -0.4) -- (3, -1.1) --
+	(3.7, -0.4) -- (4, -0.1) -- (4.4, -0.5) -- (3, -1.9) --
+	(1.7, -0.6) -- (1.7, 0.8) -- (2, 0.8);
+	
+	\end{tikzpicture}
+	\caption{Closure of a vertex in a directed graph}
+\end{figure}
+\end{columns}
+
+
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}
 \frametitle{Notations}
 
-\begin{lstlisting}[language=CoreCpp, style=SlideShadow, breaklines=true]
-typedef struct vertex vertex_t;
-typedef std::pair<FCA::BitSet, vertex_t> elt_t;
-std::vector<std:string> sigma = {"a", "b", "c", "d"};
-elt_t *p = NULL;
-void *c = nullptr;
-
-// defines a structure
-struct vertex {
-  std::map<std::string, std::list<elt_t *>> edges;
-  unsigned int counter;
-};
-
-if (p) { exit(0); } else { return "Pouet"; }
-\end{lstlisting}
 
 \end{frame}
 
