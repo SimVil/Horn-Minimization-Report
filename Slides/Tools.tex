@@ -22,9 +22,10 @@ Set $\Sg$ of attributes. A map $\varphi: 2^{\Sg} \imp 2^{\Sg}$ is a
 
 Some details:
 \begin{itemize}
-	\item ($\Sg$, $\varphi$) is a closure space,
+	% \item ($\Sg$, $\varphi$) is a closure space,
 	\item X is \turemp{closed} if $X = \varphi(X)$,
 	\item $\Sg^\varphi$ set of closed sets: \turemp{closure system}.
+	\item $\Sg^\varphi$ is closed under \turemp{intersection}, contains $\Sg$.
 \end{itemize}
 
 \end{frame}
@@ -84,17 +85,84 @@ Some details:
 \end{figure}
 \end{columns}
 
+\end{frame}
+
+\begin{frame}
+\frametitle{Implications}
+
+$A, B \subseteq \Sg$. An \turemp{implication} is:
+\begin{itemize}
+	\item $A \imp B$, $A$ \turemp{premise}, $B$ \turemp{conclusion}.
+	\item \turemp{cause/consequence} relation: \midemp{"If we have A, we have 
+	B"}.
+	\item $M \subseteq \Sg$ \turemp{model} of $A \imp B$ if
+		 \[B \subseteq M \lor A \nsubseteq M \]
+	denoted $M \models A \imp B$, $A \imp B$ \turemp{follows} from $M$.
+\end{itemize}
+
+\vspace{0.5em}
+
+Set of implications $\I$: \turemp{implication system}.
+\begin{itemize}
+	\item $M \models \I$ if each element of $\I$ follows from $M$,
+	\item $\I \models A \imp B$: all models of $\I$ are models of $A \imp B$.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Implications and closure}
+
+Given $\I$ an implication system:
+\begin{itemize}
+	\item closure operator $\I(X)$: \turemp{smallest model} (inclusion wise) of 
+	$\I$ containing $X$, $X \subseteq \Sg$. 
+	\item Models of $\I$ form a \turemp{closure system}:
+		\[ \Sg^{\I} = \{ M \subseteq \Sg \ | \ M = \I(M) \} \]
+\end{itemize}
+
+\vspace{1.2em}
+
+\begin{lightreminder}
+Important property:
+\begin{itemize}
+	\item $\I \models A \imp B$ iff $B \subseteq \I(A)$
+\end{itemize}
+\end{lightreminder}
 
 \end{frame}
 
 \begin{frame}
-\frametitle{Notations}
+\frametitle{Small Example}
 
+Let $\I$ be an implication system:
+\begin{itemize}
+	\item $\Sg = \{ a, \ b, \ c, \ d, \ e \}$,
+	\item $\I = \{ ab \imp c, \ bd \imp a, ce \imp abd \}$
+\end{itemize}
+
+\vspace{1.2em}
+
+We have:
+\begin{itemize}
+	\item $\I(b) = b$, $b$ is \turemp{closed}, hence a \turemp{model} of $\I$,
+	\item $\I(bd) = abcd$, $bd$ is \turemp{not} a model \quad 
+		\asbemp{($abcd$ is)}.
+	\item $\emptyset$ is also a model.
+\end{itemize}
 
 \end{frame}
 
-\begin{frame}{title}
+\begin{frame}
+\frametitle{Applications}
 
+\begin{itemize}
+	\item Relational Databases,
+	\item Formal Concept analysis,
+	\item Conceptual exploration,
+	\item Linguistics ?
+\end{itemize}
 \end{frame}
 
 % subsection: hypergraphs
