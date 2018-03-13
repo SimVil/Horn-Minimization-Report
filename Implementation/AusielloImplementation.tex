@@ -4,6 +4,9 @@
 
 \subsubsection{Recall the theoretical structure}
 
+In this paragraph, we will recall essential elements of an FD-Graphs, namely
+the possible arcs, the structure we may need to compute closure and so forth.
+
 \subsubsection{Code definition}
 
 The algorithms are given in terms of the size of an FD-graph. In 
@@ -54,8 +57,44 @@ number of list is constant, the excess of computations with respect to a
 
 \vspace{1.2em}
 
-In order to illustrate, we give an example of a simple basis, 
+In order to illustrate, we give an example of a simple basis $ab \imp c$ 
+represented through FD-Graph both graphically and with our data structure in
+figure \ref{fig:Graph-DS}. In this figure "\&" stands for the \belemp{address}
+of following vertex. Also, for sake of clarity we did not drawn the closure of 
+the graph nor the counters. Only initial arcs are represented: dotted, full and 
+D ones. 
+ 
 
+\begin{figure}[ht]
+	\input{Pictures/Graph-DS.tex}
+	\label{fig:Graph-DS}
+\end{figure}
+
+Note that due to lack of time, this is the only structure we provided. Here are
+some ideas and points that one should read in regard to implement another 
+structure for representing FD-Graphs. First recall that the graph should have
+a space complexity in $O(|\I|)$ according to Ausiello and al. (see 
+\cite{ausiello_minimal_1986}). In this paper, implication basis are provided
+under hypergraphs framework and the size $|\I|$ of $\I$ is the size of the 
+structure in terms of adjacency lists. Fortunately, whether we consider 
+hypergraphs or usual set notations, $|I|$ is still $O(|B||\Sg|)$ since we 
+have $|B|$ hyperarcs, going to at most $|\Sg|$ single attributes (under reduced
+form). The size of the associated FD-Graph should be linear in the size $\I$.
+
+\vspace{1.2em}
+
+We are going to investigate our structure. Because we made a structure supposed
+to store the closure of a graph also, we will study here the space used only
+for representation of the FD-Graph (simple/compound nodes, and dotted/full 
+arcs) to be fair in comparison:
+\begin{itemize}
+	\item We have $O(|\Sg| + |B|)$ nodes,
+	\item we will have full arcs to single attributes for bodies only, 
+	that is, $O(|B||\Sg|)$ = $O(|I|)$ space complexity,
+	\item we will have dotted arcs only from compound bodies of $\I$ to 
+	single attributes, also resulting in $O(|I|)$ space complexity,
+	\item for each dotted arc, we will have a D-arc, hn
+\end{itemize}
 
 \subsubsection{A quick overview of complexity}
 
