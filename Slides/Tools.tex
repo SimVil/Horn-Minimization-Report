@@ -41,11 +41,12 @@ Some details:
 
 \begin{itemize}
 	\item Directed graph $G = (V, E)$.
-	\item \turemp{Closure} $\varphi(X)$ of $X \subseteq V$: all the reachable 
-	vertices 
-	starting from $X$.
-	\item $\varphi(\{A, B \}) = \{A, B, C, D \}$.
-	\item $\varphi(\{F \}) = \{F \}$, $\{F \}$ is \turemp{closed}.
+	\item \turemp{Closure} $\varphi(X)$ of $X \subseteq V$: every 
+	vertices reachable from $X$.
+	\item[{\color{alizarine}$\blacktriangleright$}] $\varphi(\{A, B \}) = \{A, 
+	B, C, D \}$.
+	\item[{\color{amethyst}$\blacktriangleright$}] $\varphi(\{F \}) = \{F \}$, 
+	$\{F \}$ is \turemp{closed}.
 \end{itemize}
 
 
@@ -60,7 +61,7 @@ Some details:
 	\node[Vertex, label=right:{D}] (d1) at (4, -0.5) {};
 	\node[Vertex, fill=alizarine, label=left:{B}] (b1) at (2, -0.5) {};
 	\node[Vertex, label=below:{C}] (c1) at (3, -1.5) {};
-	\node[Vertex, fill=emerald, label=below:{F}] (f1) at (4, 0.5) {};
+	\node[Vertex, fill=amethyst, label=below:{F}] (f1) at (4, 0.5) {};
 	
 	\draw[->] (e1) -- (a1);
 	\draw[->] (e1) -- (f1);
@@ -69,7 +70,7 @@ Some details:
 	\draw[->] (c1) -- (d1);
 	\draw[->] (c1) -- (b1);
 	
-	\draw[emerald, fill=emerald, fill opacity=0.2] (f1) circle (0.3);
+	\draw[amethyst, fill=magenta, fill opacity=0.1, thick] (f1) circle (0.3);
 	
 	\draw[alizarine, 
 		thick,

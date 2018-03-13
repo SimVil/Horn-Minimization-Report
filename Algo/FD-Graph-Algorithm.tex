@@ -594,6 +594,24 @@ complexity. As a consequence the whole algorithm may run in $O(|\body{\I}|
 
 \subsection{Elements of proofs}
 
+{\color{alizarine}
+This section needs to be adjusted and corrected. In fact, statements lacks
+some precision, but conclusion is unchanged: both algorithm (Maier and 
+Ausiello) performs computations on same objects, but according to the 
+following statement 
+
+\begin{proposition} We have equivalence between the following:
+\begin{itemize}
+	\item[(i)] $A \equiv B$ and $A \ddv B$,
+	\item[(ii)] $A$ is "minimal" superfluous with respect to $B$,
+	\item[(iii)] third part of proposition 7. (to be adapted)
+\end{itemize}
+	
+\end{proposition}	
+	
+	
+}
+
 In this section we write various claims which help us prove correctness and 
 equivalence of Maier/Ausiello's algorithms. Knowledge about FD-graphs is 
 assumed. Equivalence of redundancy elimination is not shown (1st step of 
@@ -626,7 +644,9 @@ able to find a list of proper subsets $A_i$ of $A$ (possibly single attributes)
 such that $\bigcup_{i} A_i \models B$. Adding $A \imp C$ will add the node $A$
 and in particular dotted arcs from $A$ to each attributes of $\bigcup_{i} A_i 
 \subseteq A$. Thus, we will have a dotted path from $A$ to $\bigcup_{i} A_i$ and
-consequently, to $B$. $A$ is indeed superfluous.
+consequently, to $B$. $A$ is indeed superfluous. Because $B$ is equivalent to 
+$A$ by assumption, this property is preserved when adding a node.
+
 \end{proof}
 
 \begin{proposition} \label{prop:maier.equiv_dd_sub} The following statements 
@@ -647,7 +667,7 @@ implication, that is $\I - E_{\I}(A) \models A \imp B$.
 \begin{proposition} \label{prop:maier.equiv_ssup_dd}
 the following statements are equivalent, for $A, B$ bodies of $\I$:
 \begin{itemize}
-	\item[(i)] $A \ddv B$,
+	\item[(i)] $A \ddv B$ and $B \equiv A$,
 	\item[(ii)] the node $A$ is superfluous with respect to $B$, and there 
 	exists 
 	a dotted FD-path from $A$ to $B$ not using any outgoing full arcs of
@@ -669,7 +689,7 @@ we would contradict direct determination.
 
 \vspace{1.2em}
 
-(ii) $\imp$ (i). Suppose $A$ is superfluous with respect to $B$ and there 
+(ii) $\imp$ (i). Suppose $A$ is superfluous and there 
 exists a dotted FD-path from $A$ to $B$ not using any outgoing full arcs 
 from nodes equivalent to $A$. Those full arcs represent exactly the 
 implications contained in $E_{\I}(A)$. Since we don't use them, the path still 
@@ -685,8 +705,8 @@ E_{\I}(A) \models A \imp B$.
 	\begin{itemize}
 		\item[(i)] $A$ is a superfluous node,
 		\item[(ii)] $A$ is superfluous with respect to $B$, and there exists a
-		dotted path from $A$ to $B$ not using any outgoing full arcs from nodes
-		equivalent to $A$.
+		dotted path from $A$ to an equivalent node not using any outgoing full 
+		arcs from nodes	equivalent to $A$.
 	\end{itemize}
 	
 \end{proposition}
@@ -715,8 +735,8 @@ From the previous claims, we can yield the following one
 \begin{proposition} \label{prop:maier.equiv_sup_dd_sub}
 	The following statements are equivalent:
 	\begin{itemize}
-		\item[(i)] there exists $B$ such that $A \ddv B$,
-		\item[(ii)] $A$ is superfluous,
+		\item[(i)] there exists $B \equiv A$ such that $A \ddv B$,
+		\item[(ii)] $A$ is superfluous with respect to $B$,
 		\item[(iii)] there exists $C$ such that $A \equiv C$ and $\I - \{A \imp 
 		D \} \models A \imp C$. (possibly, $C = B$).
 	\end{itemize}
@@ -731,7 +751,8 @@ From the previous claims, we can yield the following one
 
 Those claims help to see the relation between operations of the algorithms. 
 Indeed, the last claim states that finding a direct determination is the same
-as finding a superfluous node, therefore the two algorithms are looking for
+as finding a superfluous node (under equivalence constraint), therefore the two 
+algorithms are looking for
 the same structures in different terminologies. This emphasizes the fact they
 work on the same computations. Remark: Maier algorithm do it in a special 
 order (some kinds of minimal paths in terms of FD-graph. Can we remove them in 
