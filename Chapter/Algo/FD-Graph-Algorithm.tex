@@ -601,8 +601,55 @@ complexity for finding and removing superfluousness must not exceed $O(|B|^2 +
 \begin{enumerate}
 	\item removing superfluous nodes within the closure (see algorithm 
 	\ref{alg:superfluousnessclosure})
-	\item removing superfluous nodes in the initial graph
+	\item removing superfluous nodes in the initial graph (see algorithm 
+	\ref{alg:superfluousness})
 \end{enumerate}
+
+\vspace{1.2em}
+
+Let us focus first on superfluousness elimination within the closure of an 
+FD-Graph. Let us consider $G^+$ to be the closure of some FD-graph $G$. First 
+step is to find superfluous nodes. For the recall, this property can hold only 
+for compound bodies of the implication system $G$ models. At first sight, one
+could think of finding superfluousness as follows:
+	
+\begin{algorithm}
+	
+	\ForEach{$i \in V_c$}{
+		\ForEach{$j \in L_i^{1+}$}{
+			\ForEach{$k \in L_j^{0+} \cup L_j^{0+}$}{
+				\If{$k = i$}{
+					$i$ superflous w.r.t $j$ \;	
+				}	
+			}
+		}
+	}
+\end{algorithm}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+
+\node[Vertex, label=above:{$i$}] (i) at (0, 1) {};
+\node[Vertex, label=right:{$j$}] (j) at (0, 0) {};
+\node[Vertex, label=below:{$k_1$}] (k1) at (-1, -1) {};
+\node[Vertex, label=below:{$k_2$}] (k2) at (0, -1) {};
+\node[Vertex, label=below:{$k_3$}] (k3) at (1, -1) {};
+
+\draw[->, dotted] (i) to [bend right=20] (j);
+\draw[->, belize] (j) to [bend right=20] (i);
+\draw[->, belize] (j) -- (k1);
+\draw[->, belize] (j) -- (k2);
+\draw[->, belize] (j) -- (k3);
+
+\end{tikzpicture}
+\caption{Finding superfluous nodes in FD-Graphs}
+\label{fig:findingsuperfluous}
+\end{figure}
+
+\noindent The issue being the required amount of time to perform such 
+computations. Indeed, Such nested loops will account for $O(|V_c||V|^2) = 
+O(|B|(|B| + |\Sg|)^2) = O(|B|^3 + |B||\I| + |\I||\Sg|)$ operations. 
 
 \begin{algorithm}
 \KwIn{$G_{\I}^{+}$: the closure of some FD-Graph $G_{\I}$}
