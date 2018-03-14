@@ -4,6 +4,8 @@
 \input{../Subfiles/Operators.tex}
 \input{../Subfiles/Languages.tex}
 
+\input{Chapter/Glossary.tex}
+
 \pagestyle{fancy}
 
 
@@ -13,102 +15,59 @@
 
 \begin{document}
 	
-\input{Title/Title.tex}
+\input{Chapter/Title.tex}
 	
-%\maketitle
-\tableofcontents
+\pagenumbering{roman}
+
+\input{Chapter/Acknowledgement.tex}
+\addcontentsline{toc}{chapter}{Acknowledgement}	
+
+\newpage
 \listoffigures
-\listofalgorithms
+\newpage
 
-\chapter{Introduction and definitions}
+\newpage
+\listoftables
+\newpage
 
-In this chapter, we will focus on giving definitions of the mathematical 
-objects we may need later. As we shall see, each section giving definitions is 
-a different way to represent the same idea. Then, we will introduce the Horn 
-Minimization task without any algorithm, to provide the reader with some 
-intuition and simple examples of our problem. A more detailed description of 
-the minimization task and existing solutions or studies will be given in 
-chapter 2. 
+\input{Chapter/Abstract.tex}
+\addcontentsline{toc}{chapter}{Abstract}
 
-\vspace{1.2em}
+\tableofcontents
 
-To be more precise, we develop first the main framework we may use to reason:
-closure systems over attribute sets. We will often try to think of various 
-algorithms and proofs within this framework to have a red line to follow. Then,
-we approach propositional logic and few elements of graph theory. To emphasize
-the links between various aspects, we will try to use the same notations on 
-equivalent notions.
+% Introduction
+\input{Chapter/Intro.tex}
+\addcontentsline{toc}{chapter}{Introduction}
+
+\pagenumbering{arabic}
 
 
-% BD, Implicational Basis and stuff
-\input{Defs/Closure-Def.tex}
-
-
-% Logical POV
-\input{Defs/Logic-Def.tex}
-
-
-% (Hyper)-graphs POV
-\input{Defs/Hyper-Def.tex}
-
-
-% Horn minimization task
-\input{Defs/Minimization-Def.tex}
-
+% Chapter I: Definitions, and so forth
+\input{Chapter/Defs/I-Definitions.tex}
 
 
 % Chapter II: A review on algorithms for horn minimization
-\chapter{Algorithms}
+\input{Chapter/Algo/II-Algorithms.tex}
 
-In the first chapter we introduced the aim of our study, our working procedure
-and the main tools for us to understand the next explanations. In this part, we
-will focus on reviewing the existing algorithms for the Horn minimization task. 
+% Chapter III: Implementation and results
+\input{Chapter/Implementation/III-Implementation.tex}
 
-
-% History / soa of the problem.
-% Start from explaining the applications in real life, come to implications, 
-% explain the various existing problems, come to ours, explain that it is 
-% polynomial, develop the sens of various algorithms in various terminologies.
-% Explain (again) that our task is to compare those algorithms in both
-% theoretical and practical aspects.
-
-\section{Minimization by reduction}
-
-% 2-steps algorithm
-\input{Algo/2-steps-Algorithm.tex}
+% Conclusion
+\input{Chapter/Conclusion.tex}
+\addcontentsline{toc}{chapter}{Conclusion}
 
 
-% Maier Algorithm
-\input{Algo/Maier-Algorithm.tex}
-
-
-% Ausiello Graph algorithm (FD-Graph)
-\input{Algo/FD-Graph-Algorithm.tex}
-
-
-\section{Minimization by construction}
-
-
-% Letter algorithm
-\input{Algo/Letter-Algorithm.tex}
-
-
-% Angluin Algorithm
-\input{Algo/Angluin-Algorithm.tex}
-
-
-\chapter{Efficiency, comparison, implementation}
-
-% Starting from the code of someone else
-\input{Implementation/starting.tex}
-
-% Measuring
-\input{Implementation/measure.tex}
-
-% Ausiello
-\input{Implementation/AusielloImplementation.tex}
+\newpage
+\pagenumbering{roman}
+\setcounter{page}{7}
 
 \bibliographystyle{acm}
 	\bibliography{Biblio.bib}
+
+\newpage
+
+\printglossary
+
+
 
 \end{document}

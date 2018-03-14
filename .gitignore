@@ -12,3 +12,9 @@ Ref/*
 *.vrb
 *.snm
 *.nav
+*.glg
+*.lot
+*.xdy
+*.glo
+*.gls
+*.ist
