@@ -590,6 +590,124 @@ go over all the full arcs of the FD-graph, which account for a $O(|\I|)$
 complexity. As a consequence the whole algorithm may run in $O(|\body{\I}| 
 \cdot |\I|)$ (because of the closure computation).
 
+\vspace{1.2em}
+
+The remaining part of this section will be devoted to propose ways to 
+implement efficiently the principles we just presented. By "implementing 
+efficiently" we mean to give algorithms, using adjacency list structure, 
+to perform the operations with required amount of time. In our terms, time 
+complexity for finding and removing superfluousness must not exceed $O(|B|^2 + 
+|\I|)$. We divide those computations in 2 parts:
+\begin{enumerate}
+	\item removing superfluous nodes within the closure (see algorithm 
+	\ref{alg:superfluousnessclosure})
+	\item removing superfluous nodes in the initial graph
+\end{enumerate}
+
+\begin{algorithm}
+\KwIn{$G_{\I}^{+}$: the closure of some FD-Graph $G_{\I}$}
+\KwOut{$L$: list of pair of nodes to be altered in the initial graph}
+
+\BlankLine
+\BlankLine
+
+$L = \emptyset$\;
+
+\ForEach{$i \in V_c$}{
+	\ForEach{$j \in V$}{
+		$color(j) := 0$ \;	
+	}
+
+	\ForEach{$j \in L_{i}^{1+}$ s.t $color(j) = 0$}{
+		\ForEach{$k \in L_{j}^{0+} \cup L_{j}^{1+}$ s.t $color(k) = 0$}{
+			$color(k) := 1$ \;
+			\If{$k = i$}{
+				$i$ \aliemp{superfluous} \;	
+				keep $j$ \;
+			}
+		}
+	}
+
+	\If{$i$ superfluous (w.r.t $j$)}{
+		\ForEach{$k \in L_i^{0+}$}{
+			$color(k) := 2$ \;
+		}
+	
+		\ForEach{$k \in L_j^{1+}$}{
+			\If{$color(k) = 2$}{
+				move $k$ to $L_j^{0+}$ \;	
+			}
+		}
+	
+		$L_i^{0+} = \emptyset$ \;
+		$L_i^{1+} = \emptyset$ \;
+		add $(i, j)$ to $L$ \;
+		
+	}
+
+}
+
+\BlankLine
+
+\ForEach{$i \in V$ s.t $i$ \aliemp{not} superfluous}
+{
+	\ForEach{$j \in L_{i}^{0+} \cup L_{i}^{1+}$}{
+		\If{$j$ superfluous}{
+			remove $j$ from $L_{i}^{0+} \cup L_{i}^{1+}$ \;	
+		}
+	}
+}
+	
+\caption{SuperfluousnessClosureElimination}
+\label{alg:superfluousnessclosure}
+\end{algorithm}
+
+\begin{algorithm}
+\KwIn{$L$: a list of pair of vertices $(i, j)$, $i$ superfluous w.r.t $j$}
+
+\BlankLine
+\BlankLine
+
+$dest$ array of size $|V|$\;
+\ForEach{$v \in V$}{
+	$dest[v] := v$ \;
+	$color(v) := 0$ \;
+}
+
+\BlankLine
+
+\ForEach{$(i, j) \in L$ in \aliemp{reverse order}}{
+	$dest[i] = dest[j]$ \;
+}
+
+\BlankLine
+
+\ForEach{$i \in V$, $i$ superfluous}{
+	\ForEach{$j \in L_{dest[i]}^{0} \cup L_{dest[j]}^1$}{
+		$color(j) := 1$ \;
+	}
+
+	\ForEach{$j \in L_i^{0}$, s.t $color(j) = 0$}{
+		move $j$ to $L_{dest[i]}^{0}$ \;
+	}
+
+	Reset all colors to $0$ \;
+
+}
+
+\BlankLine
+
+\ForEach{$i \in V$, $i$ is simple}{
+	\ForEach{$j \in D_i$, $j$ superfluous}{
+		remove $j$ from $D_i$ \;
+	}
+}
+
+Remove superfluous nodes from $V$ \;
+
+\caption{SuperfluousnessElimination}
+\label{alg:superfluousness}
+\end{algorithm}
 
 
 \subsection{Elements of proofs}

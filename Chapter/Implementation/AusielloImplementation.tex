@@ -70,7 +70,7 @@ D ones.
 	\label{fig:Graph-DS}
 \end{figure}
 
-Note that due to lack of time, this is the only structure we provided. Here are
+Due to lack of time, this is the only structure we provided. Here are
 some ideas and points that one should read in regard to implement another 
 structure for representing FD-Graphs. First recall that the graph should have
 a space complexity in $O(|\I|)$ according to Ausiello and al. (see 
@@ -88,19 +88,131 @@ to store the closure of a graph also, we will study here the space used only
 for representation of the FD-Graph (simple/compound nodes, and dotted/full 
 arcs) to be fair in comparison:
 \begin{itemize}
-	\item We have $O(|\Sg| + |B|)$ nodes,
+	\item we have $O(|\Sg| + |B|)$ nodes,
 	\item we will have full arcs to single attributes for bodies only, 
-	that is, $O(|B||\Sg|)$ = $O(|I|)$ space complexity,
+	that is, $O(|B||\Sg|)$ = $O(|\I|)$ space complexity,
 	\item we will have dotted arcs only from compound bodies of $\I$ to 
-	single attributes, also resulting in $O(|I|)$ space complexity,
-	\item for each dotted arc, we will have a D-arc, hn
+	single attributes, also resulting in $O(|\I|)$ space complexity,
+	\item for each dotted arc, we will have a D-arc, leading also to $O(|\I|)$
+	space complexity
 \end{itemize}
+Summing up, we will have at most $O(|\Sg| + |B|)$ vertices and $O(3|\I|)$ 
+edges into the whole graph, resulting in $O(|\Sg| + |B| + 3|\I|) = O(|\I|)$ 
+space complexity. 
+
+\vspace{1.2em}
+
+Note that the closure has a space complexity of $O((|B| + |\Sg|)^2) = O(|\I|^2)$
+because the closure can be a complete graph. This also matches theoretic 
+expectations. Because algorithms sometimes need to run over compound nodes 
+only, single attributes only or bodies only, we could have split the lists 
+of vertices into both single and compound nodes. Here are few arguments 
+explaining why we did not make so:
+\begin{itemize}
+	\item single attribute can be bodies of $\I$, meaning that tearing apart
+	single attributes on the one hand, and compound ones on the other would 
+	have bodies of $\I$ (nodes with full arcs) distributed over two 
+	distinct structures, breaking the interest of splitting;
+	
+	\item whereas the split would have ease for loops in algorithms, limiting
+	them to a minimal number of steps, because structure may implicitly refers
+	to each other (through edges), we would have lost code readability;
+	
+	\item the gain obtained in previously mentioned loops is also negligible
+	in a sense. Provided we run over all vertices  of the graph, selecting a
+	vertex or not according to its properties is $O(1)$. Consequently, 
+	computations for vertices not matching wanted properties are reduced to this
+	$O(1)$ checking, giving a small practical computation overhead and same 
+	theoretical complexity as divided nodes structure.
+\end{itemize}
+\noindent Also, to keep this splitting, we could have duplicated some nodes in
+order not to jump implicitly from one structure to another. But this would have
+obsoletely increased allocated space, and may have caused problem or required 
+more operations for proper removal of vertices and edges. Indeed, we would have
+been compelled to check that if a node is deleted, there is no duplicate left
+in other lists. 
 
 \subsubsection{A quick overview of complexity}
 
+In this part, we will describe a complexity analysis of routines not being 
+algorithms of minimization. Namely, conversion from an implication basis to
+its graph representation and vice-versa. Because we use lists, adding an edge 
+to a given node is constant time. Put another vertex in the graph without edges 
+is also constant time for the same reason. Let us consider conversion from 
+implications to graph first. We present the theoretical algorithm in 
+\ref{alg:conv-imp-graph}. The procedure uses lists of vertices we previously
+describe ($L, D, \dots $) instead of theoretical notations such as $E$ for 
+edges. Actually, this is just a matter of notations, and whenever
+we modify an $L$ list, this can be seen as adding an edge to $E$. We chose this
+representation because the algorithm shows creation of the structure (notably 
+in memory), and as such, this way of writing demonstrates it better.
+
+\begin{algorithm}
+\KwIn{ \\
+	\quad $\I$: an implication system \\
+	\quad $\Sg$: attribute set}
+\KwOut{FD-Graph represention of $\I$ ($G_{\I}$)}
+
+\BlankLine
+\BlankLine
 
 
+\ForEach{$x \in \Sg$}{
+	$V = V \cup \{x \}$ \;
+}
 
+\BlankLine
+
+\ForEach{$A \imp B \in \I$}{
+	\If{$A \notin V$}{
+		$V = V \cup \{A \}$ \;
+		
+		\ForEach{$a \in A$}{
+			$L_{A}^{1} = L_{A}^{1} \cup \{a \}$ \;
+			$D_{a} = D_{a} \cup \{A \}$ \; 	
+		}	
+	}
+
+	\ForEach{$b \in B$}{
+		$L_{A}^{0} = L_{A}^{0} \cup \{b \}$ \; 
+	}
+}
+
+\caption{Implications to FD-Graph}
+\label{alg:conv-imp-graph}
+\end{algorithm}
+
+
+Provided access to a vertex can be done in $O(1)$, this algorithm runs in linear
+time in the size of $\I$. Because access to an element in a list requires linear
+time complexity in the size of the list, we used a marking trick to access 
+vertices quickly. Access to an element is required to get $D$. Here is the 
+idea: we use a temporary array (\lil{std::vector}) of size $|\Sg|$. Whenever we 
+add a new attribute to the graph, we add its address to the array at its index
+within the attribute set. Because the articles assume reduced form, there is no 
+need to test whether a node is already present when adding a new one. Hence, 
+the algorithm runs in $O(|\I|)$. In practice however, to widen the application 
+field of the algorithm, we added the possibility for $\I$ to have two distinct 
+implications with same bodies. Ensuring that a same body is added only once 
+requires $O(|B| + |\Sg|)$ time (accessing an element in a list) resulting in an 
+$O(|B|^2 + |\I|)$ conversion algorithm.
+
+\vspace{1.2em}
+
+The conversion from graph to implications consists in running over all nodes 
+of the graph with non-empty list of full arcs ($O(|B|)$) and adding each vertex
+of outgoing full arcs to the conclusion of such nodes ($O(|\Sg|)$). Hence, 
+backward conversion is $O(|\I|)$ time consuming.
+
+\vspace{1.2em}
+
+One would be curious about removing a vertex from the graph. Since we use lists
+we must run across all nodes to see whether there is outgoing arcs to the node
+we wan to remove. Because the closure of a graph has quadratic size with
+respect to $\I$, removing a vertex may be quadratic as well. However,
+as we have seen in preceding chapter, removing a vertex is highly contextual,
+and with sufficient analysis we can achieve better complexity using the 
+context of execution.
 
 
 
