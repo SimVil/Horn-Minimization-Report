@@ -1,0 +1,97 @@
+\centering
+\subfloat[$\I_c = \emptyset$ \midemp{($\I_c(c) = c$ and $\I(c) = ac$)}]{
+\begin{tikzpicture}[scale=0.6]
+
+\node (plc) at (-4, 4) {$(\I_c(\B(\I)), \  \subseteq)$};
+
+\node[Vertex, label=below:{$d$}] (lcd) at (-2, -2) {};
+\node[Vertex, label=below:{$c$}] (lcc) at (-4, -2) {};
+\node[Vertex, label=right:{$cd$}] (lccd) at (-3, 0) {};
+\node[Vertex, label=left:{$ab$}] (lcab) at (-5, 0) {};
+\node[Vertex, label=above:{$abcd$}] (lcabcd) at (-4, 2) {};
+
+\node (pl) at (3, 4) {$(\I(\B(\I)), \  \subseteq)$};
+
+\node[Vertex, label=below:{$ac$}] (lc) at (2, -1) {};
+\node[Vertex, label=below:{$bd$}] (ld) at (4, -1) {};
+\node[Vertex, label=above:{$abcdef$}] (lab) at (3, 1) {};
+
+\draw[turquoise, fill=turquoise, opacity=0.5, thick] (lcc) circle(0.5);
+\draw[turquoise, fill=turquoise, opacity=0.5, thick] (lc) circle(0.5);
+
+\draw (lcab) -- (lcabcd) -- (lccd) -- (lcc);
+\draw (lccd) -- (lcd);
+
+\draw (lc) -- (lab) -- (ld);
+
+\end{tikzpicture}
+}\qquad
+\subfloat[$\I_c = \{ c \rightarrow ac \}$ \midemp{($\I_c(d) = d$, $\I(d) = 
+bd$)}]{
+\begin{tikzpicture}[scale=0.6]
+
+\node[Vertex, label=below:{$d$}] (lcd) at (-2, -2) {};
+\node[Vertex, label=below:{$ac$}] (lcc) at (-4, -2) {};
+\node[Vertex, label=right:{$acd$}] (lccd) at (-3, 0) {};
+\node[Vertex, label=left:{$ab$}] (lcab) at (-5, 0) {};
+\node[Vertex, label=above:{$abcd$}] (lcabcd) at (-4, 2) {};
+
+
+\node[Vertex, label=below:{$ac$}] (lc) at (2, -1) {};
+\node[Vertex, label=below:{$bd$}] (ld) at (4, -1) {};
+\node[Vertex, label=above:{$abcdef$}] (lab) at (3, 1) {};
+
+\draw[turquoise, fill=turquoise, opacity=0.5, thick] (lcd) circle(0.5);
+\draw[turquoise, fill=turquoise, opacity=0.5, thick] (ld) circle(0.5);
+
+\draw (lcab) -- (lcabcd) -- (lccd) -- (lcc);
+\draw (lccd) -- (lcd);
+
+\draw (lc) -- (lab) -- (ld);
+
+\end{tikzpicture}
+}
+
+\subfloat[$\I_c = \{ c \rightarrow ac, \ d \rightarrow db \}$ 
+\midemp{($\I_c(ab) = abcd$ and 
+$\I(ab) = \Sg$)}]{
+\begin{tikzpicture}[scale=0.6]
+
+\node[Vertex, label=below:{$ac$}] (lcc) at (-4, -1) {};
+\node[Vertex, label=right:{$bd$}] (lcd) at (-3, -1) {};
+\node[Vertex, label=left:{$ab$}] (lcab) at (-5, -1) {};
+\node[Vertex, label=above:{$abcd$}] (lcabcd) at (-4, 1) {};
+
+\node[Vertex, label=below:{$ac$}] (lc) at (2, -1) {};
+\node[Vertex, label=below:{$bd$}] (ld) at (4, -1) {};
+\node[Vertex, label=above:{$abcdef$}] (lab) at (3, 1) {};
+
+\draw[turquoise, fill=turquoise, opacity=0.5, thick] (lcab) circle(0.5);
+\draw[turquoise, fill=turquoise, opacity=0.5, thick] (lab) circle(0.5);
+
+\draw (lcab) -- (lcabcd) -- (lcd);
+\draw (lcabcd) -- (lcc);
+
+\draw (lc) -- (lab) -- (ld);
+
+\end{tikzpicture}
+}\qquad
+\subfloat[$\I_c =$ \{\textit{c $\rightarrow$ ac, d $\rightarrow$ db, ab 
+$\rightarrow \Sg$}\}]{
+\begin{tikzpicture}[scale=0.6]
+
+\node[Vertex, label=below:{$ac$}] (lcc) at (-4, -1) {};
+\node[Vertex, label=below:{$bd$}] (lcd) at (-2, -1) {};
+\node[Vertex, label=above:{$abcdef$}] (lcab) at (-3, 1) {};
+
+\node[Vertex, label=below:{$ac$}] (lc) at (2, -1) {};
+\node[Vertex, label=below:{$bd$}] (ld) at (4, -1) {};
+\node[Vertex, label=above:{$abcdef$}] (lab) at (3, 1) {};
+
+\draw (lc) -- (lab) -- (ld);
+\draw (lcc) -- (lcab) -- (lcd);
+
+\end{tikzpicture}
+}
+\caption{Trace of \textsc{BercziMinimization} execution}
+\label{fig:berczi-trace}

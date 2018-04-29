@@ -1,0 +1,33 @@
+\centering
+\begin{tikzpicture}[scale=0.6]
+\node[Vertex, label=below:{$\emptyset$}] (epty) at (0, -3) {};
+\node[Vertex, label=left:{$a$}] (a) at (-2, -1) {};
+\node[Vertex, label=right:{$b$}] (b) at (0, -1) {};
+\node[Vertex, label=right:{$c$}] (c) at (2, -1) {};
+\node[Vertex, label=left:{$ab$}] (ab) at (-2, 1) {};
+\node[Vertex, label=left:{$ac$}] (ac) at (0, 1) {};
+\node[Vertex, label=right:{$bc$}] (bc) at (2, 1) {};
+\node[Vertex, label=above:{$abc$}] (abc) at (0, 3) {};
+
+\draw (epty) -- (a) -- (ac) -- (c) -- (epty) --
+	 (b) -- (ab) -- (abc) -- (bc) -- (b);
+\draw (ab) -- (a);
+\draw (bc) -- (c);
+\draw (abc) --(ac);
+
+\draw[midnight, fill=midnight, opacity=0.2, thick] (epty) circle(0.5);
+
+\draw[asbestos, fill=asbestos, fill opacity=0.2, rounded corners]
+(-2.5, -1.5) -- (0.5, -1.5) -- (0.5, -0.7) -- (-1.5, 1.4) -- (-2.5, 1.4) -- 
+cycle;
+
+\draw[asbestos, fill=asbestos, fill opacity=0.2, rounded corners]
+(-0.5, 3.4) -- (-0.5, 0.7) -- (1.9, -1.6) -- (2.5, -1) -- (2.5, 1.3) -- (0.4, 
+3.4) -- cycle;
+
+
+\end{tikzpicture}
+
+\caption{Equivalence classes representation of $\I =$ \{ \textit{a 
+$\longleftrightarrow$ b, c $\imp$ ab} \} }
+\label{fig:I-def-EQC}

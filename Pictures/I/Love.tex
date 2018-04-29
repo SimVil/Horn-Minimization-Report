@@ -1,0 +1,22 @@
+\centering
+
+\begin{tikzpicture}
+
+\node[Vertex, label=above left:{$Neige$}] (ng) at (-1, 1) {};
+\node[Vertex, label=below left:{$Seraphin$}] (s) at (-1, -1) {};
+\node[Vertex, label=above right:{$Narcisse$}] (na) at (1, 1) {};
+\node[Vertex, label=below right:{$Jezabel$}] (j) at (1, -1) {};
+
+\draw[->] (ng) to[bend right=20] (j);
+\draw[->] (s) -- (j);
+\draw[->] (s) -- (ng);
+\draw[->] (s) -- (na);
+\draw[->] (j) -- (na);
+\draw[->] (j) to[bend right=20] (ng);
+\draw[->] (na) to[in=45, out=135, loop] (na);
+
+
+\end{tikzpicture}
+
+\caption{Graph of "like" relation}
+\label{fig:I-love}

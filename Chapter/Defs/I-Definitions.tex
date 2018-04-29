@@ -1,4 +1,450 @@
-\chapter{Definitions, Framework}
+\chapter{Introduction to implications through closure systems}
+
+In this first chapter, we will be involved in presenting our topic of 
+minimization. For this ground to be understandable by as much readers as 
+possible, we will heavily rely on toy examples to illustrate and provide 
+intuition on the various notions we will introduce. To be more precise on the
+path we are about to follow in this chapter, we are first to expose an informal
+small example of the task we want to achieve. Then, we shall investigate the
+history of research on our topic, to act as an exposition of the actual 
+knowledge on the question and to give a context to our study. For the rest of
+this chapter we will get familiar with mathematical objects called 
+\midemp{closure operators} and \midemp{closure systems} modelling our problem.
+As we shall observe, the topic of minimization can be described in several 
+mathematical frameworks. However, even if we describe briefly other objects
+in next chapters, we will stick to our closure framework in all the report in
+order to have a leading light among various different terminologies.
+
+\section{Implications and minimization: first meeting}
+
+Let us imagine we are some specialist of flowers and plants in general. As such,
+we are interested in studying \belemp{correlations} between plant 
+characteristics. Some possible traits are: \textit{colourful, bloom, wither, 
+aquatic, seasonal, climbing, scented, flower, perennial} and so forth. Having
+observed countless plants during our studies, we are able to draw relations
+among all those \belemp{attributes}. For instance, we know that a plant having
+the attribute \textit{flower} is likely to have traits \textit{scent, bloom, 
+wither} while a plant being \textit{perennial} (i.e: does not need a lot of
+water to survive, like a cactus) is not likely to be \textit{aquatic}. 
+
+\vspace{1.2em}
+
+Those relations \textit{"if we have some attributes, we get those ones too"}
+depict correlation between attributes (not cause/consequence!). It is important
+to stress on the knowledge those relations bring. They just indicate that 
+whenever we have say \textit{flower}, we have also \textit{colourful}. This is 
+very different from saying that \textit{because} some plant is a flower, it 
+will be colourful. We call those correlation relations \belemp{implication}
+and use $ flower \imp colourful$ to denote \textit{"if we have the attribute
+flower, then we have colourful"}. Now let us give some implications:
+
+\begin{center}
+	\textit{(colourful, bloom $\imp$ seasonal), (colourful, wither $\imp$ 
+		seasonal), (bloom $\imp$ wither)}
+\end{center}
+
+\noindent All those implications represent a certain amount of knowledge. While
+in our example they are not numerous we could imagine having tons of them. Hence
+we would wonder whether there is a way to reduce the number of implications 
+while keeping all the knowledge they represent. This question is 
+\belemp{minimization}. Actually, in our small example we can reduce
+the number of implications. Take \textit{(colourful, bloom $\imp$ seasonal)}. 
+We can derive this implication relation only with the two other 
+ones. Indeed, because a plant \textit{blooming} is likely to \textit{wither} 
+(3rd implication), we have \textit{(colourful, bloom $\imp$ wither)}, but since 
+we now have \textit{wither} and \textit{colourful} we also have 
+\textit{seasonal} (2nd implication). That is,
+the implication \textit{(colourful, bloom $\imp$ seasonal)} is useless (or 
+\belemp{redundant}) in our context and can be removed. Our set of implications 
+will then be smaller, but pointing out the same relations as before. 
+
+\vspace{1.2em}
+
+To summarize, we have seen that out of a set of \belemp{attributes} we can draw
+several relations called \belemp{implications} providing some knowledge. We also
+realized that sometimes, some implications are not necessary. Consequently, 
+the set of implications we are given can be \belemp{minimized} without 
+altering the information it contains. This is the topic we were interested 
+during this master thesis. In the next section, we will trace back the overhaul
+knowledge on this question.
+
+\section{Research on implications theories minimization}
+
+This section is intended to supply the reader with a general overview of the
+minimization topic. After a short contextual information, we focus on some 
+relevant results on the question by providing references to algorithms and 
+properties dedicated to our problem. Eventually, we situate our work within this
+context.
+
+\vspace{1.2em}
+
+The question of minimization has been discussed and developed through various 
+frameworks, and several computer scientists communities. Notice that in order 
+not to make this synthesis too long, we will stay within the context of 
+minimization and will not trace the field of implication theories in general. 
+For a survey of this domain anyway, the reader should refer to 
+\cite{wild_joy_2017}. Also, note that minimality in general terms is not 
+unique. Indeed, one can define several type of minimality among implication 
+systems. For instance, not only we can define minimality with respect to the 
+number of implication within a system (which is our interest) but also with 
+respect to the number of attributes in each implications. The former one is 
+called \textit{canonical} in relational database field, and \textit{hyperarc 
+	minimum} within the graph context. Especially in the graph-theoretic and 
+boolean logic settings, one can derive more types of minimality. For general 
+introduction to boolean logic notations, we invite the reader to see 
+\cite{cori_mathematical_2000}. In terms of propositional logic, implications 
+are represented through Horn formulae. Interestingly, the minimization problem 
+we are going to consider is the only one being polynomial time solvable. Other 
+problems are proved to be NP-Complete or NP-Hard. For more discussion on other 
+minimality definitions and their computational complexity, the reader should 
+refer to \cite{boros_strong_2017, ausiello_directed_2017, 
+	b._ganter_conceptual_2016, ausiello_minimal_1986, wild_joy_2017, 
+	boros_horn_1998}. In particular for NP-Completeness in the canonical case, 
+	one 
+can see \cite{hammer_optimal_1993}. In subsequent explanations, we will refer 
+to minimization with respect to the number of implications.
+
+\vspace{1.2em}
+
+To the best of our knowledge, the two first fields in which algorithms and 
+properties of minimality arose are Formal Concept Analysis (FCA) (see 
+\cite{ganter_formal_1999, 
+	ganter_two_2010} for an introduction) and Database Theory (DB) (see 
+\cite{maier_theory_1983}). Both sides were developed independently in the early 
+80's. For the first domain, characterization of minimality goes to Duquenne and 
+Guigues \cite{guigues_j.l_familles_1986}, in which they describe the so-called 
+\textit{canonical basis} (also called \textit{Duquenne-Guigues basis} after its 
+authors) relying on the notion of pseudo-closed sets. For the database part, 
+study of implications is made by Maier through FD's (\cite{maier_theory_1983, 
+	david_minimum_1980}). The polynomial time algorithm he gives for 
+	minimization 
+heavily relies on a fast subroutine discovered by Beeri and Bernstein in 
+\cite{beeri_computational_1979}, 1979.
+
+\vspace{1.2em}
+
+From then on, knowledge increased over years and spread out over domains. 
+Another algorithm based on a minimality theorem is given by Shock in 1986 
+(\cite{shock_computing_1986}). Unfortunately, as we shall see and as already 
+discussed by Wild in \cite{wild_computations_1995} the algorithm may not be
+correct in general, even though the underlying theorem is. During the same 
+period, Ausiello and al. brought the problem to graph-theoretic ground, and 
+provided new structure known as \textit{FD-Graph} and algorithm to represent 
+and work on implication systems in \cite{ausiello_directed_2017, 
+	ausiello_graph_1983, ausiello_minimal_1986}. This approach has been seen in 
+graph theory as an extension of the transitive closure in graphs 
+(\cite{aho_transitive_2006}), but no consideration equivalent to minimization 
+task seems to have been taken beforehand, as far as we know. Still in the 1980 
+decade, Ganter expressed the canonical basis formalized by Duquenne and Guigues 
+in his paper related to algorithms in FCA, \cite{ganter_two_2010} through 
+closure systems, pseudo-closed and quasi-closed sets. Next, Wild 
+(\cite{wild_implicational_1989, wild_theory_1994, wild_computations_1995}) 
+linked within this set-theoretic framework both the relational databases, 
+formal concept analysis and lattice-theoretic approach. In relating those 
+fields, he describes an algorithm for minimizing a basis, similar to algorithms 
+of Day and, somehow, Shock (resp. \cite{day_lattice_1992},  
+\cite{shock_computing_1986}). This framework is the one we will use for our 
+study, and can be found in more recent work by Ganter \& Obiedkov in 
+\cite{b._ganter_conceptual_2016}. Also, the works of Maier and Duquenne-Guigues 
+have been used in the lattice-theoretic context by Day in 
+\cite{day_lattice_1992} to derive an algorithm based on congruence relations. 
+For in-depth knowledge of implication system within lattice terminology, we can 
+see \cite{davey_introduction_2002} as an introduction and 
+\cite{bertet_lattices_2016} for a survey. Later, Duquenne proposed some 
+variations in Day's work with another algorithm in 
+\cite{duquenne_variations_2007}. More recently, Bor\`os and al. by 
+working in a boolean logic framework, exhibited a theorem on the size of
+canonical basis \cite{boros_exclusive_2010, boros_strong_2017}. They also gave
+a general theoretic approach that algorithm should do one way or another on
+reduction purpose. Out of these papers, Berczi \& al. derived a new 
+minimization procedure based on hypergraphs in \cite{berczi_directed_2017}. 
+Furthermore, an algorithm for computing the canonical basis starting from any 
+system is given in \cite{b._ganter_conceptual_2016}.
+
+\vspace{1.2em}
+
+Even though the work we are going to cite is not designed to answer this 
+question of minimization, it must also be exposed as the algorithm is 
+intimately related to DG basis and can be used for base reduction. The paper
+of Angluin and al. in query learning, see \cite{angluin_learning_1992}, provides
+an algorithm for learning a Horn representation of an unknown initial formula. 
+It has been shown later by Ariàs and Alcazar (\cite{arias_canonical_2009}) that
+the output of Angluin algorithm was always the Duquennes-Guigues basis.
+
+\vspace{1.2em}
+
+Our purpose with this master thesis is to review and implement as much as 
+possible the algorithms we exposed to provide a comparison. This comparison 
+shall act as both theoretical and experimental statement of algorithm 
+efficiency. As we already mentioned we will focus on closure theory framework.
+The reason for this choice is our starting point. Because we start from the
+algorithms provided by Wild and because the closure framework is the one we 
+are the most familiar with, we focus on clearly explain this terminology with
+examples. However, once we will be comfortable with those definitions, we will 
+relate other frameworks to our main approach in the next chapter, to explain and
+draw parallels with other algorithms. In the next section we will focus on 
+theoretical definitions we shall need to understand the algorithms we have 
+implemented.
+
+\section{Implications and minimization: theoretic approach}
+
+Here we will dive into mathematical representation of the task we gave
+in the first section of this chapter. For the recall, our aim here is to
+get familiar with the representation being closest from closure systems.  Most 
+of the notions initially come from \cite{guigues_j.l_familles_1986, 
+ganter_two_2010, wild_theory_1994,	ganter_formal_1999} but the reader can 
+also find more than sufficient explanations in \cite{b._ganter_conceptual_2016, 
+wild_joy_2017}. Readers with knowledge in relational databases will recognize 
+most of functional dependency notations. The reason is close vicinity between 
+implications and functional dependencies. Talking about our needs, we can 
+consider them as equivalent notations. Actually, the real-life application our 
+set up will be the closest from is FCA (\cite{ganter_formal_1999}) as we shall
+see in the last chapter.
+
+\subsection{Implications and closure systems}
+
+The easiest object to project onto mathematical definitions is our attribute
+set. For all the report, we fix $\Sg$ to be a set of \belemp{attributes}. 
+Usually, we will denote attributes by small letters: \textit{a, b, c, \dots} 
+and subsets of $\Sg$ (groups of attributes) will be denoted by capital letters: 
+\textit{A, B, C, \dots} We assume the reader to have few background in 
+elementary set-theoretic notations. 
+
+\begin{definition}[\midemp{Implication, implication system}] An 
+\belemp{implication} over $\Sg$ is a pair $(A, B)$ with $A, B \subseteq \Sg$. 
+It is usually denoted by $A \imp B$. A set $\I$ of implications is called an 
+\belemp{implication system}, \belemp{implication theory} or 
+\belemp{implication(al) base(is)}.
+\end{definition}
+
+\noindent Note that given as is, this definition seems to lose the semantic
+relation we depicted earlier. But we should keep in mind that in our set up, we
+will be given implications more than an attribute set. Hence, implications will
+make sense on their own, independently from the attribute set they are drawn 
+from. Quickly, remark that implications in logical terms are expressed as
+\textit{Horn formulae} giving another of its names to implication theories. 
+Also, in $A \imp B$, $A$ is said to be the \belemp{premise} (or \belemp{body}) 
+and $B$ the \belemp{conclusion} (\belemp{head}).
+
+\begin{definition}[\midemp{Model}] Let $\I$ be an implication system over 
+	$\Sg$, and $M \subseteq \Sg$. Then:
+	\begin{itemize}
+		\item[(i)] $M$ is a \belemp{model} of an implication $A \imp B$, 
+		written 
+		$M \models A \imp B$, if $B \subseteq M$ or $A \nsubseteq M$,
+		\item[(ii)] $M$ is a \belemp{model} of $\I$ if $M \models A \imp B$ for 
+		all
+		$A \imp B \in \I$.
+	\end{itemize}
+	
+\end{definition}
+
+\noindent The notion of model may seem disarming at first sight. But $M$ being
+a model of $A \imp B$ simply means that, if $A$ is included in $M$, then for
+the implication $A \imp B$ to hold in $M$, we must have $B$ in $M$ too. This 
+still suits the intuitive notion of premise/conclusion. Placed in the context
+of $M$, $A \imp B$ says \textit{"whenever we have A, we must also have B"}.
+Reader with some background in mathematical logic should be familiar with the
+notation $\models$, denoting semantic entailment, as opposed to $\vdash$ for
+syntactic deduction (see \cite{cori_mathematical_2000}). By a fortunate twist of
+fate, semantic entailment is our next step:
+
+\begin{definition}[\midemp{Semantic entailment}] We say that an implication 
+	$A \imp B$ \belemp{semantically follows} from $\I$, denoted $\I \models A 
+	\imp 
+	B$, if all models $M$ of $\I$ are models of $A \imp B$.
+	
+\end{definition} 
+
+\noindent Because next definitions are going to be on a slightly different 
+structure, even though closely related to implication systems of course, let us
+rest for a while and illustrate our definitions with an example.
+
+\vspace{1.2em}
+
+\paragraph{Example} Consider again our plant properties. Let $\Sg = $ 
+\{\textit{colourful, bloom, wither, seasonal, aquatic, perennial, flower, 
+	scented}\}. An implication could be \textit{flower $\imp$ scented}, or even
+\textit{(bloom, aquatic) $\imp$ colourful} if we get rid off semantic 
+interpretations. An implication basis $\I$ is for instance:
+
+\begin{center}
+	\textit{(colourful, bloom $\imp$ seasonal), (colourful, wither $\imp$ 
+		seasonal), (bloom $\imp$ wither)}
+\end{center}
+
+\noindent and $M = $\textit{(colourful, bloom, seasonal)} is a model of 
+\textit{colourful, bloom $\imp$ seasonal} because both the head and the body
+of the implication belong to $M$. Also, $M$ is not a model of $\I$ because it
+is not a model of \textit{bloom $\imp$ wither}. A model of $\I$ could be 
+\textit{(bloom, wither)} or even the empty set $\emptyset$.
+
+\vspace{1.2em}
+
+Next definitions are about closure operators, and closure systems. We need 
+to ground ourselves in those definitions before returning to implications.
+$2^{\Sg}$ is the set of all subsets of $\Sg$, also named the \belemp{power set}
+of $\Sg$.
+
+\begin{definition}[\midemp{Closure operator}] Let $\Sg$ be a set and $\phi : 
+	2^{\Sg} \imp 2^{\Sg}$ an application on the power set of $\Sg$. $\phi$ is
+	a \belemp{closure operator} if $\forall X, Y \subseteq \Sg$:
+	\begin{itemize}
+		\item[(i)] $X \subseteq \phi(X)$ \midemp{(extensive)},
+		\item[(ii)] $X \subseteq Y \imp \phi(X) \subseteq \phi(Y)$
+		\midemp{(monotone)},
+		\item[(iii)] $\phi(X) = \phi(\phi(X))$ \midemp{(idempotent)}.
+	\end{itemize}
+	$X \subseteq \Sg$ is called \belemp{closed} if $X = \phi(X)$.
+\end{definition}
+
+\begin{definition}[\midemp{Closure system}] Let $\Sg$ be a set, and $\Sg^{\phi}
+	\subseteq 2^{\Sg}$. $\Sg^{\phi}$ is called a \belemp{closure system} if:
+	\begin{itemize}
+		\item[(i)] $\Sg \in \Sg^{\phi}$,
+		\item[(ii)] if $\cal{S} \subseteq \Sg^{\phi}$, then $\bigcap \cal{S} 
+		\in 
+		\Sg^{\phi}$ \quad \midemp{(closed under intersection)}.
+	\end{itemize}
+	
+\end{definition}
+
+\noindent In the second definition, it is worth stressing on the fact that
+$\Sg^{\phi}$ is a set of sets. Also, the notation $\Sg^{\phi}$ may seem 
+surprising, but it has been chosen purposefully. Indeed, to each closure system
+$\Sg^{\phi}$ over $\Sg$, we can associate a closure operator $\phi$ and 
+vice-versa:
+\begin{itemize}
+	\item from $\phi$ to $\Sg^{\phi}$: compute all closed sets of $\phi$ to
+	obtain $\Sg^{\phi}$,
+	\item from $\Sg^{\phi}$ to $\phi$: define $\phi(X)$ as the smallest element
+	of $\Sg^{\phi}$ (inclusion-wise) containing $X$. Observe that such a set
+	always exists in $\Sg^{\phi}$ because $\Sg \in \Sg^{\phi}$.
+\end{itemize}
+ In any case, this notation used for clear exposition of the link
+between closure systems and closure operators will be adapted to our context
+of implication systems as we shall see later on. Notice that one can encounter 
+another object, \belemp{closure space}, being a pair ($\Sg$, $\phi$) where
+$\Sg$ is a set and $\phi$ a closure operator over $\Sg$. We are likely to find
+this notation notably in \cite{wild_implicational_1989, 
+	wild_theory_1994} where a general theory of closure spaces is addressed.
+
+\vspace{1.2em}
+
+\paragraph{Example} Let us imagine we have four people: \textit{Jezabel, Neige, 
+Seraphin} and \textit{Narcisse}. Let us assume they all know each other and then
+define a relation \textit{"like"} between them. For instance, say 
+\textit{Séraphin likes Jezabel}. this relation is a \belemp{binary relation}: 
+it relates pairs of elements. We can represent this relation by a graph where 
+nodes are people and edges represent relations:
+
+\begin{figure}[ht]
+	\input{Pictures/I/Love.tex}
+\end{figure}
+
+The arrow from \textit{Seraphin} to \textit{Jezabel} stands for 
+\textit{"Seraphin likes Jezabel"} and the arrow from \textit{Narcisse} to itself
+means equivalently \textit{"Narcisse likes Narcisse"}. With this clear, let 
+us introduce an operation of gathering people. Starting from any group $A$ of 
+persons presented here, let's add to $A$ every person liked by at least one 
+element of $A$, until we can no more add people. For instance:
+\begin{itemize}
+	\item[-] if we start from \textit{Neige}, because \textit{Neige} likes
+	\textit{Jezabel} and \textit{Jezabel} likes \textit{Narcisse} we will add
+	both of them to the group of \textit{Neige},
+	\item[-] because \textit{Narcisse} only likes himself, we have no people
+	to add in his group.
+\end{itemize}
+\noindent Now observe that this operation of gathering people is in fact a
+closure operator:
+\begin{itemize}
+	\item[(i)] it is \midemp{extensive}: starting from any group of people,
+	we can only add new ones, hence either the group does not change (e.g: 
+	\textit{Narcisse}) or it grows,
+	\item[(ii)] it is \midemp{monotone}: if we start from a group $A$ containing
+	a group $B$, it is clear that we will at least gather in $A$ all the people
+	we would add with $B$,
+	\item[(iii)] \midemp{idempotency}: once we added all the people we had to
+	reach, then trying to find new people is useless by definition. Hence the
+	group will remain the same if we apply our operation once more.
+\end{itemize}
+
+\vspace{1.2em}
+
+We are going to get back to our main implication purpose to illustrate the 
+notion of closure in our context. It turns out that given a basis
+$\I$ over some set $\Sg$, the set of models of $\I$, $\Sg^{\I}$, is a closure 
+system. Moreover, the operator $\I : 2^{\Sg} \imp 2^{\Sg}$ associating to a 
+subset $X$ of $\Sg$ the smallest model (inclusion wise) containing $X$ is 
+a closure operator. Furthermore, the closure system it defines is 
+$\Sg^{\I}$. An interesting point is the mathematical computation of 
+$\I(X)$ given $\I$ as a set of implications. We rely on 
+\cite{wild_implicational_1989, b._ganter_conceptual_2016} to this end. Let 
+us define a temporary operation $\circ : 2^{\Sg} \imp 2^{\Sg}$ as follows:
+
+\[ X^{\circ} = 
+X \cup \bigcup \{ B \; | \; A \imp B \in \I, \; A \subseteq X \} \]
+
+\noindent Applying this operator up to stability provides $\I(X)$. In other 
+words $\I(X) 
+= X^{\circ \circ \dots}$. It is clear that we have a finite amount of 
+iterations since $X$ cannot grow more than $\Sg$. Readers with background in
+logic (see \cite{boros_strong_2017}) or graph theory 
+(\cite{berczi_directed_2017}) might see this operation as the marking or 
+forward chaining procedure.
+
+\vspace{1.2em}
+
+\paragraph{Example} Let's stick to our vegetable example, but reducing $\Sg$ to 
+\{\textit{bloom, flower, colourful} \} (abbreviated \textit{b, f, c}) for the 
+sake of simplicity. Furthermore, let $\I =$ \{\textit{((colourful, bloom) 
+	$\imp$ flower), (flower $\imp$ bloom)}\}, abbreviated then $cb \imp f$, $f 
+\imp b$. For instance, because $f \imp b \in \I$, the smallest model of $\I$ 
+containing $f$ is $bf$, and $bf$ is closed. More precisely, the set of closed
+sets is the following:
+
+	\[ \Sg^{\I} = \{ \emptyset, \ b, \ c, \ bf, \ bcf \} \]
+	
+\noindent Pouet.
+
+\begin{comment}
+we will place $X$ under $Y$ and draw an arc from $X$ to $Y$, except we do not 
+display transitive arcs. This representation is related to partially ordered 
+set and is sometimes known as Hasse diagram, see \cite{davey_introduction_2002} 
+for more details. We rely on figure \ref{fig:I-def-CS}.
+
+\begin{figure}[ht]
+	\input{Pictures/I-def-CS.tex}
+\end{figure}
+
+\vspace{1.2em}
+
+On the left side of the picture, one can find the boolean cube associated to 
+$\Sg$, or equivalently the power set of $\Sg$ ordered by inclusion. On the 
+right, the set of closed sets of $\I$. On the left side, all elements in the 
+same cluster have the same closure: it defines an \belemp{equivalence class} 
+under $\I$. Each dotted arc corresponds to application 
+of the closure operator we described earlier.  
+If a cluster contains only one element, this element is closed. This drawing 
+shows the relation between a closure operator and its associated system, in 
+particular in implication basis context, where the closure describes models. 
+Finally, one can graphically note that the set of models is indeed closed 
+under intersection. While this representation is graphically appealing, it is
+clearly not tractable for larger attribute set: we have to draw
+a diagram with an exponential number of elements (one for all $X \in 2^{\Sg}$). 
+Thus, all Hasse diagrams we are going to draw only aim at providing some 
+intuition of the various notions and not as an efficient representation.
+
+\end{comment}
+
+\vspace{1.2em}
+
+Having presented the main definitions we shall need, we are to investigate 
+practical computation of closures and more elaborated structures like the 
+canonical basis (or Duquenne-Guigues basis) in the next section.
+
+\begin{comment}
+
 \gls{pseudo-closed set} pouet pouet. \gls{closure} hus hus. \gls{a} and 
 \gls{z}.
 
@@ -33,3 +479,5 @@ equivalent notions.
 
 % Horn minimization task
 \input{Chapter/Defs/Minimization-Def.tex}
+
+\end{comment}

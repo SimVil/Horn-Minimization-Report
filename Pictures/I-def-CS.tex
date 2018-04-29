@@ -1,0 +1,56 @@
+\centering
+\begin{tikzpicture}[scale=0.6]
+
+\node[Vertex, label=below:{$\emptyset$}] (epty) at (-4, -3) {};
+\node[Vertex, label=left:{$c$}] (c) at (-6, -1) {};
+\node[Vertex, label=right:{$b$}] (b) at (-4, -1) {};
+\node[Vertex, label=right:{$f$}] (f) at (-2, -1) {};
+\node[Vertex, label=left:{$bc$}] (bc) at (-6, 1) {};
+\node[Vertex, label=left:{$cf$}] (cf) at (-4, 1) {};
+\node[Vertex, label=right:{$bf$}] (bf) at (-2, 1) {};
+\node[Vertex, label=above:{$bcf$}] (bcf) at (-4, 3) {};
+
+\draw (epty) -- (c) -- (bc) -- (bcf) -- (bf) -- (f) -- (epty);
+\draw (epty) -- (b);
+\draw (bc) -- (b) -- (bf);
+\draw (c) -- (cf) -- (f);
+\draw (bcf) -- (cf);
+
+\node[Vertex, label=below:{$\emptyset$}] (pepty) at (4, -3) {};
+\node[Vertex, label=left:{$b$}] (pb) at (2, -1) {};
+\node[Vertex, label=left:{$c$}] (pc) at (6, 0) {};
+\node[Vertex, label=left:{$bf$}] (pbf) at (2, 1) {};
+\node[Vertex, label=above:{$bcf$}] (pbcf) at (4, 3) {};
+
+\draw (pepty) -- (pb) -- (pbf) -- (pbcf) -- (pc) --(pepty);
+
+\draw[turquoise, fill=turquoise, opacity=0.4, thick] (epty) circle(0.5);
+\draw[turquoise, fill=turquoise, opacity=0.4, thick] (c) circle(0.5);
+\draw[turquoise, fill=turquoise, opacity=0.4, thick] (b) circle(0.5);
+	
+\draw[turquoise, fill=turquoise, fill opacity=0.3, rounded corners]
+	(-2.5, -1.3) -- (-1.5, -1.3) -- (-1.5, 1.3) -- (-2.5, 1.3) -- cycle;
+
+\draw[turquoise, rounded corners, fill=turquoise, fill opacity=0.3]
+	(-3.5, 3.3) -- (-3.5, 0.5) -- (-6.5, 0.5) -- (-6.5, 1.3) -- 
+	(-4.5, 3.3) -- cycle;
+
+\draw[->, dotted, color=turquoise, very thick]
+	(-3.2, 3.3) to[bend left=20] (3.7, 3.1);
+
+\draw[->, dotted, color=turquoise, very thick]
+	(-3.3, -3.3) to[bend right=20] (3.7, -3.1);
+
+\draw[->, dotted, color=turquoise, very thick] 
+	(-5.3, -1.2) to[bend right=35] (5.7, -0.2);
+	
+\draw[->, dotted, color=turquoise, very thick] 
+	(-3.3, -1.2) to[bend right=20] (1.7, -1.2);
+
+\draw[->, dotted, color=turquoise, very thick] 
+	(-1.3, 0) to[bend right=20] (1.7, 0.8);
+
+
+\end{tikzpicture}
+\caption{Application of closure operator in implication context}
+\label{fig:I-def-CS}
