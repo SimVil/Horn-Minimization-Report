@@ -596,13 +596,80 @@ follows:
 	\item we draw an arc between $x$ and $y$ if and only if $x \prec y$ in $P$.
 \end{enumerate}
 As examples, one can observe the diagrams of $(\Ens{N}, \leq)$ and $(2^{\Sg}, 
-\subseteq)$ described previously in figure .
+\subseteq)$ described previously in figure \ref{fig:I-posets}. On the right-hand
+side we wrote a subset of $\Sg$ by a concatenation of its element for 
+readability purpose.
 
 
 \begin{figure}[ht]
 	\input{Pictures/I/Posets.tex}
 \end{figure}
 
+\vspace{1.2em}
+
+Now equipped with orders and equivalence relation, we can go a bit further in
+the study of implications and sets. For instance, as exposed in the previous 
+example, we can consider our attribute set $\Sg$ (more precisely its power set)
+equipped with $\subseteq$ as an ordering. Furthermore, recall that $\I$ is
+a set of implications and hence provide a closure operators. Because every 
+subset of $\Sg$ has only one closure in $\I$, we can define an equivalence 
+relation $\equl$ on $2^{\Sg}$ as follows:
+
+	\[ \forall X, Y \subseteq \Sg, X \equl Y \textit{ if and only if }
+	\I(X) = \I(Y) \]
+
+\noindent Let us go one step beyond. With $\equl$, we can set up 
+\belemp{equivalence classes} on $(2^{\Sg}, \equl)$. An equivalence class can be 
+defined with respect to an element $X$ as follows:
+
+	\[ \left[ X \right]_{\I} = \{ Y \subseteq \Sg \ | \ X \equl Y \}  \]
+	
+\noindent Those equivalence classes are a partition of $2^{\Sg}$ with respect
+to the closed sets of $\I$: every model of $\Sg^{\I}$ defines an 
+equivalence class. 
+
+\paragraph{Example} Because all this discussion on equivalence class may have
+been a bit troubling, let us rest for a while before eventually reaching 
+minimal basis definitions. Remind our plant example:
+\begin{itemize}
+	\item[-] $\Sg = $ \{\textit{bloom, flower, colourful}\} (abbreviated 
+	\{\textit{b, f, c}\}),
+	\item[-] $\I = $ \{\textit{((colourful, bloom) $\imp$ flower), (flower 
+	$\imp$ bloom)}\} (abbreviated $cb \imp f$, $f \imp b$)
+	\item[-] the models (closed sets of $\I$) are: $\Sg^{\I} = \{ \emptyset, \ 
+	b, \ c, \ bf, \ bcf \}$
+\end{itemize}
+\noindent In details, because of the implication $f \imp b$, we can observe 
+that $f$ and $bf$ belong to the equivalence class defined by $bf$. The same
+goes for $bc$, $cf$ and $bcf$, describing the class given associated to $bcf$.
+In order to make it clear, we give a graphical representation of those classes
+using orders in figure \ref{fig:I-def-CS}.
+
+\begin{figure}[ht]
+	\input{Pictures/I-def-CS.tex}
+\end{figure}
+
+\vspace{1.2em}
+
+On the left side of the picture, we drew $(2^{\Sg}, \subseteq)$. On the
+right-hand side: $(\Sg^{\I}, \subseteq)$. Clusters on the left diagram are
+the equivalence classes, associated (dotted arrows) to their
+closed representative. If a cluster contains only one element, this element is 
+closed. This drawing shows the relation between a closure operator and its 
+associated system, in particular in implication basis context, where the 
+closure describes models. Finally, one can graphically note that the set of 
+models is indeed closed under intersection. While this representation is 
+graphically appealing, it is clearly not tractable for larger attribute set: we 
+have to draw a diagram with an exponential number of elements (one for all $X 
+\in 2^{\Sg}$). Thus, all Hasse diagrams we are going to draw only aim at 
+providing some intuition of the various notions and not as an efficient 
+representation.
+
+\vspace{1.2em}
+
+With this detour in order theory made, even though closely related to our topic
+as we have seen, we can now go back to our main goal: the canonical basis. It
+relies on some particular sets in the closure systems.
 
 \begin{definition}[\midemp{Pseudo-closed set}] Given $\I$ over $\Sg$, we say
 	that $P \subseteq \Sg$ is \belemp{pseudo-closed} if:
@@ -632,10 +699,13 @@ pseudo-closure by using so called \textit{quasi-closed sets} (see
 	
 \end{definition}
 
-\noindent Defining equivalence classes around closed sets, pseudo-closed sets
-are then minimal quasi-closed sets among their equivalence class. The interest
-of quasi-closure is that it can be seen out of the cube we are working on,
-as we shall see in next example.
+\noindent The recursive definition of pseudo-closed sets may seem complicated,
+and it is somehow since the problem of determining whether a set is 
+pseudo-closed or not has been proven to be NP-Hard (see 
+\cite{b._ganter_conceptual_2016}). Fortunately, quasi-closed sets and 
+equivalence classes give another definition to pseudo-closeness: a set is 
+pseudo-closed if it is quasi-closed and minimal (inclusion-wise) in its 
+equivalence class. Let us illustrate those notions with some diagrams.
 
 
 \paragraph{Example} Let us consider the following case:
@@ -661,10 +731,15 @@ the left-hand side figure, we consider the subset $c$. For $c$ to be
 quasi-closed, we must look at all of its subsets, and see whether the closure
 of each subset is either smaller than $c$ or in the same equivalence class
 as $c$. The dashed line shows which elements of the diagram we have to 
-consider. In fact it represents what we call in lattice theory the 
-\belemp{ideal} or \belemp{down-set} generated by $c$. It appears that the only
-distinct subset of $c$ is $\emptyset$, which is closed. $c$ itself is also
-not closed. Hence $c$ is indeed quasi-closed. 
+consider. In fact it represents what we call in lattice and order theories the 
+\belemp{ideal} or \belemp{down-set} generated by $c$:
+
+	\[ \downarrow c = \{ X \subseteq \Sg | X \subseteq c \} \] 
+
+It appears that the only distinct subset of $c$ is $\emptyset$, which is 
+closed. $c$ itself is also not closed. Hence $c$ is indeed quasi-closed. 
+
+\vspace{1.2em}
 
 \begin{figure}[ht]
 	\input{Pictures/I-def-QCS.tex}
@@ -685,7 +760,7 @@ following is true:
 \noindent where $\downarrow Q$ is the ideal generated by $Q$ (see dashed line
 in figure \ref{fig:I-def-QCS}). 
 
-\vspace{1.2em}
+\newpage
 
 \paragraph{Example} Now let us take 
 \begin{itemize}
