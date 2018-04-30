@@ -1,0 +1,43 @@
+\centering
+\subfloat[$(\Ens{N}, \leq)$]{
+\begin{tikzpicture}
+
+\node[Vertex, label=below left:{$0$}] (0) at (0, -1) {};
+\node[Vertex, label=left:{$1$}] (1) at (0, 0) {};
+\node[Vertex, label=left:{$2$}] (2) at (0, 1) {};
+\node[Vertex, label=left:{$3$}] (3) at (0, 2) {};
+\node (inf) at (0, 3.2) {};
+
+\node (left) at (-1, 0) {};
+\node (right) at (1, 0) {};
+
+\draw (0) -- (1) -- (2) -- (3);
+\draw[dotted] (3) -- (inf);
+
+
+\end{tikzpicture}
+}\qquad
+\subfloat[$(2^{\Sg}, \subseteq)$]{
+\begin{tikzpicture}[scale=0.7]
+\node[Vertex, label=below:{$\emptyset$}] (epty) at (0, -3) 
+{};
+\node[Vertex, label=left:{$a$}] (a) at (-2, -1) {};
+\node[Vertex, label=right:{$b$}] (b) at (0, -1) {};
+\node[Vertex, label=right:{\quad $c$}] (c) at (2, -1) {};
+\node[Vertex, label=left:{$ab$}] (ab) at (-2, 1) {};
+\node[Vertex, label=left:{$ac$}] (ac) at (0, 1) {};
+\node[Vertex, label=right:{$bc$}] (bc) at (2, 1) {};
+\node[Vertex, label=above:{$abc$}] (abc) at (0, 3) {};
+
+\draw (epty) -- (a) -- (ac) -- (c) -- (epty) -- (b) -- (ab) -- (abc) -- 
+(bc) -- 
+(b);
+\draw (ab) -- (a);
+\draw (bc) -- (c);
+\draw (abc) --(ac);
+
+
+\end{tikzpicture}
+}
+\caption{Hasse diagrams of two ordered sets}
+\label{fig:I-posets}

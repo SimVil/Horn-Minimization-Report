@@ -186,6 +186,11 @@ draw parallels with other algorithms. In the next section we will focus on
 theoretical definitions we shall need to understand the algorithms we have 
 implemented.
 
+
+% ---------------------------------------------------------------------------- %
+% ==== Section: theoretic approach
+% ---------------------------------------------------------------------------- %
+
 \section{Implications and minimization: theoretic approach}
 
 Here we will dive into mathematical representation of the task we gave
@@ -200,6 +205,9 @@ implications and functional dependencies. Talking about our needs, we can
 consider them as equivalent notations. Actually, the real-life application our 
 set up will be the closest from is FCA (\cite{ganter_formal_1999}) as we shall
 see in the last chapter.
+
+
+% ==== Subsection: implications and closure system
 
 \subsection{Implications and closure systems}
 
@@ -398,86 +406,479 @@ forward chaining procedure.
 \paragraph{Example} Let's stick to our vegetable example, but reducing $\Sg$ to 
 \{\textit{bloom, flower, colourful} \} (abbreviated \textit{b, f, c}) for the 
 sake of simplicity. Furthermore, let $\I =$ \{\textit{((colourful, bloom) 
-	$\imp$ flower), (flower $\imp$ bloom)}\}, abbreviated then $cb \imp f$, $f 
+$\imp$ flower), (flower $\imp$ bloom)}\}, abbreviated then $cb \imp f$, $f 
 \imp b$. For instance, because $f \imp b \in \I$, the smallest model of $\I$ 
 containing $f$ is $bf$, and $bf$ is closed. More precisely, the set of closed
 sets is the following:
 
 	\[ \Sg^{\I} = \{ \emptyset, \ b, \ c, \ bf, \ bcf \} \]
 	
-\noindent Pouet.
-
-\begin{comment}
-we will place $X$ under $Y$ and draw an arc from $X$ to $Y$, except we do not 
-display transitive arcs. This representation is related to partially ordered 
-set and is sometimes known as Hasse diagram, see \cite{davey_introduction_2002} 
-for more details. We rely on figure \ref{fig:I-def-CS}.
-
-\begin{figure}[ht]
-	\input{Pictures/I-def-CS.tex}
-\end{figure}
-
-\vspace{1.2em}
-
-On the left side of the picture, one can find the boolean cube associated to 
-$\Sg$, or equivalently the power set of $\Sg$ ordered by inclusion. On the 
-right, the set of closed sets of $\I$. On the left side, all elements in the 
-same cluster have the same closure: it defines an \belemp{equivalence class} 
-under $\I$. Each dotted arc corresponds to application 
-of the closure operator we described earlier.  
-If a cluster contains only one element, this element is closed. This drawing 
-shows the relation between a closure operator and its associated system, in 
-particular in implication basis context, where the closure describes models. 
-Finally, one can graphically note that the set of models is indeed closed 
-under intersection. While this representation is graphically appealing, it is
-clearly not tractable for larger attribute set: we have to draw
-a diagram with an exponential number of elements (one for all $X \in 2^{\Sg}$). 
-Thus, all Hasse diagrams we are going to draw only aim at providing some 
-intuition of the various notions and not as an efficient representation.
-
-\end{comment}
-
 \vspace{1.2em}
 
 Having presented the main definitions we shall need, we are to investigate 
 practical computation of closures and more elaborated structures like the 
 canonical basis (or Duquenne-Guigues basis) in the next section.
 
-\begin{comment}
 
-\gls{pseudo-closed set} pouet pouet. \gls{closure} hus hus. \gls{a} and 
-\gls{z}.
 
-In this chapter, we will focus on giving definitions of the mathematical 
-objects we may need later. As we shall see, each section giving definitions is 
-a different way to represent the same idea. Then, we will introduce the Horn 
-Minimization task without any algorithm, to provide the reader with some 
-intuition and simple examples of our problem. A more detailed description of 
-the minimization task and existing solutions or studies will be given in 
-chapter 2. 
+% ==== Subsection: DG-basis, closure algos
+
+\subsection{Canonical Basis, Closure Algorithm}
+
+Before giving the definition of canonical basis, we should consider special 
+kind of sets given $\I$ over $\Sg$. Also, we will need to expose particular
+implications. First of all, let us introduce a property through a proposition
+we will assume (we redirect the reader to \cite{b._ganter_conceptual_2016}
+for another proof). When not introduced, we consider a system $\I$
+of implications, over some attribute set $\Sg$.
+
+\begin{proposition} Let $A \imp B$ be an implication. $\I \models A \imp B$
+	if and only if $B \subseteq \I(A)$.	
+\end{proposition}
+
+\begin{proof} $\I \models A \imp B \implies B \subseteq \I(A)$. Every model
+of $\I$ models $A \imp B$, hence for each closed set $X$ of $\I$, either 
+$A \subseteq X $ and $B \subseteq X$, or $A \nsubseteq X$. Consider all closed 
+$X$ for which $A \subseteq X$. By definition $\I(A) = \bigcap \{X \in 
+\Sg^{\I},\  A \subseteq X \}$ and $B \subseteq \I(A)$.
 
 \vspace{1.2em}
 
-To be more precise, we develop first the main framework we may use to reason:
-closure systems over attribute sets. We will often try to think of various 
-algorithms and proofs within this framework to have a red line to follow. Then,
-we approach propositional logic and few elements of graph theory. To emphasize
-the links between various aspects, we will try to use the same notations on 
-equivalent notions. 
+$B \subseteq \I(A) \implies \I \models A \imp B$. By contraposition suppose 
+$\I \not\models A \imp B$. Then there must exist at least one model $X$ of $\I$
+such that $A \subseteq X$ and $B \nsubseteq X$. Because $A \subseteq X$, 
+$\I(A) \subseteq X$ hence $B \nsubseteq \I(A)$.
+	
+\end{proof}
 
-% BD, Implicational Basis and stuff
-\input{Chapter/Defs/Closure-Def.tex}
+\begin{definition}[\midemp{Redundancy}] An implication $A \imp B$ of $\I$ is 
+\belemp{redundant} if $\I - \{A \imp B \} \models A \imp B$. If $\I$ 
+contains no redundant implications, it is \belemp{non-redundant}.
+	
+\end{definition}
+
+\noindent Our definition of redundancy models the notion of \textit{"useless"} 
+we were talking about in our toy example: if an implication is true in some 
+$\I$ even if we remove it, it brings no knowledge. In practice, redundancy can 
+be checked as follows: put $\I^{-}$ as
+$\I$ without $A \imp B$ and compute $\I^{-}(A)$. If $\I^{-}(A) = \I(A)$ or 
+equivalently, if $B \subseteq \I^{-}(A)$, then $A \imp B$ is redundant. 
+Moreover, it is worth commenting that in FCA or DB fields (see 
+\cite{ganter_formal_1999, maier_theory_1983}), implications (or 
+FD's) are deduced from data presented as contexts or relation schemes. Hence, 
+we usually introduce notions of soundness and completeness ensuring that 
+implications we are working on are meaningful with respect to the knowledge we 
+are dealing with. More precisely, \belemp{soundness} ensures that $\I$ does not 
+contain any implication not holding in the dataset. \belemp{Completeness}
+says that all true implications in the data context are true in $\I$. Because 
+we work directly on implications, $\I$ is by definition sound and complete with 
+respect to the models it defines. Next, we set up minimality.
+
+\begin{definition}[Minimality] $\I$ is \belemp{minimal} if removing one of its 
+	implication alters $\Sg^{\I}$.
+	
+\end{definition}
+
+\paragraph{Example} We consider our canonical plant example. Take 
+
+\begin{center}
+	$\I = $  \{\textit{((colourful, bloom) $\imp$ seasonal), ((colourful, 
+		wither) $\imp$ seasonal), (bloom $\imp$ wither)} \}
+\end{center}
+
+\noindent as we explained in first section, the first implication can be 
+removed. In particular, it is redundant. Hence $\I$ is not minimal. If 
+we get rid of \textit{(colourful, bloom) $\imp$ seasonal)}, $\I$ 
+will be minimal.
+
+\vspace{1.2em}
+
+Interestingly, depending on the implications we get, non-redundancy is not a 
+sufficient criterion for minimality as we shall see in Maier algorithm. As an 
+example for now, consider $\Sg = $\{\textit{a, b, c, d, e, f}\} and $\I = $ 
+\{\textit{ab $\imp$ cde, c $\imp$ a, d $\imp$ b, cd $\imp$ f}\}. $\I$ is not 
+redundant, but is not minimal either. In fact, $\I_m = $ \{\textit{ab $\imp$ 
+cdef, c $\imp$ a, d $\imp$ b}\} is equivalent to $\I$ but with one implication 
+less. 
+
+\vspace{1.2em}
+
+For now, we defined what are implication theories, redundancy and minimality. 
+One could expect our next step to be the exposition of some minimal basis. 
+Unfortunately, we need to make a detour to visit some set and order definitions
+before getting back to our main purpose. Those notions not only deserve to
+explain minimal basis but also to settle some landmarks for further discussions 
+in the next chapter.
+
+\vspace{1.2em}
+
+Recall that in our example of closure operator we briefly approached binary 
+relations. To be more formal, let $E, F$ be two sets. A \belemp{binary 
+relation} $\rel{R}$ is a set of pairs $(e, f)$ (sometimes denoted 
+$e \rel{R} f$) with $e \in E$, $f \in F$, or equivalently $\rel{R} \subseteq E 
+\times F$. We will assume $\rel{R} \subseteq E^2$. Actually, $\rel{R}$ can 
+present some properties:
+\begin{itemize}
+	\item[(i)] \belemp{reflexivity}: $\forall x \in E, x\rel{R}x$,
+	\item[(ii)] \belemp{irreflexivity}: $\forall x \in E, \lnot(x\rel{R}x)$,
+	\item[(iii)] \belemp{symmetry}: $\forall x, y \in E, x \rel{R} y \imp y 
+	\rel{R} x$
+	\item[(iv)] \belemp{antisymmetry}: $\forall x, y \in E, x \rel{R} y \land 
+	y \rel{R} x \imp x = y$,
+	\item[(v)] \belemp{asymmetry}: $\forall x, y \in E, x \rel{R} y \imp
+	\lnot(y\rel{R}x)$,
+	\item[(vi)] \belemp{transitivity}: $\forall x, y, z \in E, x \rel{R} y 
+	\land y \rel{R} z \imp x \rel{R} z$
+\end{itemize}
+All possible properties are not given here, see \cite{cori_mathematical_2000} 
+for more. With those properties anyway, we can define several types of 
+relations:
+
+\begin{definition} Let $E$ be a set and $\rel{R}$ a binary relation on $E$:
+\begin{itemize}
+	\item[(i)] $\rel{R}$ is an \belemp{equivalence} relation (denoted by $=$) 
+	if it is \midemp{reflexive, transitive} and \midemp{symmetric},
+	
+	\item[(ii)] $\rel{R}$ is a \belemp{(partial) order} ($\leq$) if 
+	\midemp{reflexive, transitive} and \midemp{antisymmetric},
+	
+	\item[(iii)] $\rel{R}$ is a \belemp{strict order} ($<$) if 
+	\midemp{irreflexive, transitive} and \midemp{asymmetric}.
+\end{itemize}
+	
+\end{definition}
+
+\paragraph{Example} Time has come for some illustrations. First, let us imagine
+we are looking at some tree in a meadow. Because the season is spring, this tree
+has branches and leaves. We are interested in the set of all leaves, and we 
+would like to relate them by the branch they are one. Hence define $\rel{R}$ as
+\textit{"is on the same branch as"}, being a binary relation. It turns out
+that $\rel{R}$ is an equivalence relation:
+\begin{itemize}
+	\item[-] \midemp{reflexivity}: every leaf is on the same branch as itself;
+	\item[-] \midemp{transitivity}: if a leaf $l_1$ is on the same branch as
+	a leaf $l_2$, and $l_2$ is on the same branch as $l_3$, then it is clear
+	that $l_1$ is on the same branch as $l_3$;
+	\item[-] \midemp{symmetry}: $l_1$ being on the same branch as $l_2$ clearly
+	implies that $l_2$ is on the same branch as $l_1$.
+\end{itemize}
+\noindent For partial and strict ordering, we will go back to more mathematical
+examples, in order to slowly go back to our main purpose. Consider the set 
+$\Ens{N}$ ($= \Ens{N}_0 $) of positive integers, including 0. The natural 
+relation $\leq$ is an order, and the pair $(\Ens{N}, \leq)$ is an ordered set.
+In particular it is a \belemp{totally ordered set} or \belemp{chain} because 
+every pair of integers can be compared. $<$ is a strict total ordering on 
+$\Ens{N}$. Another example,let $\Sg = \{a, b, c \}$ be a set of attributes and
+consider $\subseteq$ as a binary relation on $2^{\Sg}$. Again, $(2^{\Sg}, 
+\subseteq)$ is a \belemp{partially ordered set} (or \belemp{poset} under 
+abbreviation):
+\begin{itemize}
+	\item[-] every subset $X$ of $\Sg$ is included in itself, for instance 
+	$\{a, b\}$ is a subset or equal to $\{a, b\}$, whence \midemp{reflexivity},
+	\item[-] if $X \subseteq Y$ and $Y \subseteq X$ then necessarily, $X = Y$
+	(\midemp{antisymmetry}),
+	\item[-] if $X \subseteq Y \subseteq Z$, then clearly $X \subseteq Z$
+	(\midemp{transitivity})
+\end{itemize}
+\noindent There is a convenient way to represent posets. At least when they are
+not to heavy. It is sometimes called \belemp{Hasse diagram} (see 
+\cite{davey_introduction_2002}) and relies on the \belemp{cover} relation of
+a partially ordered set. Take any poset $(P, \leq)$ and define the cover 
+relation as $x \prec y$ if $x < y$ and $x \leq z < y \imp x = z$. In other 
+word, $x \prec y$ says \textit{"there is no element between x and y"}. The
+example of $\Ens{N}$ is appealing. For instance, $4 \prec 5$ because there is
+no integer between 4 and 5, but $4 \nprec 7$ since we can find 5 and 6 as 
+intermediary elements. Now the Hasse diagram of $(P, \leq)$ is a graph drawn as 
+follows:
+\begin{enumerate}
+	\item there is a point for each $x \in P$,
+	\item if $x \leq y$, then $y$ is placed above $x$,
+	\item we draw an arc between $x$ and $y$ if and only if $x \prec y$ in $P$.
+\end{enumerate}
+As examples, one can observe the diagrams of $(\Ens{N}, \leq)$ and $(2^{\Sg}, 
+\subseteq)$ described previously in figure .
 
 
-% Logical POV
-\input{Chapter/Defs/Logic-Def.tex}
+\begin{figure}[ht]
+	\input{Pictures/I/Posets.tex}
+\end{figure}
 
 
-% (Hyper)-graphs POV
-\input{Chapter/Defs/Hyper-Def.tex}
+\begin{definition}[\midemp{Pseudo-closed set}] Given $\I$ over $\Sg$, we say
+	that $P \subseteq \Sg$ is \belemp{pseudo-closed} if:
+	\begin{itemize}
+		\item[(i)] $P \neq \I(P)$,
+		\item[(ii)] $Q \subset P$ and $Q$ pseudo-closed, implies $\I(Q) 
+		\subseteq P$.
+	\end{itemize}
+\end{definition}
+
+\noindent The idea of pseudo-closed sets goes back to Guigues and Duquenne in
+\cite{guigues_j.l_familles_1986}, but the name comes from Ganter in 
+\cite{ganter_two_2010}. We can also find explanations in following 
+research \cite{ganter_two_2010, day_lattice_1992} and
+in \cite{b._ganter_conceptual_2016}. It turns out that we can explain 
+pseudo-closure by using so called \textit{quasi-closed sets} (see 
+\cite{wild_implicational_1989, ganter_two_2010, guigues_j.l_familles_1986}). 
+
+\begin{definition}[\midemp{Quasi-closed set}] a set $Q \subseteq \Sg$ is 
+	\belemp{quasi-closed} with respect to $\I$ if:
+	\begin{itemize}
+		\item[(i)] $Q \neq \I(Q)$,
+		\item[(ii)] $\forall A \subseteq Q$, $\I(A) \subseteq Q$ or $\I(A) = 
+		\I(Q)$.
+		
+	\end{itemize}
+	
+\end{definition}
+
+\noindent Defining equivalence classes around closed sets, pseudo-closed sets
+are then minimal quasi-closed sets among their equivalence class. The interest
+of quasi-closure is that it can be seen out of the cube we are working on,
+as we shall see in next example.
 
 
-% Horn minimization task
-\input{Chapter/Defs/Minimization-Def.tex}
+\paragraph{Example} Let us consider the following case:
+\begin{itemize}
+	\item $\Sg = \{a, \ b, \ c \}$,
+	\item $\I = $ \{\textit{a $\imp$ b, b $\imp$ a, c $\imp$ ab}\}.
+\end{itemize}
+As in \ref{fig:I-def-CS}, we will represent the power set of $\Sg$ and 
+equivalence classes of $\I$. Two subsets of $\Sg$ are in the same class if they
+have the same closure in $\I$. First, one can observe the effective class 
+representation in figure \ref{fig:I-def-EQC}. Models of $\I$ are indeed 
+$\emptyset$, $ab$ and $abc$. For instance $\I(ac) = abc$.
 
-\end{comment}
+\vspace{1.2em}
+
+\begin{figure}[ht]
+	\input{Pictures/I-def-EQC.tex}
+\end{figure}
+
+Next, we can observe figure \ref{fig:I-def-QCS} in which we somehow represented 
+the definition of quasi-closure. We still represent equivalence classes. On
+the left-hand side figure, we consider the subset $c$. For $c$ to be 
+quasi-closed, we must look at all of its subsets, and see whether the closure
+of each subset is either smaller than $c$ or in the same equivalence class
+as $c$. The dashed line shows which elements of the diagram we have to 
+consider. In fact it represents what we call in lattice theory the 
+\belemp{ideal} or \belemp{down-set} generated by $c$. It appears that the only
+distinct subset of $c$ is $\emptyset$, which is closed. $c$ itself is also
+not closed. Hence $c$ is indeed quasi-closed. 
+
+\begin{figure}[ht]
+	\input{Pictures/I-def-QCS.tex}
+\end{figure}
+
+On the right-hand side we consider the subset $bc$. As shown in the picture 
+(under the dashed line), there are 3 elements to consider: $\emptyset$, $c$, 
+$b$. For the same reason as for $c$, $\emptyset$ is not a problem. the closure
+of $c$ is not included in $bc$, but equals the closure of $bc$. Hence $c$ is
+not an issue either. However, $b$ is included in $bc$, but its closure is $ab$,
+neither subset of $bc$ nor equal to $abc$. Therefore, $bc$ is not quasi-closed.
+Actually, one could informally say that a set $Q$ is quasi-closed if the 
+following is true:
+
+\[ (\forall P \in 2^{\Sg})\left[( P \in \; \downarrow Q) \imp (\I(P) \in \; 
+\downarrow Q \cup \{\I(Q)\})\right] \]
+
+\noindent where $\downarrow Q$ is the ideal generated by $Q$ (see dashed line
+in figure \ref{fig:I-def-QCS}). 
+
+\vspace{1.2em}
+
+\paragraph{Example} Now let us take 
+\begin{itemize}
+	\item $\Sg = \{a, \ b, \ c \}$,
+	\item $\I = $ \{\textit{c $\imp$ ab, b $\imp$ ab}\}.
+\end{itemize}
+Again, we will use equivalence classes and Hasse diagram to represent the 
+closure system of $\I$, see figure \ref{fig:I-def-PCS}. In this representation
+we coloured all quasi-closed sets at least in grey. Red (or lighter) nodes are
+precisely pseudo-closed sets: they are the minimal quasi-closed sets among the
+equivalence class defined by $abc$. 
+
+\begin{figure}[ht]
+	\input{Pictures/I-def-PCS.tex}
+\end{figure}
+
+Note that in particular, minimal premises of $\I$ inclusion wise are 
+pseudo-closed. Furthermore, we should be aware that an equivalence class may
+not contain pseudo-closed set, or more generally, quasi-closed sets. As such,
+we cannot consider that minimal elements of equivalence classes are 
+quasi-closed. Take for example $\I =$ \{\textit{$\emptyset \imp $ a, b $\imp$ a 
+}\}. $b$ and $ab$ define a class, but $b$ is not even quasi-closed. With these
+notions, we can move on and define the canonical basis.
+
+\begin{definition}[\midemp{Duquenne-Guigues basis}] The basis $\I$ defined by
+	
+	\[ \I = \{ P \imp \I(P) \; | \; P \text{ is pseudo-closed } \} \]
+	
+	\noindent is called the \belemp{Duquenne-Guigues} or \belemp{canonical} 
+	basis. 
+	It is \belemp{minimal}.
+	
+\end{definition}
+
+\noindent This definition does not say that the canonical basis is the only one
+being minimal. Actually, it says that every minimal basis should have the same
+number of implications than this one. We can find a deeper argument in 
+\cite{b._ganter_conceptual_2016} on links between any minimal basis and the 
+canonical one.
+
+\vspace{1.2em}
+
+So far we discussed several notions: implications, pseudo-closed set, 
+quasi-closed set, canonical basis and so forth. Most of them relies heavily on
+computing the closure of sets with respect to $\I$. Hence, to have practical 
+efficiency, we must be able to compute closures as fast as possible. 
+Fortunately, several algorithms can be found. Among them, there is a naïve
+procedure based on the operation $\circ$ we described earlier. Furthermore the 
+algorithm by Beeri and Bernstein in \cite{beeri_computational_1979} called 
+\textsc{LinClosure} addresses this question. \textsc{LinClosure} as previously 
+mentioned has been widely used, notably in \cite{maier_theory_1983, 
+david_minimum_1980, b._ganter_conceptual_2016, shock_computing_1986, 
+day_lattice_1992}. Before describing those procedures, let us introduce our 
+complexity notations:
+\begin{itemize}
+	\item $|\Sg|$ will denote the size of the attribute set $\Sg$,
+	\item $|\B|$ will be the number of implications in $\I$ ($\B$ stands
+	for body),
+	\item $|\I|$ is the number of symbols used to represent $\I$.
+\end{itemize}
+We consider $|\I|$ to be in reduced form for complexity results. By "reduced" 
+we mean that we do not have distinct implications with same bodies. Indeed, if
+say, $a \imp b$ and $a \imp c$ holds in some $\Sg^{\I}$ then we can replace 
+those two implications by $a \imp bc$. Moreover, we shall not explain in details
+$O$ notation for complexity since we do not need in-depth knowledge within 
+this field. For us, it is enough to say that $O$ is the 
+asymptotically worst case complexity (in time or space). For instance, in the 
+worst case, $|\I| = |\B|\times|\Sg|$, thus $|\I| = O(|\B|\times|\Sg|)$. 
+\textsc{Closure} and \textsc{LinClosure} are algorithms \ref{alg:closure}, 
+\ref{alg:linclosure} (resp.). 
+
+\vspace{1.2em}
+
+\begin{algorithm}[ht]
+\KwIn{A base $\I$, $X \subseteq \Sg$}
+\KwOut{The closure $\I(X)$ of $X$ under $\I$}
+
+\BlankLine
+\BlankLine
+
+$closed := \bot$ \;
+$\I(X) := X$ \;
+\While{$\lnot closed$}{
+	$closed := \top$ \;
+	\ForEach{$A \imp B \in \I$}{
+		\If{$A \subseteq \I(X)$}{
+			$\I(X) := \I(X) \cup B$ \;
+			$\I := \I - \{A \imp B \}$ \;
+			$closed := \bot$ \;
+		}
+		
+	}
+}
+
+\BlankLine
+
+return $\I(X)$\;
+
+\caption{\textsc{Closure}}
+\label{alg:closure}
+\end{algorithm}
+
+
+As we already mentioned, the algorithm \textsc{Closure} relies on the $\circ$ 
+operation. The principle is to re-roll over the set of implications $\I$ to see 
+whether there exists an implication $A \imp B$ in $\I$ such that $\I(X) 
+\not\models A \imp B$ up to stability. Asymptotically, we will need $O(|\B|^2 
+\times |\Sg|)$ if we remove only one implication per loop. the $|\Sg|$ cost
+comes from the set union.
+
+\vspace{1.2em}
+
+\begin{algorithm}
+\KwIn{A base $\I$, $X \subseteq \Sg$}
+\KwOut{The closure $\I(X)$ of $X$ under $\I$}
+
+\BlankLine
+\BlankLine
+
+\ForEach{$A \imp B \in \I$}{
+	$count[A \imp B] := |A|$ \;
+	
+	\If{$|A| = 0$}{
+		$X := X \cup B$ \;
+	}
+	
+	\ForEach{$a \in A$}{
+		$list[a] = list[a] \cup  \{ A \imp B \}$ \;
+	}
+}
+
+\BlankLine
+
+$update := X$ \;
+
+\BlankLine
+
+\While{$update \neq \emptyset$}{
+	choose $m \in update$ \;
+	$update := update - \{m\}$ \;
+	
+	\ForEach{$A \imp B \in list[m]$}{
+		$count[A \imp B] := count[A \imp B] - 1$ \;
+		\If{$count[A \imp B] = 0$}{
+			$add := B - X$ \;
+			$X := X \cup add$ \;
+			$update := update \cup add$ \;
+		}
+		
+	}
+}
+
+return $X$ \;
+
+\caption{\textsc{LinClosure}}
+\label{alg:linclosure}
+\end{algorithm}
+
+\textsc{LinClosure} has $O(|\I|)$ time complexity. The main idea is to use
+counters. Starting from $X$, if we reach for a given $A \imp B$ as many elements
+as $|A|$, then $A \subseteq \I(X)$ and we must also add $B$. Because the closure
+in itself is not the main point of our topic, we will not study 
+\textsc{LinClosure} in depth. Furthermore, there exists other linear time 
+algorithm for computing closure. For more complete theoretical and practical 
+comparisons of closure algorithms, we redirect the reader to 
+\cite{bazhanov_optimizations_2014}. In this paper, \textsc{LinClosure} is 
+shown maybe not to be the most efficient algorithm in practice when used in 
+other algorithms, especially when compared with \textsc{Closure}. Anyway, 
+because of its theoretical complexity and use in all algorithms we will review, 
+we will still consider \textsc{LinClosure}, notably because we can separate the 
+initialization step from the computation one in some cases on optimization 
+purpose.
+
+\vspace{1.2em}
+
+
+In this last section, we got a step further in building ground for understanding
+the implication theory structure. We gave definitions of minimality and visual
+examples of particular sets called pseudo-closed. With the support of those
+sets, we defined the canonical basis known to be minimal. Finally, algorithms
+for efficiently computing closures have been presented. 
+
+
+\paragraph{Conclusion} In this chapter we first gave a soft introduction to our 
+task with a somehow "physical" example. Then we described briefly advances 
+starting from the first properties found independently in Concept Analysis and 
+Relational Databases fields. We have seen that the question of Horn 
+minimization has been studied in various fields such as graphs, closure spaces, 
+logic (where the name Horn comes from), functional dependencies, lattices. 
+Then, we placed our study within this context. The aim of this study has been 
+exposed as providing a review of some algorithms we talked about, and comparing 
+them under implementation. The last part of the chapter was dedicated to a more 
+formal and theoretical ground necessary for a good understanding of subsequent 
+parts. In the next chapter, we will theoretically discuss in details several 
+algorithms.
+
