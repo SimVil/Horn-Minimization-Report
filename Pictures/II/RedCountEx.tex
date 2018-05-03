@@ -1,0 +1,52 @@
+\centering
+\subfloat[FD-graph of $\I$]{
+\begin{tikzpicture}
+
+\node[Vertex, label=above left:{$ab$}] (ab) at (-2, 0) {};
+\node[Vertex, label=below:{$b$}] (b) at (0, 0) {};
+\node[Vertex, label=above right:{$bc$}] (bc) at (2, 0) {};
+\node[Vertex, label=above:{$d$}] (d) at (0, 1) {};
+\node[Vertex, label=below left:{$a$}] (a) at (-2, -1) {};
+\node[Vertex, label=below right:{$c$}] (c) at (2, -1) {};
+
+\draw[->] (ab) -- (d);
+\draw[->] (bc) -- (d);
+\draw[->] (a) to[bend right=10] (c);
+\draw[->] (c) to[bend right=10] (a);
+
+\draw[->, dotted, thick] (ab) -- (a);
+\draw[->, dotted, thick] (ab) -- (b);
+\draw[->, dotted, thick] (bc) -- (b);
+\draw[->, dotted, thick] (bc) -- (c);
+
+\end{tikzpicture}
+}\qquad
+\subfloat[Closure FD-graph of $\I$]{
+\begin{tikzpicture}
+
+\node[Vertex, label=above left:{$ab$}] (ab) at (-2, 0) {};
+\node[Vertex, label=below:{$b$}] (b) at (0, 0) {};
+\node[Vertex, label=above right:{$bc$}] (bc) at (2, 0) {};
+\node[Vertex, label=above:{$d$}] (d) at (0, 1) {};
+\node[Vertex, label=below left:{$a$}] (a) at (-2, -1) {};
+\node[Vertex, label=below right:{$c$}] (c) at (2, -1) {};
+
+\draw[->] (a) to[bend right=10] (c);
+\draw[->] (c) to[bend right=10] (a);
+
+\draw[->, dotted, thick] (ab) -- (a);
+\draw[->, dotted, thick] (ab) -- (b);
+\draw[->, dotted, thick] (bc) -- (b);
+\draw[->, dotted, thick] (bc) -- (c);
+\draw[->, dotted, thick] (ab) -- (c);
+\draw[->, dotted, thick] (bc) -- (a);
+\draw[->, dotted, thick] (ab) -- (d);
+\draw[->, dotted, thick] (bc) -- (d);
+\draw[->, dotted, thick] (ab) to[bend right=15] (bc);
+\draw[->, dotted, thick] (bc) to[bend right=15] (ab);
+
+\end{tikzpicture}
+}
+
+\caption{Representations of a redundant FD-graph and its closure}
+\label{fig:FD-Red-CountEx}

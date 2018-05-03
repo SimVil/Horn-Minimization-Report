@@ -1,0 +1,35 @@
+\centering
+\subfloat[Representation (i)]{
+\begin{tikzpicture}
+
+\node[Vertex, label=above left:{$a$}] (a) at (-1, 1) {};
+\node[Vertex, label=above right:{$b$}] (b) at (1, 1) {};
+\node[Vertex, label=below:{$\emptyset$}] (e) at (0, -1) {};
+
+\draw[->] (a) -- (b);
+\draw[->] (e) -- (a);
+\draw[->] (e) -- (b);
+
+\end{tikzpicture}
+}\quad
+\subfloat[Representation (ii)]{
+
+\begin{tikzpicture}
+
+\node[Vertex, label=above left:{$a$}] (a) at (-1, 1) {};
+\node[Vertex, label=above right:{$b$}] (b) at (1, 1) {};
+\node[Vertex, label=below:{$\emptyset$}] (e) at (0, -1) {};
+
+\draw[->] (a) -- (b);
+\draw[->] (e) -- (a);
+\draw[->] (e) -- (b);
+
+\draw[->, dotted, thick] (a) to[bend right=15] (e);
+\draw[->, dotted, thick] (b) to[bend left=15] (e);
+
+\end{tikzpicture}
+
+}
+
+\caption{Two possible representations of the empty set in FD-Graphs}
+\label{fig:FD-empty}

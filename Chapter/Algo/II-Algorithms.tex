@@ -1,37 +1,1573 @@
-\chapter{Review of existing algorithms}
+\chapter{Minimization algorithms for implication theories}
 
-In the first chapter we introduced the aim of our study, our working procedure
-and the main tools for us to understand the next explanations. In this part, we
-will focus on reviewing the existing algorithms for the Horn minimization task. 
+In the first chapter, we settled the context of our study. We introduced our 
+subject of interest and defined the theoretical ground it is built on. In this
+chapter, we discuss several algorithms and their complexity. The objective of
+such (bounded) review is implementation for practical comparison, in next 
+chapter. Our first section within this part will be dedicated to bound the study
+to some algorithms and to explain those boundaries. Next, we will effectively
+dive into in-depth studies of minimization procedure. 
+
+\section{Field of study}
+
+Here, we limit our study to some algorithms. As we explained during
+the short state-of-the-art of chapter 1 around the task of closure systems 
+minimization. Within the scope of the internship we will be interested in the
+algorithms \textsc{MinCover} (\cite{b._ganter_conceptual_2016}), 
+\textsc{MaierMinimization} the procedure on functional dependency by Maier in 
+\cite{david_minimum_1980, maier_theory_1983}, \textsc{BercziMinimization} 
+derived from \cite{berczi_directed_2017}.
+
+\vspace{1.2em}
+
+The question is, why? It turns out that we can easily study those algorithms
+within the framework of closure systems. One could argue that this is also the
+case for procedures offered by Shock (\cite{shock_computing_1986}),
+Day (\cite{day_lattice_1992}) and Wild (\cite{wild_implicational_1989, 
+	wild_theory_1994}). As we shall see, those three routines are 
+intimately related to \textsc{MinCover} (not to say they are the same) and as 
+such, studying this one is sufficient to explain the three of them. Regarding
+graph algorithm by Ausiello in \cite{ausiello_graph_1983, 
+	ausiello_minimal_1986}, it seems to us (at the best of our understanding) 
+	that
+one step of the algorithm is not valid in general if taken as written. Namely,
+redundancy elimination. Considering the structure of FD-Graph, first 
+determining the closure and then removing all redundant nodes may alter 
+the initial basis. The last algorithm proposed by Duquenne in 
+\cite{duquenne_variations_2007} has been found too late in the internship to
+be considered as well. Eventually, Angluin algorithm (see 
+\cite{angluin_learning_1992, arias_canonical_2009}) is not designed to minimize 
+a given basis but to learn Horn representation. Hence, even though this 
+algorithm can be used somehow for minimization, this is not the purpose it has 
+been designed for. Consequently, we will not add it to our study.
+Another reason is conciseness. Because we have various mathematical domains
+involved (logic, closure systems, lattices, graphs, functional dependencies),
+limiting ourselves to algorithms within one framework ease detailed exposition
+and comprehension of the closure system terminology instead of overhaul covering
+of all distinct fields, which would have resulted in a definition chapter much 
+heavier regarding to the following material. This detailed overhaul review is
+left for further work, or to the master thesis associated to this internship.
 
 
-% History / soa of the problem.
-% Start from explaining the applications in real life, come to implications, 
-% explain the various existing problems, come to ours, explain that it is 
-% polynomial, develop the sens of various algorithms in various terminologies.
-% Explain (again) that our task is to compare those algorithms in both
-% theoretical and practical aspects.
+% ---------------------------------------------------------------------------- %
+% ==== Section: MinCover, Shock, Day, Duquenne 
+% ---------------------------------------------------------------------------- %
 
-\section{Minimization by reduction}
-
-% 2-steps algorithm
-\input{Chapter/Algo/2-steps-Algorithm.tex}
+\section{Algorithms on closure systems (FCA community)}
 
 
-% Maier Algorithm
-\input{Chapter/Algo/Maier-Algorithm.tex}
+% ==== Minimal Cover ==== %
+
+\subsection{Minimal Cover}
+
+The minimization procedure we will describe in this section, soberly called
+\textsc{MinCover} is the starting point from this internship. It can be found
+in \cite{b._ganter_conceptual_2016}. As we shall explain, it has roots in
+Day lattice-based algorithm \cite{day_lattice_1992}, and more surprisingly, 
+"unknown" ancestor in Shock algorithm \cite{shock_computing_1986}. 
+
+\vspace{1.2em}
+
+The principle is to perform \belemp{right-saturation}, and then \belemp{body 
+	redundancy} elimination. In fact, not only this is the general idea 
+	recently 
+issued in \cite{boros_strong_2017}, but it is also the main theorem of Shock in 
+\cite{shock_computing_1986} and the part of a theorem by Wild 
+(\cite{wild_implicational_1989, wild_theory_1994}). This procedure has the 
+advantage to be somehow intuitive. Indeed, right-saturation means replacing the 
+conclusion of an implication by the closure of its premise:
+
+\begin{center} $A \imp B$ becomes $A \imp \I(A)$ (of course $B \subseteq 
+	\I(A)$)
+\end{center}
+
+\noindent hence, it means that we associate to $A$, all the information we can 
+reach starting from $A$. Then, we perform body redundancy elimination. That is, 
+for each right-closed implication, we check whether the amount of knowledge 
+represented by $\I(A)$ depends necessarily on $A$. In other words, we remove
+$A \imp \I(A)$ from $\I$, and if starting from $A$ we still get the same amount 
+of information ($\I^{-}_{A \rightarrow \I(A)}(A) = \I(A)$), then
+$A$ is not required to get $\I(A)$: $A \imp \I(A)$ can be removed. Now that 
+the principle is explained in words, let us introduce the pseudo-code (see 
+algorithm \ref{alg:MinCover}).
+
+\vspace{1.2em}
+
+\begin{algorithm}
+	\KwIn{$\I$: an implication base}
+	\KwOut{the canonical base of $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	\ForEach{$A \imp B \in \I$}{
+		$\I := \I - \{ A \imp B \}$ \;
+		$B  := \I(A \cup B)$ \;
+		$\I := \I \cup \{ A \imp B \}$ \;
+	}
+	
+	\BlankLine
+	
+	\ForEach{$A \imp B \in \I$}{
+		$\I := \I - \{ A \imp B \}$ \;
+		$A  := \I(A)$ \;
+		\If{$A \neq B$}{
+			$\I := \I \cup \{ A \imp B \}$ \;	
+		}
+		
+	}
+	
+	\caption{\textsc{MinCover}}
+	\label{alg:MinCover}	
+\end{algorithm}
+
+\textsc{MinCover} ends up on the canonical basis. Assuming that 
+closure are computed with \textsc{LinClosure}, the overhaul complexity of
+the algorithm is $O(|\B||\I|)$. To see correctness of the algorithm, observe
+that the resulting $\I_c$ is equivalent to $\I$ at the end of the algorithm.
+Indeed, at the end of the first loop, we replaced $B$ in every implications $A 
+\imp B$ of $\I$ by $\I(A)$. But by definition, $\I \models A \imp B$ if and 
+only if $B \subseteq \I(A)$. This is in particular the case for $B = \I(A)$.
+In the second loop we remove an implication only if it is redundant, thus
+the resulting $\I_c$ is indeed equivalent to $\I$. The main question is 
+minimality of $\I_c$. Recall that the DQ-basis, being minimal is based on 
+pseudo-closed sets. Hence, if we can show that we keep an implication in the 
+second loop only if the premise $\I^{-}(A)$ is pseudo-closed, we are done. This
+is the purpose of next "hand-made" proposition:
+
+\begin{proposition} Let $\I$ be a \belemp{right-closed} implication theory. 
+	Denote $\I^{-}(A) := (\I - \{ A \imp \I(A) \})(A)$, the following holds for 
+	all 
+	$A \imp 
+	\I(A) \in \I$:
+	\begin{itemize}
+		\item[(i)] if $\I(A) = \I^{-}(A)$, $A \imp \I(A)$ is redundant in $\I$,
+		\item[(ii)] if $\I(A) \neq \I^{-}(A)$, $\I^{-}(A)$ is pseudo-closed.
+	\end{itemize}
+	
+\end{proposition}
+
+\begin{proof} \textit{(i)} is trivial by definition. For \textit{(ii)}, let us
+show that $\I^{-}(A)$ is quasi-closed, and then minimal among quasi-closed 
+sets in its equivalence class. Suppose $\I^{-}(A)$ is not quasi-closed, then 
+there must exist $B \subseteq \I^{-}(A)$ such that $\I(B) \nsubseteq \I^{-}(A)$ 
+and $\I(B) \neq \I(\I^{-}(A)) = \I(A)$. Because $B \subseteq \I^{-}(A)$, either 
+$\I(B) \subset \I(A)$ or $\I(B) = \I(A)$. If we are in the equality case, 
+we are done. So let $B \subseteq \I^{-}(A)$ and $\I(B) \subset \I(A)$. By 
+definition of $\I^{-}$, if there exists such $B$, either it is closed in 
+$\I$ and we are done, or there exist implications $C_i \imp \I(C_i)$ such that 
+$C_i \subseteq B$, $\I(C_i) \nsubseteq B$ with $\bigcup \I(C_i) = \I(B)$. But 
+for all such implications, $C_i \subseteq \I^{-}(A)$, and by construction of 
+$\I^{-}(A)$, $\I(B) = \bigcup \I(C_i) \subseteq \I^{-}(A)$. Hence, 
+$\I^{-}(A)$ is indeed quasi-closed. Now, let us show that it is minimal among 
+quasi-closed sets in its equivalence class. If $A$ is closed in $\I^{-}$, the 
+result is direct, because for all $C \imp \I(C)$ in $\I$, either $C \nsubseteq 
+A$ or $(C \subseteq A) \ \land \ (\I(C) \subseteq \I^{-}(A) = A)$. Assume the 
+presence of some $B$ such that $A \subseteq B \subseteq \I^{-}(A)$ with $B$ 
+being quasi-closed. Note that if $A$ is not closed under $\I^{-}$, it
+cannot be quasi-closed. If $B \imp \I(B) = \I(A)$ is in $\I$, then 
+$\I^{-}(A) = \I(A)$ and we have a contradiction. If $B \imp \I(B) \not\in \I$, 
+then we have $\I^{-}(A) = B$ because $B$ contains $A$ and will be closed under 
+$\I^{-}$, which concludes the proof.
+\end{proof}
+
+\vspace{1.2em}
+
+This proposition is sufficient for the algorithm to correctly end up on the 
+canonical basis. Interestingly, the main idea of \textsc{MinCover} is similar to
+the theorem 2.1 of Shock in \cite{shock_computing_1986}, but the algorithm in
+practice is much closer from the procedure given by Day in section 6 of 
+\cite{day_lattice_1992}. Before moving to their work, let us settle down an 
+example of trace for \textsc{MinCover}.
+
+\vspace{1.2em}
+
+\paragraph{Example} Let us discuss the following example:
+\begin{itemize}
+	\item $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, 
+		abcd $\imp$ ef} \} 
+\end{itemize}
+We will present a trace of \textsc{MinCover} by a sequence of vectors 
+representing $\I$ after modifications:
+
+\[
+\begin{pmatrix}
+ab  \imp  cde  \\
+cd  \imp   f    \\
+c  \imp  a     \\
+d  \imp  b     \\
+abcd \imp ef \\
+\end{pmatrix}
+\imp
+\begin{pmatrix}
+ab \imp \text{\midemp{abcdef}}   \\
+cd \imp \text{\midemp{abcdef}}   \\
+c \imp \text{\midemp{ac}}        \\
+d \imp \text{\midemp{bd}}        \\
+abcd \imp \text{\midemp{abcdef}} \\
+\end{pmatrix}
+\imp
+\begin{pmatrix}
+ab \imp abcdef \\
+\text{\aliemp{abcdef $\imp$ abcdef}} \\
+c \imp ac \\
+d \imp bd \\
+\text{\aliemp{abcdef $\imp$ abcdef}} \\
+\end{pmatrix}
+\imp
+\begin{pmatrix}
+ab \imp abcdef \\
+c \imp ac \\
+d \imp bd \\
+\end{pmatrix}
+\]
+
+The first vector is the initial basis. Then we perform right-saturation. The
+third vector differs a bit from true execution of \textsc{MinCover}, but it
+illustrates replacement of $A$ by $\I^{-}(A)$ in $A \imp \I(A)$. As we can see,
+two implications have the same premises and conclusion: they are useless and
+hence removed in the resulting $\I$, being the last vector.
+
+\vspace{1.2em}
+
+Now that things should be a bit clearer, let us discuss the two other 
+algorithms previously cited. Remark that we will not explain the procedure
+given by Wild in \cite{wild_implicational_1989, wild_theory_1994} because it
+is strictly \textsc{MinCover}:
+\begin{enumerate}
+	\item right-close all implications of $\I$,
+	\item find a minimal non-redundant subfamily of implications in $\I$
+	right-closed, i.e redundancy elimination. 
+\end{enumerate}
+\noindent Hence, the procedure given by Shock is presented in algorithm 
+\ref{alg:Shock}.
+
+\begin{algorithm}
+	\KwIn{$\I$: a theory to minimize}
+	\KwOut{a minimum cover for $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	\ForEach{$A \imp B \in \I$}{
+		$\I := \I - \{ A \imp B \}$ \;
+		\If{$B \nsubseteq \I(A)$}{
+			$\I := \I \cup \{A \imp \I(B) \}$ \;	
+		}
+		
+	}
+	\caption{\textsc{ShockMinimization}}
+	\label{alg:Shock}
+\end{algorithm}
+
+This routine, co-issued with the theorem we discussed previously is 
+quite different from \textsc{MinCover}. Even though the conditional statement 
+$B \nsubseteq \I(A)$ is equivalent to $\I(A) \neq \I^{-}(A)$ and 
+replacing $A \imp B$ by $A \imp \I^{-}(B)$ is about right-closing $A \imp B$, 
+the resulting basis of this algorithm may not be minimal in
+general:
+\begin{itemize}
+	\item if $\I = \{ \emptyset \imp a, \ a \imp b \}$ (in this order), 
+	\textsc{ShockMinimization} will produce $\emptyset \imp ab$ which is right,
+	\item if $\I = \{ a \imp b, \ \emptyset \imp b \}$, the result will
+	be $\{ a \imp ab, \ \emptyset \imp ab \}$ being redundant.
+\end{itemize} 
+In fact, this error has already been pointed out in 1995 by Wild in 
+\cite{wild_computations_1995}. In Wild work, we can also find another proof
+for the theorem of Shock, jointly with minimality of DQ-basis (theorem 5 of
+\cite{wild_theory_1994, wild_computations_1995}). Let us discuss now the 
+algorithm proposed by A. Day in 1992 (see pseudo-code \ref{alg:Day}: 
+\textsc{DayMinimization}).
+
+\begin{algorithm}
+	\KwIn{$\I$: a theory to minimize}
+	\KwOut{canonical basis of $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	\ForEach{$A \imp B \in \I$}{
+		$\I := \I - \{ A \imp B \}$ \;
+		$A := \I(A)$ \;
+		$B := \I(A \cup B)$ \;
+		\If{$A \neq B$}{
+			$\I := \I \cup \{ A \imp B \}$ \;	
+		}
+		
+	}
+	
+	\caption{\textsc{DayMinimization}}
+	\label{alg:Day}
+\end{algorithm}
+
+\noindent Here, equivalence with \textsc{MinCover} is clear. The only difference
+is the order in which operations are performed. Even though the 2 algorithms 
+rely on the same computation, it is worth noting a particular case where the
+algorithm by Day may fail. Consider a system not being reduced, e.g:
+
+\[ \I =  \{ b \imp ac, \ c \imp a, \  c \imp b \} \]
+
+\noindent we have:
+\begin{itemize}
+	\item \textsc{MinCover} output: $\{ b \imp ac, \ c \imp abc \}$,
+	\item \textsc{DayMinimization} output: $ \{ b \imp ac, \ ac \imp abc, \  c 
+	\imp abc \}$
+\end{itemize}
+In general, performing right-closure before redundancy elimination, as in 
+\textsc{MinCover} avoids this problem. 
+
+\vspace{1.2em}
+
+In this section we reviewed the algorithm acting as our starting point, by 
+studying its complexity and principle. We also linked it to research we made
+and other algorithms we found. As exposed, \textsc{MinCover} summarizes and 
+corrects all material we covered here, and hence justifies not to implement
+all of them. The next section defines a different algorithm.
 
 
-% Ausiello Graph algorithm (FD-Graph)
-\input{Chapter/Algo/FD-Graph-Algorithm.tex}
+\subsection{Lattice-theoretic approach}
+
+\subsection{Duquenne algorithm}
 
 
-\section{Minimization by construction}
 
 
-% Letter algorithm
-\input{Chapter/Algo/Letter-Algorithm.tex}
 
 
-% Angluin Algorithm
-\input{Chapter/Algo/Angluin-Algorithm.tex}
+
+% ---------------------------------------------------------------------------- %
+% ==== Section: DB algorithms
+% ---------------------------------------------------------------------------- %
+
+
+\section{Algorithms based on Maier's database approach}
+
+\subsection{First algorithm: Maier's algorithm on FDs}
+
+Here we will consider one of the first algorithm given for the minimization 
+task. It has been proposed by Maier in \cite{maier_theory_1983, 
+	david_minimum_1980} and rely notably on the algorithm \textsc{LinClosure} 
+	issued
+in \cite{beeri_computational_1979}. For understandability we will explain this
+algorithm through implication theories framework while drawing parallel with
+Maier's notation and definitions. As a soft introduction, we will develop an
+interesting and simple example in Maier's algorithm context.
+
+\vspace{1.2em}
+
+\paragraph{Example} Let $\Sg$ and $\I$ be as follows (in fact, same example as 
+in previous section):
+\begin{itemize}
+	\item $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, 
+		abcd $\imp$ ef} \} 
+\end{itemize}
+\noindent Let us try to minimize it "with hands". First, we see \textit{abcd 
+	$\imp$ ef} to be redundant. Indeed, if we remove it from $\I$, we still have
+\textit{ab $\imp$ cde} and \textit{cd $\imp$ f}, thus $\I^{-} := \I - \{ abcd 
+\imp ef \} \models abcd \imp ef$. $\I^{-}$ is not redundant any more. 
+Nevertheless, we can still remove an implication. Indeed, not only we can reach 
+$ab$ from $cd$, but also $cd$ from $ab$. Consequently, we could remove $cd \imp 
+f$ from $\I^{-}$ while adding to the head of $ab \imp cde$ the element
+$f$ (the head of $cd \imp f$) to avoid loss of informations. Hence, we 
+would end up with 
+\begin{itemize}
+	\item $\I =$ \{ \textit{c $\imp$ a, d $\imp$ b, ab $\imp$ cdef} \}
+\end{itemize}
+
+\vspace{1.2em}
+
+Those steps of redundancy elimination and equivalence manipulation are the core 
+manipulations of Maier algorithm. For the recall, Maier worked with functional
+dependencies, but this makes no difference when it comes as implications. 
+
+\paragraph{Redundancy elimination} As mentioned in the first chapter, given 
+$\I$, $A \imp B \in \I$ is redundant if $\I - \{ A \imp B \} \models A \imp B$ 
+or equivalently if $B \subseteq \I^{-}_{A \rightarrow B}(A)$. Thus get rid off 
+redundancy elimination can be done in the following procedure:
+
+\begin{algorithm}
+	\KwIn{$\I$: an implication theory}
+	\KwOut{$\I$ without redundant implications}
+	
+	\BlankLine
+	\BlankLine
+	
+	\ForEach{$A \imp B \in \I$}{
+		\If{$\I - \{ A \imp B \} \models A \imp B$}{
+			remove $A \imp B$ from $\I$ \;
+		}
+		
+	}
+	
+	\caption{\textsc{RedundancyElimination}}
+	\label{alg:Maier-RE}	
+\end{algorithm}
+
+\noindent Checking for redundancy is done with \textsc{LinClosure}. Because this
+is done for all implications of $\I$, complexity of redundancy elimination is
+$O(|\B| \times |\I|)$.
+
+\vspace{1.2em}
+
+\paragraph{Equivalence classes} As briefly described previously, we can identify
+equivalence classes within $\Sg^{\I}$. For $X \subseteq \Sg$, we can set up
+$\left[ X \right]_{\I} = \{ Y \subseteq \Sg \ | \ \I(Y) = \I(X) \}$. Notice 
+that this is the definition of an \belemp{equivalence class} we informally 
+presented in the first chapter. More than
+this, we can limit those equivalence classes to bodies of $\I$, i.e for some
+$A \subseteq \Sg$ let
+\begin{itemize}
+	\item[(i)] $E_{\I}(A) = \{ X \imp Y \in \I \ | \ X \in \left[ A 
+	\right]_{\I} \}$ 
+	\item[(ii)] $e_{\I}(A) =\{ X \ | \ X \in \B(\I) \cap \left[ A \right]_{\I} 
+	\}$
+\end{itemize}
+\noindent Plus, we say that $A$ \belemp{directly determines} $B$, denoted $A 
+\ddv B$, if $\I - E_{\I}(A) \models A \imp B$. Now, the minimization process
+in \cite{maier_theory_1983, david_minimum_1980} is the following: 
+
+\begin{proposition} Let $\I$ be an irredundant theory. If $A \imp B, \ C \imp D 
+	\in \I$ (distinct) are such that $C \equiv A$ and $A \ddv C$, then we can 
+	remove $A \imp B$ from $\I$ and replace $C \imp D$ by $C \imp D \cup B$ 
+	without 
+	altering $\Sg^{\I}$.
+\end{proposition}
+
+\begin{proof}(\midemp{sketch}) Suppose we removed $A \imp B$ and modified
+$C \imp D$ to $C \imp D \cup B$. Put $\I^{-}$ as the system we obtained. 
+The main point is to show that we still have $\I^{-} \models A \imp B$. Recall 
+$A \ddv C$, thus:
+
+\begin{align*}
+	\I - E_{\I}(A) \models A \imp C & \implies \I - A \imp B \models A \imp 
+	C \\
+	& \implies \I^{-} \models A \imp C \\ 
+\end{align*}
+
+\noindent Because we changed $C \imp D$ to $C \imp D \cup B$, we have then
+
+\[ (\I^{-} \models A \imp C) \land (\I^{-} \models C \imp D \cup B) \implies
+	(\I^{-} \models A \imp B) \]
+
+\noindent by transitivity. Note that equivalence of $A$ and $C$ is 
+preserved, because in $\I$, by transitivity $C \imp A \imp B$. Removing $A \imp 
+B$ but moving $B$ to $C \imp D \cup B$ preserves $C \imp B$. Also, taking 
+equivalent premise is important in order not to alter the closure system 
+$\Sg^{\I}$. If $A$ and $C$ were not equivalent, we may have changed the system 
+by adding $B$ to the closure of $C$ even though $\I \not\models C \imp B$.
+\end{proof}
+
+\vspace{1.2em}
+
+This is worth noting we gave a "light" definition of direct determination more
+relying on a property proved by Maier than the strict original definition. 
+Also, Wild in \cite{wild_implicational_1989, wild_theory_1994} drawn a parallel
+between quasi-closure property and equivalence classes $E_{\I}(\cdot)$. 
+Indeed, a set $A$ will be quasi-closed if and only if $\I(A) = 
+\I^{-}_{E_{\I}(A)}(A)$. Finally, the last proposition gives us an algorithmic 
+test for minimization: given an equivalence class $E_{\I}(X)$, one can run 
+across all its implications and successively remove useless ones. Actually it 
+says that if an non-redundant basis contains direct determinations, it is not 
+minimal. Hence contrapositive yields a condition for minimality ensuring 
+correctness and end of the operation.
+
+\vspace{1.2em}
+
+The main question is: how to get the equivalence classes efficiently? It turns
+out this can be done using a modified version of \textsc{LinClosure}. It is 
+sufficient to embed in the function a vector of implied premises. That is, 
+for a given premise $X$, we provide to \textsc{LinClosure} a bit-vector 
+$implied$ of size
+$|\B|$. Within the procedure, whenever we reach $count\left[A \imp B \right] = 
+0$ for some $A \imp B \in \I$, then $A$ is implied by $X$ under $\I$. Hence we 
+set $implied\left[ A \imp B\right]$ to 1. Doing this operation for all 
+implications in $\I$ provide a matrix $M$ of size $|\B| \times |\B|$. Then, to 
+compute equivalence classes, a travel over the matrix is enough. Two 
+implications $A \imp B$ and $C \imp D$ of $\I$ belong to the same equivalence 
+class if 
+
+\[ M\left[A \imp B, \ C \imp D \right] = 1 \quad \text{and} \quad 
+M\left[C \imp D, \ A \imp B \right] = 1 \]
+
+\noindent Building the matrix requires $|\B|$ executions of \textsc{LinClosure}
+in any case, thus has $O(|\B||\I|)$ time complexity. Running across $M$ is 
+of course $O(|\B|^2)$. Hence the whole operation can be done in $O(|\B||\I|)$,
+since $|\B||\I| = |\B|^2|\Sg| > |\B|^2$. We will note rewrite 
+\textsc{LinClosure} altered since the modification is about one line in the 
+algorithm and quite simple to understand as is. We will not write the run over 
+$M$ for conciseness, since principle seems sufficient for understanding. All 
+those steps will be summarized as \textsc{EquivClasses}($\I$) in subsequent 
+algorithm. Finally, the whole Maier minimization process is given in algorithm
+\ref{alg:Maier-Min}.
+
+\vspace{1.2em}
+
+\begin{algorithm}
+	\KwIn{$\I$ : a theory to minimize}
+	\KwOut{$\I$ minimized}
+	
+	\BlankLine
+	\BlankLine
+	
+	\ForEach{$A \imp B \in \I$}{
+		\If{$\I - \{ A \imp B \} \models A \imp B$}{
+			remove $A \imp B$ from $\I$ \;
+		}
+		
+	}
+	
+	\BlankLine
+	
+	$E_{\I} := $ \textsc{EquivClasses}($\I$) \;
+	
+	\BlankLine
+	
+	\ForEach{$E_{\I}(X) \in E_{\I}$}{
+		\ForEach{$A \imp B \in E_{\I}(X)$}{
+			\If{$\exists C \imp D \in E_{\I}(X)$ s.t $A \ddv C$}{
+				remove $A \imp B$ from $\I$ \;
+				replace $C \imp D$ by $C \imp D \cup B$ \;	
+			}
+		}
+		
+	}
+	
+	\caption{\textsc{MaierMinimization}}
+	\label{alg:Maier-Min}
+\end{algorithm}
+
+A question we could have is about complexity of removing direct determinations.
+In fact, we can use again a modified version of \textsc{LinClosure} to find
+direct determination. For each implications $A \imp B$, we would have to 
+provide \textsc{LinClosure} with a vector of implications with premises 
+equivalent to $A$. The first one we reach (i.e the first one for which the 
+counter goes to 0) is necessarily an example of direct determination. Moreover,
+note that equivalence classes in $E_{\I}$ defines a partition of $\I$. That is,
+we will have to compute at most $|\B|$ closures to get rid off direct 
+determinations. Whence, the last step of the algorithm requires $O(|\B||\I|)$,
+which is consequently the complexity of \textsc{MaierMinimization} by the 
+previous explanations. It is important to mention that even though the base
+we obtain is minimal, it is not the canonical basis, as we shall see in the
+next example, acting as a trace.
+
+\vspace{1.2em}
+
+\paragraph{Example} Let us use the example we presented at the beginning of
+the section, but this time, applying formally Maier's algorithm on it. Hence,
+as a reminder, we had:
+\begin{itemize}
+	\item $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, 
+		abcd $\imp$ ef} \} 
+\end{itemize}
+\noindent We will proceed by steps.
+\begin{enumerate}
+	\item \midemp{redundancy elimination}: in this step, we compute the closure
+	of each premise to see whether there exists $A \imp B \in \I$ such that 
+	$B \subseteq \I_{A \imp B}^{-}(A)$. It turns out that the only one for which
+	this happens is $abcd \imp ef$. After this step, we have:
+	
+	\begin{center}
+		$\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b} \} 
+	\end{center}
+	
+	\item \midemp{getting equivalence classes}: here is a more interesting step.
+	First, we have to compute the matrix $M$ (see table \ref{tab:Maier-Mat}).
+	The table does not represent the way computations are done, but is still of
+	interest. On the left-hand side, we described the closure of each premise
+	of $\I$. On the right-hand side, we gave the matrix $M$. We can see that
+	an element $M(i, j)$ of $M$ equals 1 if the closure of $i$ contains the
+	premise of $j$.
+	
+	\begin{table}[ht]
+		\centering
+		\subfloat[closures of $\B(\I)$]{
+			\begin{tabular}{| c | c |}
+				\hline \rowcolor{clouds}
+				$\B(\I)$ & $\I(\cdot)$ \\ \hline
+				$ab$ & $abcdef$ \\ \hline
+				$cd$ & $abcdef$ \\ \hline
+				$c$  & $ac$ \\ \hline
+				$d$  & $bd$ \\ \hline
+			\end{tabular}
+		}\quad
+		\subfloat[matrix $M$]{
+			\begin{tabular}{c | c c c c}
+				& $ab \imp cde$ & $cd \imp f$ & $c \imp a$ & $d \imp b$ \\ 
+				\hline
+				$ab \imp cde$ & 1 & 1 & 1 & 1 \\
+				$cd \imp f$   & 1 & 1 & 1 & 1 \\
+				$c \imp a$    & 0 & 0 & 1 & 0 \\
+				$d \imp b$    & 0 & 0 & 0 & 1 \\    
+			\end{tabular} 
+			
+		}
+		\caption{Computing matrix $M$ of implied premises}
+		\label{tab:Maier-Mat}
+	\end{table}
+	
+	\noindent Then, we need to derive out of $M$ the different equivalence 
+	classes. For all pairs of implications $(i, j)$, if $M(i, j) = M(j, i) = 1$,
+	then they belong to the same equivalence class. In our case, we will 
+	partition $\I$ in 3 classes:
+	\begin{itemize}
+		\item[-] $E_{\I}(ab) = \{ ab \imp cde, \ cd \imp f \}$ (= $E_{\I}(cd)$),
+		\item[-] $E_{\I}(c) = \{ c \imp a \}$,
+		\item[-] $E_{\I}(d) = \{ d \imp b \}$
+	\end{itemize}
+	\item \midemp{removing direct determination}: last step. We have to look in
+	all equivalence classes for distinct implications with direct determination.
+	Because $E_{\I}(c)$ and $E_{\I}(d)$ are of size 1, they cannot be reduced.
+	However, $E_{\I}(ab)$ is more interesting. We do not have $ab \ddv cd$. 
+	Indeed, the only way to reach $cd$ from $ab$ is to use $ab \imp cde$, that 
+	is, an element of $E_{\I}(ab)$. Nevertheless, $cd \ddv ab$ because if we 
+	restrict ourselves to $\I - E_{\I}(ab) = \{ c \imp a, \ d \imp b \}$, $cd 
+	\imp ab$ holds. Consequently, we can apply our modifications: we remove 
+	$cd \imp f$ from $\I$, and $ab \imp cde$ becomes $ab \imp cdef$.
+\end{enumerate}
+After applying this algorithm, we end up with a minimal $\I$ being:
+
+\[ \I = \{ c \imp a, \ d \imp b, \ ab \imp cdef \} \]
+
+\vspace{1.2em}
+
+In this section we provided a theoretical study of the algorithm 
+proposed by Maier in \cite{maier_theory_1983, david_minimum_1980} for finding a 
+minimal cover of a basis $\I$. Based on his results, we stated that the  
+asymptotic complexity of this algorithm was $O(|\B||\I|)$. In the next section, 
+we will develop another procedure coming from the graph theory community.
+
+\subsection{Graph-theoretic approach to Maier's algorithm}
+
+This section is dedicated to a minimization algorithm relying on graphs. 
+It has been set up by Ausiello and al. in \cite{ausiello_directed_2017, 
+ausiello_graph_1983, ausiello_minimal_1986}. Starting from a directed 
+hypergraph representation of functional dependencies, it builds a special kind 
+of directed graph, called \belemp{FD-Graph} with which it reduces the initial 
+hypergraph. In order, we are going to define what is a FD-graph, provide the 
+general idea for the algorithm as explained in \cite{ausiello_minimal_1986} and 
+then go into further details and more precise algorithms for such computations 
+as exposed in \cite{ausiello_graph_1983}.
+
+\subsubsection{FD-Graphs and minimum covers}
+
+As we already mentioned, the graph framework developed by Ausiello and al. in
+\cite{ausiello_graph_1983, ausiello_minimal_1986} comes from the work of Maier
+in database theory over functional dependencies (see \cite{maier_theory_1983}).
+Moreover we already discussed the closeness of FD and implications in our 
+context, hence we can still consider the algorithms we are about to study from
+an implication point of view. This leads to no alteration. Furthermore, the
+hypergraph representation of some theory $\I$ is no more than worth mentioning
+for us, since it just presents an attractive graphical description of $\I$.
+Because the structure presented by Ausiello is a particular kind of directed
+graph, let us try to keep explanations as simple as possible and stick to this
+one. It might be first interesting to recall what are graphs (undirected and 
+directed) as an introduction.
+
+\begin{definition}[\midemp{graph}] A \belemp{graph} $G = (V, E)$ is a pair
+of sets where $V$ is a set of \belemp{nodes} or \belemp{vertices} and $E$ is
+a set of unordered pair called \belemp{edges} or \belemp{arcs} from $V^2$.
+\end{definition}
+
+\begin{definition}[\midemp{directed graph}] A graph $G = (V, E)$ where $E$ is
+a set of \belemp{ordered} pairs from $V^2$ is called a \belemp{directed graph}.	
+\end{definition}
+
+\paragraph{Example} Let us illustrate those notions with examples. First, let us
+imagine a graph (not directed) $G_1 = (V_1, E_1)$ where $V_1 = $\{ 
+\textit{a, b, c, d, e}\} is a set of cities and
+$E_1$ would be railways between them, as $(b, c)$ and $(a, d)$ for example. 
+Because railways are bidirectional, if we can go from one city to another, then 
+the other way around is valid too. One possible "map" is represented 
+on the left side of figure \ref{fig:II-graph}.
+
+\begin{figure}[ht]
+	\input{Pictures/II/Graphs.tex}
+\end{figure}
+
+For an example of directed graph, recall our "like" binary relation from the
+chapter 1. The associated graph is $G_2 = (V_2, E_2)$ where $V_2 = $ 
+\{\textit{Narcisse, Neige, Jezabel, Seraphin}\} and for instance, 
+(\textit{Seraphin, Jezabel}) is an edge of $E_2$ while (\textit{Jezabel, 
+Seraphin}) is not. See right-hand side of figure \ref{fig:II-graph} for an 
+illustration.
+
+Now that the notion of graph may be clearer, let us introduce a particular
+kind of directed graph issued in \cite{ausiello_graph_1983, 
+ausiello_minimal_1986} as an improvement of the structure proposed in 
+\cite{ausiello_graph_1980}. It deserves to represent implication theories within
+a framework simpler than hypergraphs. It has been recently re-issued in 
+\cite{ausiello_directed_2017} being a survey.
+
+\begin{definition}[(\midemp{FD-Graph})] Given a theory $\I$ over some $\Sg$, 
+the directed graph $G_{\I} = (V, \  E)$ such that:
+\begin{itemize}
+	\item $V = V_0 \cup V_1$ is the set of nodes where:
+	\begin{itemize}
+		\item $V_0 = \Sg$ is the set of \belemp{simple} nodes (a node
+		per attribute in $\Sg$),
+		\item $V_1 = \{X | X \in \body{\I} \}$ is the set of 
+		\belemp{compound} nodes (a node per distinct body in $\I$),
+	\end{itemize}
+	
+	\item $E = E_0 \cup E_1$ is the set of arcs where:
+	\begin{itemize}
+		\item $E_0$ is the set of \belemp{full} arcs. We have a full arc 
+		$(X, i)$ in	$E_0$ if $(X, i)$ is an hyperarc of $\I$,
+		\item $E_1$ the set of \belemp{dotted} arcs. For each compound node 
+		$X$ of $V^1$, we have a dotted arc $(X, \ i)$ to every attributes 
+		$i$ of $X$,
+	\end{itemize}
+	
+\end{itemize}
+\noindent is the \belemp{Functionnal Dependency Graph} or \belemp{FD-Graph} 
+associated to $\I$.
+\end{definition}
+
+
+Again, the definition may be quite confusing. Therefore, let us pause our 
+explanations with some toy examples, presented in \ref{fig:FD-Graph-1}. 
+Out of those graphs, we can give a way \textit{"with hands"}
+to build an FD-graph out of some $\I$:
+\begin{itemize}
+	\item every single attribute of $\Sg$ is a node, as every premise of $\I$,
+	\item For each $A \imp B$ of $\I$ we draw a \belemp{full} arc from the node
+	$A$ to \textit{every attribute} of $B$,
+	\item For each compound node $A$, we draw a \belemp{dotted} arc from
+	$A$ to \textit{all of its attribute}.
+\end{itemize}
+\noindent which is indeed what we formally defined previously. Furthermore, for
+this algorithm, we consider a basis $\I$ over an attribute set $\Sg$, such that:
+\begin{itemize}
+	\item there is no $A \imp B$, $A' \imp B'$ in $\I$ such that $A = A'$ when
+	$B \neq B'$,
+	\item for all $A \imp B$ of $\I$, $A \cap B = \emptyset$
+\end{itemize}
+\noindent this is a \belemp{reduced} basis for the recall.
+
+\begin{center}
+	\input{Pictures/Graph.1-FD-Ex.tex}
+\end{center}
+
+\vspace{1.2em}
+
+The next definition is about describing a graph-theoretic way to combine 
+implications to derive new one. This notion is essential for all the following 
+material and is called \belemp{FD-paths}.
+
+\begin{definition}[\midemp{FD-Path}] Given an FD-Graph $G_{\I} = (V, E)$, an
+\belemp{FD-Path} $\langle i, \ j \rangle$ is a minimal subgraph 
+$\bar{G}_{\I} = (\bar{V}, \bar{E})$ of $G_{\I}$ such that $i, j \in \bar{V}$ 
+and either $(i, j) \in \bar{E}$ or one of the following holds:
+\begin{itemize}
+	\item $j$ is a simple node and there exists $k \in \bar{V}$ such that 
+	$(k, j) \in \bar{E}$ and there exists a FD-Path $\langle i, \ k \rangle$ 
+	included in $\bar{G}$, 
+	 
+	\item $j = \bigcup_{k = 1}^n j_k$ is a compound node and there exists 
+	FD-paths $\langle i, \ j_k \rangle$ included in $\bar{G}$, for all $k = 
+	1, \ \dots, \ n$.
+\end{itemize}
+	
+\end{definition}
+
+\noindent Informally, an FD-path from a node $i$ to $j$ describes the 
+implications we use to derive $i \imp j$. Intuitively, 
+directed paths are FD-paths. But there is also one case in which
+we can go "backward" in the graph. For better understanding, see examples of
+figure \ref{fig:FD-Graph-3} based on the theory described in figure 
+\ref{fig:FD-Graph-2}. To be more precise, $\I = \{ ab \imp f, \ af \imp g,
+\ a \imp c, \ b \imp d, \ cd \imp e, \ c \imp h, \ cd \imp e \}$.
+
+\begin{center}
+	\input{Pictures/Graph.1-FD-Ex-2.tex}
+\end{center}
+
+There are either \belemp{dotted} or \belemp{full} paths. A path $\langle i, j
+\rangle$ is dotted if all arcs leaving $i$ are dotted, it is full otherwise.
+
+\begin{center}
+	\input{Pictures/Graph.1-FD-Ex-3.tex}
+\end{center}
+
+\vspace{1.2em}
+
+Having explained FD-Graphs, we will now move to explanations of the algorithm
+developed by Ausiello and al. The following procedure finds from a given basis 
+its \belemp{minimal cover}: 
+
+\begin{algorithm}[H]
+	\KwIn{$\I$ an implication basis}
+	\KwOut{$\I_c$ a minimal cover for $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	Find the \belemp{FD-Graph} of $\I$ \;
+	Remove \belemp{redundant} nodes \;
+	Remove \belemp{superfluous} nodes \;
+	Remove \belemp{redundant} arc \;
+	Derive $\I_c$ from the new graph \;
+	
+	\caption{\textsc{AusielloMinimization} (Overview, 1983)}
+\end{algorithm}
+
+\vspace{1.2em}
+
+As we will see in detailed explanations, those steps are equivalent to Maier's
+procedure. In fact, the last part, removing redundant arcs, goes beyond the 
+scope of our needs since it deserves to reduce sizes of premises and 
+conclusion, not the number of implications. This has also been studied in 
+Maier's work, but for out of scope reason we did not reviewed it. For the same
+argument here, we will not focus on it either. To help the reader see where we 
+are heading, one should keep in mind that the two other steps of removing 
+redundant nodes and superfluous nodes will be equivalent to removing redundant 
+implication and direct determination respectively. However, we must first
+dive into the closure of an FD-Graph (parallel to closure of implications) to
+be able to perform removal steps.
+
+\subsubsection{Closure of an FD-Graph}
+
+The closure is based on the following data structures:
+\begin{itemize}
+	\item $V_0$: set of \belemp{simple} nodes,
+	\item $V_1$: set of \belemp{compound} nodes,
+	\item $D_i$ ($\forall i \in V$): nodes from \belemp{incoming dotted} arcs
+	$\{j \in V \ | \ (j, \  i) \text{ is a dotted arc} \}$,
+	\item $L_{i}^0$ ($\forall i \in V$): nodes from \belemp{outgoing full} arcs
+	$\{j \in V \ | \ (i, \  j) \text{ is a full arc} \}$,
+	\item $L_{i}^1$ ($\forall i \in V$): nodes from \belemp{outgoing dotted} 	
+	arcs $\{j \in V \ | \ (i, \  j) \text{ is a dotted arc} \}$,
+	\item $L_{i}^{0+}, L_{i}^{1+}$ ($\forall i \in V$): the respective closures
+	of $L_i^0, L_i^1$,
+	\item $q_m$ ($\forall m \in V^1$): counter of nodes in $m$ belonging to 
+	$L_i^{0+} \cup L_i^{1+}$ for some $i \in V$.
+\end{itemize}
+
+\noindent To make understanding easier, we first give pseudo-code closer from
+principle than algorithms. From a general point of view, to determine the 
+closure of a FD-graph, we must compute the closure of all its nodes. The 
+closure of a node is described by its full and dotted outgoing arcs. Because we
+put a priority on dotted possibilities, they will be computed before. Principle
+are given in algorithmic/pseudo-code form so that identification between steps
+of procedures and ideas of principle are easier to see.
+
+\vspace{1.2em}
+
+First, we introduce the procedure \textsc{NodeClosure} which computes the 
+closure of a node with respect to a type of arc. In other words, to compute the 
+full closure of a node, we must first apply \textsc{NodeClosure} to its dotted 
+arcs, then to its full arcs. The principle and algorithm for 
+\textsc{Nodeclosure} are procedures \ref{alg:FD-NodeClosure-Principle}, 
+\ref{alg:FD-NodeClosure}. 
+
+\vspace{1.2em}
+
+\begin{algorithm}
+	\KwIn{
+		$L_i$: set of nodes for which there exists dotted (resp. full) arcs 
+		$(i, j)$}
+	\KwOut{$L_i^+$: the dotted (resp. full) closure of $i$}
+	
+	\BlankLine
+	\BlankLine
+	
+	Initialize a list of nodes to treat $S_i$ to $L_i$ \;
+	\While{there is a node $j$ to treat in $S_i$}{
+		remove $j$ from $S_i$ \;
+		\If{$j$ is simple node}{
+			\ForAll{compound node $m$ \belemp{except $i$}, $j$ appears in}{
+				increase $q_m$ by 1 \;
+				\If {$q_m$ = number of outgoing \belemp{dotted} arcs from $m$}{
+					$m$ is reachable from $i$ by \aliemp{union} \;
+					$m$ must be treated, add it to $S_i$ \;
+				}
+			}
+			
+		}
+		
+		add $j$ to the closure $L_i^+$ \;
+		
+		\ForAll{nodes $k$ such that there is an arc $(j, \ k)$}{
+			\If{$k$ is not yet in the closure $L_i^+$ or in the \belemp{dotted}
+				closure $L_i^{1+}$ of $i$}{
+				$k$ is reachable from $i$ by \aliemp{transitivity} \;
+				$k$ must be treated, add it to $S_i$ \;
+			}
+		}
+		
+		return $L_i^{+}$ \;
+	}
+	
+	
+	\caption{\textsc{NodeClosure} (Principle)}
+	\label{alg:FD-NodeClosure-Principle}
+\end{algorithm}
+
+We would like to provide some observations on top of their description. Namely 
+on the \aliemp{union} step and $q_m$ counters. Say $i \imp m$ where $m$ is a 
+compound node is a valid implication in a FD-graph. Furthermore say $m = 
+\bigcup_i m_i$ where $m_i$'s are simple nodes. The union step models the fact 
+that if we have $i \imp m_i$ for all $m_i$ in $m$, then we must have $i \imp m$ 
+also. The counter $q_m$ ensures that we indeed reached all $m_i$'s in $m$. 
+Also, the algorithm has access to all the structures we described above (nodes, 
+sets of arcs, and so forth). Parameters are thus lists we are going to modify 
+somewhat. The \textsc{NodeClosure} algorithm runs in time $O(|\I|)$. The first 
+nested loop runs in at most $O(|\Sg| \times |\body{\I}|) = O(|L|)$ because 
+$S_i$ contains at most $|\Sg|$ elements, and the block referring to the 
+\textit{union} rule runs over compound nodes, that is bodies of $\I$. For the 
+second loop (transitivity) note that we can at most consider all the edges of 
+the FD-graph. In fact, the cost of transitivity operation for all $j$ is 
+$O(\sum_{j = 1}^n |L_j^0 \cup L_j^1 |)$. But by definition, those sets are 
+disjoints, and therefore we cannot treat more than $| E |$ arcs (the total 
+number of arcs in $G$), that is $|\I|$.
+
+\begin{algorithm}
+	\KwIn{
+		$L_i$: set of nodes for which there exists dotted (resp. full) arcs 
+		$(i, j)$}
+	\KwOut{$L_i^+$: the dotted (resp. full) closure of $i$}
+	
+	\BlankLine
+	\BlankLine	
+	
+	$S_i := L_i$ \;
+	
+	\While{$S_i \neq \emptyset$}{
+		select $j$ from $S_i$ \;
+		\If{$j \in V^0$}{
+			\ForAll{$m \in D_j - \{ i \}$}{
+				$q_m := q_m + 1$ \;
+				\If{$q_m = |L_m^1|$}{
+					$S_i := S_i \cup \{ m \}$ \;
+				}
+				
+			}
+		}
+		
+		$S_i^+ := S_i^+ \cup \{ j \}$ \;
+		
+		\ForAll{$k \in L_j^0 \cup L_j^1$}{
+			\If{$k \not\in S_i^+ \cup L_i^{1+} \cup \{ i\}$}{
+				$S_i := S_i \cup \{ k \}$ \;
+			}
+		}
+	}
+	return $L_i^+$ \;
+	\caption{\textsc{NodeClosure}}
+	\label{alg:FD-NodeClosure}
+\end{algorithm}
+
+\vspace{1.2em}
+
+Next, we present the principle and pseudo-code for the closure of an FD-graph
+\ref{alg:FD-Closure-Principle}, \ref{alg:FD-Closure}. Mostly, the principle is 
+the idea we described previously. There is just one observation to make about 
+setting a counter $q_m$ to 1. This variable helps to see whether we can use 
+union rule as we saw in procedure \textsc{NodeClosure}
+(\ref{alg:FD-NodeClosure-Principle}, \ref{alg:FD-NodeClosure}). We initialize it
+in case $i$ is indeed part of some compound node so that we do not omit to count
+it when dealing with $S_i$ (because $S_i$ does not contain $i$). In terms of
+complexity, we are running \textsc{NodeClosure} on all nodes having outgoing
+edges, that is $|\body{\I}|$ nodes (if a compound node is represented, it must
+have at least one outgoing full arc). Since \textsc{NodeClosure} operates in
+$O(|\I|)$, the whole closure algorithm must run in $O(|\body{\I}| \times |\I|)$.
+
+\begin{algorithm}
+	\KwIn{$V_0$, $V_1$ and $\forall i \in V$ $D_i$, $L_i^0$, $L_i^1$}
+	\KwOut{$\forall i \in V$ $L_i^{0+}$, $L_i^{1+}$}
+	
+	\BlankLine
+	\BlankLine
+	
+	\ForAll{node $i$ in $V$ with outgoing arcs}{
+		
+		\If{$i$ is an attribute of a compound node $m$}{
+			set a counter $q_m$ to $1$ \;	
+		}
+		
+		initialize the closure of $i$ to $\emptyset$ \;
+		
+		\If{$i$ is a compound node}{
+			determine \belemp{dotted} arcs in the closure of $i$ \;
+		}
+		
+		determine \belemp{full} arcs in the closure of $i$ \;
+		
+	}
+	
+	\caption{\textsc{GraphClosure} (Principle)}
+	\label{alg:FD-Closure-Principle}
+\end{algorithm}
+
+\begin{algorithm}
+	\KwIn{$V_0$, $V_1$ and $\forall i \in V$ $D_i$, $L_i^0$, $L_i^1$}
+	\KwOut{$\forall i \in V$ $L_i^{0+}$, $L_i^{1+}$}
+	
+	\BlankLine
+	\BlankLine
+	
+	\ForAll{$i \in V$ with $L_i^0  \cup L_i^1 \neq \emptyset$}{
+		
+		\ForAll{$m \in V^1$}{
+			\uIf{$m \in D_i$}{
+				$q_m := 1$ \;
+				
+			} \Else {
+				$q_m := 0$ \;
+				
+			}
+		}
+		
+		$L_i^{1+} := \emptyset$ \;
+		$L_i^{0+} := \emptyset$ \;
+		
+		\If{$i \in V^1$}{
+			$L_i^{1+} := $ \textsc{NodeClosure}($L_i^{1}$) \;	
+		}
+		
+		$L_i^{0+} := $ \textsc{NodeClosure}($L_i^{0} - L_i^{1+}$) \;
+		
+	} 
+	
+	\caption{\textsc{GraphClosure}}
+	\label{alg:FD-Closure}
+\end{algorithm}
+
+\vspace{1.2em}
+
+Now that algorithms for computing the closure of a FD-graph have been set, we
+can move to the minimization part.
+
+\subsubsection{Removing redundant nodes}
+
+The first step is about removing redundant implications. In terms of FD-graphs, 
+we remove redundant nodes. A compound node (only) $i$ is said \belemp{redundant} if for each full arc $(i, j)$ leaving $i$
+there exists a dotted path $\fdpath{i}{j}$. We give an example in the figure
+\ref{fig:FD-Graph-4}.
+
+\begin{figure}[ht]
+\input{Pictures/II/RedExample.tex}
+\end{figure}
+
+In this example, the associated basis is $\I = { ab \imp cd \, ; \, a \imp c \, ; \, b \imp d}$. Indeed, in this case, $ab \imp cd$ is 
+redundant because $\I - {ab \imp cd} \models ab \imp cd$. So removing a redundant node is removing exactly one implication in $\I$ since $\I$ is reduced. It is quite direct to see equivalence between redundancy of a node and
+redundancy of the implication having this node as a premise. We give a 
+proposition anyway to make everything clear.
+
+\begin{proposition} An implication $A \imp B$ is redundant in $\I$ if and only if $A$ is a redundant node in the FD-graph $G_{\I}$ associated to $\I$.
+\end{proposition}
+
+\begin{proof} Assume $A \imp B$ is redundant in $\I$. Then $A \imp B$ still holds in $\I^{-} := \I - {A \imp B}$. The FD-graph $G_{\I^{-}}$ associated to 
+$\I^{-}$ is in fact $G_{\I}$ where we got rid of node $A$ (being compound) and
+of all its outgoing arcs, dotted and full. If $\I^{-} \models A \imp B$ we must be able to find implications $X_i \imp Y_i$, $X_i \subseteq A$ such that $\bigcup_{i} X_i \imp B$. In particular we could add a compound node $\bigcup_i X_i$ to $G_{\I^{-}}$ with only dotted arcs to its attribute so that
+we would have only a dotted FD-path from $\bigcup_i X_i$ to $B$, hence from $A$
+to $B$.
+
+\vspace{1.2em}
+
+Suppose $A$ is redundant node in $G_{\I}$. It has full outgoing arcs, and is
+compound hence corresponds to a premise $A$ of $\I$. Because it is redundant, we
+can remove all of its full outgoing arcs without any loss of information. Say
+$A \imp B$ is the implication represented by the node $A$ and its full outgoing
+arcs. Removing all is reducing $A \imp B$ to $A \imp \emptyset$ that is an
+implication we can remove. Because there is still FD-path from $A$ to $B$ in this set up we have $A \imp B$ still holding in $\I$ where $A \imp B$ has been
+replaced by $A \imp \emptyset$ equivalent to $\I - \{ A \imp B \}$.
+
+\end{proof}
+
+To remove redundant nodes, Ausiello and al. observed that a redundant node will
+only have dotted arcs in the closure of a FD-Graph. Hence its minimization procedure for some $\I$ and associated $G_{\I}$ suggests to determine the closure of $G_{\I}$ and then to remove all redundant nodes by checking it. However, let us consider the following case:
+
+\[ \I = \{ ab \imp d, \ bc \imp d, a \imp c, c \imp a \} \]
+
+with the associated FD-Graph presented in figure \ref{fig:FD-Red-CountEx}. On the right-hand side of the figure we gave the closure of the FD-graph. We can
+observe that two nodes are redundant, namely $ab$ and $bc$. Indeed, we have:
+\begin{itemize}
+	\item[-] $\I - \{ab \imp d \} \models ab \imp d$
+	\item[-] $\I - \{bc \imp d \} \models bc \imp d$
+\end{itemize}
+\noindent Nevertheless, this does not mean we can remove the two of them. Indeed
+those two implications are somehow \textit{"mutually redundant"}: if we remove
+one, the other is not redundant anymore. For instance, consider removing $ab \imp d$ from $\I$. Then, $\I = \{ bc \imp d, a \imp c, c \imp a \}$. In this
+case $\I - \{bc \imp d \} \not\models bc \imp d$ because even though $c \imp a$,
+the lack of $ac \imp d$ prevent redundancy of $bc \imp d$. Therefore, the idea
+proposed by Ausiello as we understood it would result in $\I = \{ a \imp c, \ c \imp a \}$ after redundancy elimination, being not correct. In Maier's term, this would be equivalent to first marking all redundant implications and then
+removing all of them.
+
+\begin{figure}[ht]
+	\input{Pictures/II/RedCountEx.tex}
+\end{figure}
+
+\vspace{1.2em}
+
+FD-Graphs suffer from another drawback: representation of non-closed empty set.
+To the best of our knowledge, this has not been discussed. While Maier's algorithm is flexible towards open empty set, FD-graphs may not, unless we missed informations. How to represent the basis $\I = \{ \emptyset \imp ab, a \imp b\}$? We thought of two possible choices:
+\begin{itemize}
+	\item[(i)] consider $\emptyset$ as a compound node without dotted arcs,
+	hence like a simple node
+	\item[(ii)] when $\emptyset$ is present, consider all simple nodes as 
+	compound, and add a dotted arc for all of them into $\emptyset$
+\end{itemize}
+Let us investigate those two representations. As one may have noticed, $\I$
+is redundant and we should only keep $\emptyset \imp ab$. The two ideas
+are represented in figure \ref{fig:FD-empty}.
+
+\begin{figure}[ht]
+	\input{Pictures/II/RedEmptyEx.tex}	
+\end{figure}
+
+\vspace{1.2em}
+
+In the first representation, we will not remove any implication, since there
+is no dotted arcs anywhere. On the right-hand side, we would remove simple
+nodes, namely $a$, since we have indeed dotted FD-path from $a$ to $b$.
+However, we would reduce our attribute set and consequently we would keep only
+$\emptyset \imp b$ in $\I$. Therefore, none of those ideas is satisfying. Of course we do not state there is no solution.
+
+\vspace{1.2em}
+
+That said, we could argue on two points. First, maybe we should doubt of our
+interpretation of the algorithm. Second, let us consider we understood it well,
+then a possible correction would be to compute both dotted and full closure for
+all compound nodes of $\I$ to see whether they are redundant or not. If it is the case, we update the graph and its closure(among nodes already computed!) by removing the node. This would be strictly the same operation as Maier's redundancy elimination, plus the cost in time and memory of bidirectional translation from basis to FD-Graph. On top of that, one should consider the cost of removing only one node and all of its outgoing arcs within a graph. While this could be done quite easily in an adjacency matrix representation, the adjacency lists choice (which seems to be the one assumed somehow in Ausiello work) would be more time consuming, namely $O(\I)$. 
+
+\vspace{1.2em}
+
+We shall discuss it again later on, but as for now, it seemed to us that  Ausiello algorithm requiring bidirectional translation, maybe misleading operations, or equal processing as in the Maier case was not worth implementing.
+
+
+\subsubsection{Removing superfluous nodes}
+
+From now on, assume we are given a nonredundant FD-Graph. Let us remove so-called superfluous nodes. A node $i$ is \belemp{superfluous} if there is an equivalent node $j$ and a dotted path from $i$ to $j$. Two nodes $i, j$ are \belemp{equivalent} if there are FD-paths $\fdpath{i}{j}$ and $\fdpath{j}{i}$.
+It comes at no surprise that nodes are equivalent exactly when they have the
+same closure in $\I$. From a theoretical point of view, the minimization algorithm suggests the following operation:
+\begin{itemize}
+	\item find a superfluous node $i$, and an equivalent node $j$ with a dotted
+	path from $i$ to $j$
+	\item for each full arc $ik$, we add a full arc $jk$
+	\item then we remove the node $i$ and all of its outgoing arcs from the 
+	graph
+	\item repeat until no more superfluous nodes exist
+\end{itemize}
+\noindent An example of this procedure is given in the figure
+\ref{fig:FD-Graph-5}. In this example $\I = {ab \imp e \, ; \, a \imp c
+	\, ; \, b \imp d \, ; \, cd \imp ab}$. The node $ab$ is superfluous. Since 
+our
+basis are reduced, note that removing a superfluous node is removing exactly 
+one implication in $\I$. In this case, the resulting $\I$ will be
+
+\[ \I = {a \imp c, b \imp d, cd \imp abe} \] 
+
+
+\begin{figure}[ht]
+\input{Pictures/II/SupExample.tex}
+\end{figure}
+
+
+\noindent Now we may rewrite this operation in our terms. Let $A \imp B$ and 
+for instance $C \imp D$ be part of $\I$ to be general. Then $A$ is superfluous
+body if
+
+\[ \I \models A \imp C, C \imp A \land \exists X \subset A \; s.t \;
+\I \models X \imp C \]
+
+\noindent In this case, we apply the following operations
+\begin{itemize}
+	\item $C \imp D$ becomes $C \imp (D \cup B)$
+	\item we remove $A \imp B$ from $\I$
+\end{itemize}
+
+\noindent In order to prove correctness of this operation, we will show that
+a node $A$ is superfluous exactly when $A$ directly determines some equivalent
+$B$ in Maier's terms. Because in both case we are doing same replacement/deletion operation, if two statements are equivalent then the Ausiello algorithm is correct as Maier's one is.
+
+\begin{proposition} \label{prop:maier.equiv_sup_sub} The following properties
+are equivalent (let $A \imp C$ be the implication of $\I$ with $A$ as body):
+\begin{itemize}
+	\item[(i)] A node $A$ in a FD-graph is superfluous with respect to $B$,
+	\item[(ii)] $A \equiv B$ and $\I - \{A \imp C \} \models A \imp B$.
+\end{itemize}
+\end{proposition}
+
+\begin{proof} (i) $\imp$ (ii). If $A$ is superfluous, we have a dotted FD-Path
+$\langle A, \ B \rangle$. Since it is dotted, let us remove this node $A$ 
+and its outgoing arcs. Actually, none of the nodes pointed by dotted arcs of $A$
+have been removed, thus we can still find the nodes $a_i$ (attributes of 
+$a$) used in the dotted path $\langle A, \ B \rangle$ such that $\bigcup_i a_i 
+\models B$. Because $\bigcup_i a_i \subseteq A$, we end up with $\I - \{A 
+\imp C \} \models A \imp B$.
+
+\vspace{1.2em}
+
+(ii) $\imp$ (i). In the FD-Graph associated to $\I - \{A \imp C \}$, the 
+node $A$ is not present. But still, $A \imp B$ holds. This means that we must be
+able to find a list of proper subsets $A_i$ of $A$ (possibly single 
+attributes) such that $\bigcup_{i} A_i \models B$. Adding $A \imp C$ will add the node $A$ and in particular dotted arcs from $A$ to each attributes of $\bigcup_{i} A_i \subseteq A$. Thus, we will have a dotted path from $A$ to $\bigcup_{i} A_i$ and consequently, to $B$. $A$ is indeed superfluous. Because $B$ is equivalent to $A$ by assumption, this property is preserved when adding a node.
+	
+\end{proof}
+
+
+\begin{proposition} \label{prop:maier.equiv_ssup_dd}
+the following statements are equivalent, for $A, B$ bodies of $\I$:
+\begin{itemize}
+	\item[(i)] $A \ddv B$ and $B \equiv A$,
+	\item[(ii)] the node $A$ is superfluous with respect to $B$, and there 
+	exists 
+	a dotted FD-path from $A$ to $B$ not using any outgoing full arcs of
+	nodes equivalent to $A$.
+\end{itemize}
+	
+\end{proposition}
+
+
+\begin{proof} (i) $\imp$ (ii). Using proposition
+\ref{prop:maier.equiv_sup_sub} and the equivalence between $A \ddv B$
+and $\I - E_{\I}(A) \models A \imp B$ (from Maier's terminology), showing that there is a direct determination starting from $A$ implies $A$ is a superfluous node in the FD-Graph is straightforward. If $\I - E_{\I}(A) \subseteq \I - \{A \imp C \} \models A \imp B$ so does $\I - \{A \imp C \}$. This holds in particular if $B \subseteq A$. Moreover, notice that using an outgoing full arc from a node $D$ equivalent to $A$ is exactly using an implication with left hand side equivalent to $A$. Therefore, if there is not dotted FD-path from $A$ to $B$ not using those arcs, we would contradict direct determination.
+
+\vspace{1.2em}
+
+(ii) $\imp$ (i). Suppose $A$ is superfluous and there exists a dotted FD-path from $A$ to $B$ not using any outgoing full arcs from nodes equivalent to $A$. Those full arcs represent exactly the implications contained in $E_{\I}(A)$. Since we don't use them, the path still holds in $\I - E_{\I}(A)$ (we would remove compound nodes without outgoing full arcs of course, but this would only make the path stops to attributes instead of compound node). Having this path in $\I - E_{\I}(A)$ means that $\I - E_{\I}(A) \models A \imp B$.
+	
+\end{proof}
+
+With propositions 3, 6 and above remarks on operations done in FD-graphs, we
+can conclude that \textsc{AusielloMinimization} performs from a graph-theoretic point of view the operations made by \textsc{MaierMinimization} in implications
+framework. Hence both are correct and the resulting FD-graph represents a minimal basis in our terms. As aforementioned, we did not implement this graph-theoretic approach not only because of a possible misunderstanding or mistake in the first step, but also because the operations are the same as in
+\textsc{MaierMinimization} except that they are moved to a framework where
+we would need translation procedure (hence overhead in time and memory). However, the superflousness elimination is claimed to be  sometimes faster than in Maier's case asymptotically. Unfortunately, we were unable to find a 
+practical representation matching both the expected size of the FD-Graph data
+structure and the complexity of elementary operations like removing a node.
+Eventually, this algorithm could be considered as a weak point of our study since for all this reason taking time to investigate, we chose to focus on
+other algorithms. Nevertheless, as all this section shows, we still provided
+some theoretical comparison to exhibit the heart of the procedure being a 
+translation from a framework to another. The advantages of FD-graphs are the
+representation in simple terms of some implication theories, and the difference
+between dotted and full arcs allowing for some separations in nodes.
+
+
+\section{Propositionnal logic based approach}
+
+\subsection{Hypergraphs out of a bounding theorem}
+
+Here, we will study an algorithm proposed by Berczi and al. in 
+\cite{berczi_directed_2017} following a paper by Boros and al. 
+(\cite{boros_strong_2017}). Readers having a glance at the paper previously 
+cited will see different notations and framework between our study and the one 
+performed by the authors. This is because they use a graph-theoretic ground 
+equivalent to ours, but as we previously said, in order to stay in a somehow 
+coherent set up all along this report, we will discuss in terms of implications 
+and so forth.
+
+\vspace{1.2em}
+
+The main idea of the algorithm we should keep in mind, is to build iteratively
+the DG basis. To describe briefly the procedure in words, having an initial 
+basis $\I$: we initialize $\I_c = \emptyset$ and then at each step of the 
+algorithm we add a new implication $A \imp \I(A)$ in $\I_c$ such that $A$ is 
+pseudo-closed in $\I$. By construction then, we will terminate and end up with 
+the DQ basis. Now that the process is defined, let us expose the procedure
+and discuss it (see algorithm \ref{alg:Berczi-min})
+
+\begin{algorithm}
+	\KwIn{$\I$: an implication theory}
+	\KwOut{$\I_c$: the DQ-basis of $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	$\I_c := \emptyset$ \;
+	
+	\While{$\exists B \in \B(\I)$ s.t $\I_c(B) \neq \I(B)$}{
+		$P := \min\{\I_c(B), \ B \in \B(\I) \text{ and } \I_c(B) \neq \I(B)\}$ 
+		\;
+		$\I_c := \I_c \cup \{P \imp \I(P) \}$ \;
+		
+	}
+	
+	return $\I_c$ \;
+	
+	\caption{\textsc{BercziMinimization}}
+	\label{alg:Berczi-min}
+\end{algorithm}
+
+\noindent In \cite{berczi_directed_2017, boros_strong_2017}, pseudo-closure
+is not really considered. Instead, an implication of the form $P \imp \I(P)$ 
+where $P$ is pseudo-closed, is called \belemp{left-right-saturated}. To stay
+close to our definition of the canonical basis, we provide an proposition for 
+the correctness of this algorithm, based on pseudo-closed sets:
+
+\begin{proposition} In algorithm \ref{alg:Berczi-min}, we add an implication
+	$P \imp \I(P)$ only if $P$ is pseudo-closed.
+	
+\end{proposition}
+
+\begin{proof} Let us prove this proposition by induction. 
+	
+	\paragraph{Initial Case} The initial case is the first implication we add
+	to $\I_c$. Because $\I_c$ is empty, for all $B \in \B(\I)$, $\I_c(B) = B$.
+	Thus, we add to $I_c$ an implication $B \imp \I(B)$ where $B$ is minimal
+	inclusion-wise among bodies of $\I$. Recalling our definition of 
+	pseudo-closure, $B$ is compelled to be pseudo-closed then. Note that in 
+	fact,
+	this argument will hold for all minimal bodies inclusion-wise. Hence, the 
+	proposition is true for the initial case.
+	
+	\vspace{0.5em}
+	
+	\paragraph{Induction} Suppose we added only implications with pseudo-closed 
+	sets as premises in $\I_c$. We will show that in the next implication $P 
+	\imp 
+	\I(P)$ we add, $P$ is pseudo-closed. Take $P$ as mentioned in the algorithm.
+	First observe that taking the minimal non-closed sets of $\I$ closed in 
+	$\I_c$
+	generated by bodies of $\I$ is sufficient to have the minimal such sets in 
+	general. Indeed, let $X$ be a closed set of $\I_c$ not closed in $\I$. Then,
+	because bodies are minimal in non-closed sets of $\I$, there must exist 
+	implications $\alpha \imp \beta$ in $\I$ such that $\alpha \subseteq X$.
+	In particular, we must have an implication $\alpha_i \imp \beta_i$ such 
+	that 
+	$\alpha_i \subseteq X$ and $\beta_i \nsubseteq X$, because $X$ is not 
+	closed. 
+	Now by construction of the algorithm, we have the following for all 
+	implications $A \imp B$ of $\I$: either $\I_c(A) \imp \I(A)$ belongs to 
+	$\I_c$, 
+	either it does not (here $\I_c(A)$ is the closure of $A$ before adding 
+	$\I_c(A) \imp \I(A)$ to $\I_c$). Because $\beta_i \nsubseteq X = 
+	\I_c(X)$ we can conclude that $\I_c(\alpha_i) \imp \I(\alpha_i) \not\in 
+	\I_c$.
+	Thus $X$ will not be minimal $\I_c$-closed $\I$-non-closed unless it is the 
+	closure of some body of $\I$.
+	Because we are sure to take a minimal $\I_c$-closed $\I$-non-closed set at 
+	each step, we are sure to have all possible pseudo-closed sets $P_i \subset 
+	P$
+	when considering $P$. Furthermore, since we take $P$ to be the minimal close
+	set of $\I_c$, $\I(P_i) \subseteq P$ for all $P_i$. Hence $P$ is indeed 
+	pseudo-closed, which confirms the induction hypothesis and the property in
+	general.
+	
+\end{proof}
+
+This statement saying that if we add an implication, then its premise is 
+pseudo-closed is enough to justify termination of the algorithm on DQ
+basis. The outer while loop will be executed at most $|\B|$ times since at
+each step, we take out another body of $\I$. Computing and finding the next
+pseudo-closed set in this case is done in $O(|\B||\I|)$ operations (an 
+execution of \textsc{LinClosure} for each implication of $\I$), thus resulting
+in an $O(|\B|^2|\I|)$ asymptotic complexity for the whole algorithm. Even though
+simple in its form, it is much more time consuming than previous studied 
+algorithms. Before discussing any improvement, we will give an example.
+
+\paragraph{Example} To be coherent, let us take again our perpetual example:
+\begin{itemize}
+	\item $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, 
+		abcd $\imp$ ef} \} 
+\end{itemize}
+Let us illustrate the algorithm through a graphical trace (see figure 
+\ref{fig:berczi-trace}). In this figure, we represented the 4 steps of 
+\textsc{BercziMinimization} over $\I$ as follows: on the left-hand side of each 
+step, one can find the closures of premises of $\I$ under $\I_c$, denoted 
+$\I_c(\B(\I))$, ordered by inclusion ($\subseteq$). On the right-hand side, we 
+have the closures of premises of $\I$ under $\I$, that is $\I(\B(\I))$, again 
+ordered by inclusion.
+
+\vspace{1.2em}
+
+In fact, Berczi procedure is a matter of comparing those two orderings. At each
+step, we should consider all premises $B$ of $\I$ such that $\I(B)$ is not an
+element of $(\I_c(\B(\I)), \subseteq)$. Among those premises, we take one with
+a minimal $\I_c$-closure. Then, adding $\I_c(B) \imp \I(B)$ to $\I_c$ ensures
+in next steps, we will not have to consider elements of $\downarrow \I(B)$ in
+$(\I(\B(\I)), \subseteq)$. In details (a point refers to a step in the figure):
+\begin{itemize}
+	\item[(a)] $\I_c = \emptyset$, so for all premises $B$ of $\I$, $\I_c(B) = 
+	B$.	Hence we take $c$ as a premise with minimal $\I_c$-closure, and append 
+	$c \imp ac$ to $\I_c$.
+	\item[(b)] $\I_c = \{ c \imp ac \}$. $d$ is a premise of $\I$ being closed 
+	in $\I_c$, hence minimal. Consequently, we add $d \imp bd$ to $\I_c$.
+	\item[(c)] $\I_c = \{ c \imp ac, d \imp bd \}$, the closures of $c$ and 
+	$d$, are the same in $\I_c$ and in $\I$. It remains then $ab$, $cd$ and 
+	$abcd$. In $\I_c$, we have:
+	\begin{itemize}
+		\item $\I_c(ab) = ab$,
+		\item $\I_c(cd) = abcd$,
+		\item $\I_c(abcd) = abcd$,
+	\end{itemize}
+	thus the minimal one is $\I_c(ab) = ab$ and we add $ab \imp abcdef$ to 
+	$\I_c$,
+	\item[(d)] $\I_c = \{ c \imp ac, d \imp bd, ab \imp abcdef 
+	\}$, for all $B \in \B(\I)$, $\I_c(B) = \I(B)$, the two orderings
+	are identical (or \belemp{isomorphic}), $\I_c$ is equivalent to $\I$ and
+	canonical whence minimal.
+\end{itemize}
+
+
+\begin{figure}[ht]
+	\input{Pictures/II-Berczi-Trace.tex}
+\end{figure}
+
+\paragraph{Possible improvement} As we said, this algorithm is much less 
+efficient than \textsc{MinCover} or even than \textsc{MaierMinimization}. The
+problem may come from the need to re-compute the closure of bodies in $\I$ under
+$\I_c$ at each step to find a possible minimum. Thus, an improvement would be
+to order premises so that the algorithm becomes:
+
+\newpage
+
+\begin{algorithm}
+	\KwIn{$\I$: a theory to minimize}
+	\KwOut{$\I_c$: canonical basis associated to $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	$\I_c := \emptyset$ \;
+	\textsc{Order}($\I$) \;
+	
+	\BlankLine
+	
+	\ForEach{$A \imp B \in \I$}{
+		\If{$\I_c(A) \neq \I(A)$}{
+			$\I_c := \I_c \cup \{ \I_c(A) \imp \I(A) \}$ \;	
+		}	
+	}
+	
+	return $\I_c$ \;
+	
+\end{algorithm}
+
+\noindent where \textsc{Order} would be an order on premises of $\I$ in 
+accordance with the partial order defined by pseudo-closed sets. Unfortunately,
+it seems like neither lectic or premise-size ordering are valid though they 
+are compatible with inclusion partial order.
+
+\vspace{1.2em}
+
+In this section we are interested in the Angluin algorithm (1992). 
+\cite{angluin_learning_1992, arias_canonical_2009}.
+
+\subsection{Angluin algorithm and AFP: Query Learning based approach}
+
+Here, the method for building a minimal base is slightly different. We use 
+so-called \belemp{query learning}. The idea is we formulate \belemp{queries}
+to an \belemp{oracle} knowing the basis we are trying to learn. The oracle 
+is assumed to provide an answer to our query in constant time. Depending on 
+the query, it might also provide informations on the object we are looking for.
+For the Angluin algorithm, we need 2 types of queries. Say we want to learn
+a basis $\I$ over $\Sg$:
+\begin{enumerate}
+	\item \belemp{membership} query: is $M \subseteq \Sg$ a model of $\I$? The
+	oracle may answer "yes", or "no".
+	\item \belemp{equivalence} query: is a basis $\I'$ equivalent to $\I$? Again
+	the answers are "yes", or "no". In the second case, the oracle provides a
+	\belemp{counterexample} either positive or negative:
+	\begin{itemize}
+		\item[(i)] \belemp{positive}: a model $M$ of $\I$ which is not a
+		model of $\I'$,
+		\item[(ii)] \belemp{negative}: a non-model $M$ of $\I$ being a model
+		of $\I'$. 
+	\end{itemize}
+\end{enumerate}
+\noindent To clarify, the terms negative/positive are related to the base $\I$
+we want to learn.
+
+\subsubsection{Algorithm}
+
+The algorithm has been proved to end up with the Duquenne-Guigue Basis, again 
+we can refer to \cite{angluin_learning_1992, arias_canonical_2009} for further
+explanations. The first algorithm provided by Angluin et al. relies on clauses
+with unitary heads. It uses two operations allowing to reduce implications:
+\begin{itemize}
+	\item $refine(A \imp B, M)$: produces $M \imp \Sg$ if $B = \Sg$, 
+	$M \imp B \cup A - M$ otherwise,
+	\item $reduce(A \imp B, M)$: produces $A \imp M - A$ if $B = \Sg$, 
+	$A \imp B \cap M$ otherwise.
+\end{itemize}
+
+\begin{algorithm}
+	\KwIn{$\I$}
+	\KwOut{$\I_c$}
+	
+	\BlankLine
+	\BlankLine
+	
+	$\I_c = \emptyset$ \;
+	\While{not equivalence($\I_c$)}{
+		$M$ is the counterexample \;
+		\If{$M$ is positive}{
+			\ForEach{$A \imp B \in \I_c$ such that $M \not\models A \imp B$}{
+				replace $A \imp B$ by $reduce(A \imp B, M)$ \;	
+			}
+			
+		} \Else {
+			\ForEach{$A \imp B \in \I_c$ such that $A \cap M \subset A$}{
+				membership($M \cap A$) \;	
+			}
+			
+			\If{Oracle replied "no" for at least one $A \imp B$}{
+				Take the first such $A \imp B$ in $\I_c$ \;	
+				replace $A \imp B$ by $refine(A \imp B, A \cap M)$ \;
+				
+			} \Else {
+				add $M \imp \Sg$ to $\I_c$ \;
+				
+			}
+			
+		}
+		
+	}
+	return $\I_c$ \;
+	
+	\caption{Angluin Algorithm}
+	\label{alg:Angluin}
+\end{algorithm}
+
+\paragraph{Some Observations} \begin{itemize}
+	\item Proved to be polynomial (\cite{angluin_learning_1992})
+	\item Proved to end up on the DG basis (\cite{arias_canonical_2009})
+	\item We can see that (apart from previous remark) that we end up 
+	on implications of the form $A \imp \I(A)$ (induction)
+	\item .
+\end{itemize}
+
+
+\section{Theoretical expectations and conclusion}
+
+All along the previous section, we discussed independently several algorithms.
+When comparing them, it turns out that \textsc{MinCover} and 
+\textsc{MaierMinimization} has the same complexity. Indeed, they are both 
+quadratic in the number of implications in $\I$. For 
+\textsc{BercziMinimization}, the complexity is worse, being cubic in the number 
+of implications. What to expect from those algorithms in practice? It should 
+come at no surprise that in any case, Berczi algorithm will perform much worse
+than Maier algorithm and \textsc{MinCover}, unless we are able to find a 
+suitable order as mentioned for an improvement. Actually, we did not manage to
+find such an order not relying on computations of closures and pseudo-closed 
+sets. So let us focus on \textsc{MinCover} and \textsc{MaierMinimization}. They
+have the same complexity but in practice, we do not really know what would 
+happend depending on the case. From our point of view, it is worth noting that
+the asymptotic number of \textsc{LinClosure} uses is higher in Maier's 
+procedure. \textsc{MinCover} performs 2 closure for every implications,
+while \textsc{MaierMinimization} performs 3 (redundancy, equivalence, direct 
+determination). Hence, in most cases in practice, \textsc{MinCover} should
+raise better results.
+
+\vspace{1.2em}
+
+\paragraph{Conclusion} In this chapter, our task was to present and review 
+some algorithms for reducing implication theories. After explaining the bounds
+of our work within this internship we discussed three procedures: 
+\textsc{MinCover}, \textsc{MaierMinimization} and \textsc{ShockMinimization} 
+(algorithms \ref{alg:MinCover}, \ref{alg:Maier-Min} and \ref{alg:Berczi-min} 
+respectively). For all of them we explained the principle, drew at least a 
+sketch of proof within the context of closure systems/implications, and studied
+complexity. In the last part, we tried to compare their complexity and give
+some hypothesis on their relative practical efficiency. In order to test our
+hypothesis, we will dedicate the final chapter of this report to practical 
+experiences under implementation in C++ 11.
+
+
+

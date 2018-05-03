@@ -1,0 +1,37 @@
+\centering
+\subfloat[undirected graph $G_1$]{
+\begin{tikzpicture}
+
+\node[Vertex, label=above left:{$a$}] (a) at (0, 1) {};
+\node[Vertex, label=below left:{$b$}] (b) at (-1.5, 0) {};
+\node[Vertex, label=below left:{$c$}] (c) at (-1,-1.5) {};
+\node[Vertex, label=below right:{$d$}] (d) at (1, -1.5) {};
+\node[Vertex, label=below right:{$e$}] (e) at (1.5, 0) {};
+
+\draw (a) -- (e) -- (d) -- (c) -- (b) -- (e) -- (c);
+\draw (d) -- (a);
+
+
+\end{tikzpicture}
+}\qquad
+\subfloat[directed graph $G_2$]{
+\begin{tikzpicture}
+
+\node[Vertex, label=above left:{$Neige$}] (ng) at (-1, 1) {};
+\node[Vertex, label=below left:{$Seraphin$}] (s) at (-1, -1) {};
+\node[Vertex, label=above right:{$Narcisse$}] (na) at (1, 1) {};
+\node[Vertex, label=below right:{$Jezabel$}] (j) at (1, -1) {};
+
+\draw[->] (ng) to[bend right=20] (j);
+\draw[->] (s) -- (j);
+\draw[->] (s) -- (ng);
+\draw[->] (s) -- (na);
+\draw[->] (j) -- (na);
+\draw[->] (j) to[bend right=20] (ng);
+\draw[->] (na) to[in=45, out=135, loop] (na);
+
+\end{tikzpicture}
+}
+
+\caption{Representation of graphs $G_1$, $G_2$}
+\label{fig:II-graph}
