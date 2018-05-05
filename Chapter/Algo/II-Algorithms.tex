@@ -1125,7 +1125,10 @@ In the first representation, we will not remove any implication, since there
 is no dotted arcs anywhere. On the right-hand side, we would remove simple
 nodes, namely $a$, since we have indeed dotted FD-path from $a$ to $b$.
 However, we would reduce our attribute set and consequently we would keep only
-$\emptyset \imp b$ in $\I$. Therefore, none of those ideas is satisfying. Of course we do not state there is no solution.
+$\emptyset \imp b$ in $\I$. Therefore, none of those ideas is satisfying. In fact, one possible solution is to add a new element $\sigma$ to $\Sg$ acting
+as the empty set. Then, for all premises $A$ of $\I$ we add $\sigma$ as a new
+element of $A$. This however brings a solution in pre-processing our implication
+theory, it does not solve the problem in a graph theoretic manner.
 
 \vspace{1.2em}
 
@@ -1246,6 +1249,8 @@ some theoretical comparison to exhibit the heart of the procedure being a
 translation from a framework to another. The advantages of FD-graphs are the
 representation in simple terms of some implication theories, and the difference
 between dotted and full arcs allowing for some separations in nodes.
+
+discussion about complexity and effective algorithm to delete superfluous nodes.
 
 
 \section{Propositionnal logic based approach}
@@ -1521,7 +1526,7 @@ with unitary heads. It uses two operations allowing to reduce implications:
 	}
 	return $\I_c$ \;
 	
-	\caption{Angluin Algorithm}
+	\caption{\textsc{AngluinAlgorithm}}
 	\label{alg:Angluin}
 \end{algorithm}
 
@@ -1532,6 +1537,68 @@ with unitary heads. It uses two operations allowing to reduce implications:
 	on implications of the form $A \imp \I(A)$ (induction)
 	\item .
 \end{itemize}
+
+
+\begin{algorithm}
+	\KwIn{some theory $\I$ over $\Sg$}
+	\KwOut{$\I_c$ the Duquenne-Guigues basis of $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	$\I_c := \emptyset$ \;
+	Stack $\mathcal{S}$ \;
+	
+	\BlankLine
+	
+	\ForAll{$A \imp B \in \I$}{
+		$\mathcal{S} := \left[ A \right]$ \;
+		\Repeat{$\mathcal{S} = \emptyset$}{
+			$X := \I_c(\text{pop}(\mathcal{S}))$ \;
+			
+			
+			\If{$X \neq \I(X)$}{
+				$found := \bot$ \;
+				
+				\ForAll{$\alpha \imp \beta \in \I_c$}{
+					$C := \alpha \cap X$ \;
+					\If{$C \neq \alpha$}{
+						$D := \I(C)$ \;
+						
+						\If{$C \neq D$}{
+							$found := \top$ \;
+							change $\alpha \imp \beta$ by $C \imp D$ in $\I_c$\;
+							push($X \cup D$, $\mathcal{S}$) \;
+							
+							\If{$B \neq D$}{
+								push($\alpha$, $\mathcal{S}$)\;
+							}
+							\textbf{exit for}
+					
+						}
+						
+						
+					}
+			
+		
+				}
+			
+				\BlankLine
+			
+				\If{$found = \bot$}{
+					$\I_c := \I_c \cup \{X \imp \I(X)\}$ \;	
+				}
+			}
+		}
+
+	}
+
+	return $\I_c$ \;
+	
+	
+	\caption{\textsc{AFPAlgorithm}}
+	\label{alg:AFP}
+\end{algorithm}
 
 
 \section{Theoretical expectations and conclusion}
