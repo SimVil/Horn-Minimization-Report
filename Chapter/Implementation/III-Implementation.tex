@@ -4,16 +4,99 @@
 
 \section{Test set up}
 
-\subsection{Overhaul framework}
+\subsection{Tools}
+
+Here, we understand by tools the general implementation ground we rely on:
+the languages, some classes, file formatting and so forth. Let us begin by
+a very large point of view. We use two languages: C++ (11) for implementing
+the algorithms and testing. For data visualization we use python with libraries \lil{matplotlib}, \lil{numpy}, \lil{csv}. To be more precise about C++, 
+we use MinGW-64 compiler and \lil{-O3} optimization flag. Our tests are timed
+with release builds. We recorded CPU-time, not wall-clock time which consider also the time spent outside the program. CPU is an Intel I5, 2.4 GHz.
+
+\vspace{1.2em}
+
+We used the code from \url{https://github.com/yazevnul/fcai}, used in 
+\cite{bazhanov_optimizations_2014} for experience on \textsc{LinClosure}. It has been made under FCA context. In this framework, sets are represented as \lil{boost::dynamic_bitset} instances (named \lil{BitSet}). Because \lil{boost}
+was already present in the project and has various built-in tools, we used it
+for timing and recording purposes with \lil{boost::timer} and \lil{boost::accumulators} respectively.
+
+\vspace{1.2em}
+
+On top of implementation of the algorithms we wrote few tools to ease I/O and
+testing. Even though we will not go into details, let us introduce quickly
+main use of those tools, especially the file format we chose. Because we may need to load or save some implication theories, we have to think of a file format able to represent such basis easily. For this aim, we made \lil{.imp}
+files, structured as follows:
+\begin{itemize}
+	\item[-] the first line contains the number of attributes and the number of
+	implications, separated by a space,
+	\item[-] because of the \lil{Bitset} representation, an implication is 
+	written as lists of indices, premise and conclusion, separated by ">". Indices are also space separated.
+\end{itemize}
+For instance, consider our running example from the previous chapter:
+$\Sg = \{ a, \ b, \  c, \  d, \  e, \ f \}$ and $\I = \{ ab \imp cde, \ cd \imp f, \ c \imp a, \ d \imp b, \  abcd \imp  ef \}$. Considering $a$ indexed as 0 and $f$ indexed as 5, the corresponding \lil{.imp} file will be:
+
+\begin{lstlisting}[language = inline, style = Light]
+6 5
+0 1 > 2 3 4
+2 3 > 5
+2 > 0
+3 > 1
+0 1 2 3 > 4 5
+\end{lstlisting}
+
+\noindent Using functions \lil{ReadFile} and \lil{WriteFile} in the namespace \lil{ImplicationTools}, one can easily read or write implication basis:
+
+\begin{lstlisting}[language = CoreCpp, style = Light]
+theory L, Lc;  // alias for std::vector<FCA::ImplicationInd>
+ImplicationTools::ReadFile("input_file.imp", L);
+Minimize(L, Lc);  // result of some minimization into Lc
+ImplicationTools::WriteFile("output_file.imp", Lc);
+\end{lstlisting}
+
+\noindent Note that the meaning of attributes here is somehow lost. So far, this is not an issue and it may be fixed by keeping a trace of correspondence between indices and attributes names. To test minimization, we use a class
+\lil{GridTester} writing CSV results.
+
+
 
 \begin{itemize}
-	\item c++, boost, python, matplotlib
-	\item code gotten from github
-	\item closure, linclosure
 	\item csv exportation, bitfiles
+	\item quickly describe the class GridTest
 \end{itemize}
 
-\subsection{Generating random data}
+\subsection{Randomly generated data}
+
+This paragraph is important for all following experiences.
+We would like to put the emphasis on the way we randomly generate sets and 
+implications. First, let us focus on set generation. We use \lil{boost::random} 
+and \lil{time} libraries for generating pseudo-random numbers. In particular 
+for a set $X$, we use discrete uniform random distribution on the interval 
+$\lbrack 0 \ ; \ |\Sg| \rbrack$:
+\begin{enumerate}
+	\item determine the size $|X|$ of $X$ by drawing a number out of our 
+	distribution,
+	\item draw again $|X|$ numbers. Because of the interval, we are sure to
+	obtain valid indices of elements to set in $X$.
+\end{enumerate}
+\noindent Note that an element can be drawn more than once, resulting in 
+effective $|X|$ smaller than the one we got at the beginning. We do not consider
+this as an issue. Generating theories then is as follows:
+\begin{enumerate}
+	\item generate a conclusion randomly,
+	\item generate a premise. Because we want implications to be informative,
+	we keep as a premise the difference \textit{premise $-$ conclusion}.
+	\item because empty premise is likely to occur several times, resulting in
+	$\emptyset \imp \Sg$, we allow for no more than one empty premise. 
+	Nevertheless, in order not to loop forever with this condition, we fixed
+	a maximal amount of re-roll with a variable \lil{MAX_ITER}. Passed this 
+	number of failure, we accept an empty premise anyway.
+\end{enumerate}
+\noindent Note that this method can be discussed and probably improved. For us,
+it seems like this method is sufficient to provide theories with informative
+implications, and uniformly distributed sizes of premises and conclusions thus
+a "good" representation of the theories space. We did not investigate further 
+ways of generations since the main task was to test algorithms and not to study
+implication structures in depth. This anyway is an interesting question for
+further work.
 
 \subsection{Real data}
 
@@ -31,5 +114,347 @@ chemistry for instance.
 \subsubsection{Some real datasets}
 
 \section{Pruning the algorithms}
+
+Because we can plug-in various closure procedures (\textsc{Closure}, \textsc{LinCLosure}), we are interested in knowing which configuration is
+the most efficient for each minimization procedure. However, because we may
+have several possible configurations and tests can be highly time consuming,
+we will rely on the next assumption based on the result of \cite{bazhanov_optimizations_2014}. Actually, it is exhibited in this paper
+that \textsc{LinClosure} performs worst in general than \textsc{Closure}. However, as we will see there are some possible optimizations for \textsc{LinClosure} dealing with initialization steps. Consequently, 
+we will first give priority to \textsc{Closure}, and try to replace it 
+by \textsc{LinClosure} whenever we find a possible optimized use of 
+for this closure method. We will keep as the "best version" the most efficient
+in the tests we will run.
+
+\subsection{\textsc{MinCover}}
+
+Recall that \textsc{MinCover} is a two-steps algorithm: right-closure and redundancy elimination. et $\I$ over $\Sg$ be the basis we are trying to minimize. In the first step, we do not remove or add any implications from
+$\I$. Furthermore, we do not alter its premises. Therefore, when using
+\textsc{LinClosure}, we may need to initialize counters and list only one
+time. However, in the second loop, it is question of first removing an implication from $\I$. From our point of view, removing only one implication
+$A \imp B$ in counters may be as complex as \textsc{LinClosure} itself:
+\begin{itemize}
+	\item[-] if the data structure used for \textit{list} in \textsc{LinClosure}
+	is a chained list, then removing $A \imp B$ from some \textit{list}[$a$], $a \in A$ is $O(|\B|)$. Because this has to be done for all $a \in A$, the 
+	overhaul operation should be $O(|\I|)$, like \textsc{LinClosure} and in particular, the initialization step
+	\item[-] if the data structure is an array, there are again two possibilities. Either we store in \textit{list}[$a$] directly implications or indices of implications in $\I$, but then finding and removing an implication will be $O(|\I|)$. Or we can use marking procedure to store a boolean value at some index $i$ representing the $i-th$ implication to know
+	whether or not the $i$-th implication should belong to \textit{list}[$a$]. Removing an implication then may be $O(|\Sg|)$. However, we should take care
+	of updating all the boolean values  if we remove an implication from $\I$, because the $i$-th index may not correspond to the implication $i$ anymore. To avoid this update, we can in fact do not remove implications in $\I$ at
+	all and put all redundant ones in some trash-marked state. This would require some more conditional statements in the nested for loop of the second step of \textsc{LinClosure}, but it may offer indeed a slight optimization.
+\end{itemize}
+\noindent We did not test the last possible optimizations due to lack of time,
+but also because of the results we shall exhibit hereafter about \textsc{MinCover}, stressing on the bad behaviour of \textsc{LinClosure} in practice. Therefore, the two pseudo-codes we compared for \textsc{MinCover} are
+algorithms \ref{alg:MinCoverClo}, \ref{alg:MinCoverLin}.
+
+\vspace{1.2em}
+
+\begin{minipage}[t]{0.4\textwidth}
+	\begin{algorithm}[H]
+		\TitleOfAlgo{\textsc{MinCoverClo}}
+		\KwIn{$\I$: an implication base}
+		\KwOut{the canonical base of $\I$}
+		
+		\BlankLine
+		\BlankLine
+		
+		\ForEach{$A \imp B \in \I$}{
+			$\I := \I - \{ A \imp B \}$ \;
+			$B  := \textsc{Closure}(\I, A \cup B)$ \;
+			$\I := \I \cup \{ A \imp B \}$ \;
+		}
+		
+		\BlankLine
+		
+		\ForEach{$A \imp B \in \I$}{
+			$\I := \I - \{ A \imp B \}$ \;
+			$A  := \textsc{Closure}(\I, A)$ \;
+			\If{$A \neq B$}{
+				$\I := \I \cup \{ A \imp B \}$ \;	
+			}
+		}
+	
+		
+		\label{alg:MinCoverClo}
+	\end{algorithm}
+\end{minipage}
+~
+\begin{minipage}[t]{0.4\textwidth}
+	\begin{algorithm}[H]
+		\TitleOfAlgo{\textsc{MinCoverLin}}
+		\KwIn{$\I$: an implication base}
+		\KwOut{the canonical base of $\I$}
+		
+		\BlankLine
+		\BlankLine
+		
+		\textsc{LinClosureInit}$(\I)$ \;
+		
+		\ForEach{$A \imp B \in \I$}{
+			$\I := \I - \{ A \imp B \}$ \;
+			$B  := \textsc{LinClosure}(\I, A \cup B)$ \;
+			$\I := \I \cup \{ A \imp B \}$ \;
+		}
+		
+		\BlankLine
+		
+		\ForEach{$A \imp B \in \I$}{
+			$\I := \I - \{ A \imp B \}$ \;
+			$A  := \textsc{Closure}(\I, A)$ \;
+			\If{$A \neq B$}{
+				$\I := \I \cup \{ A \imp B \}$ \;	
+			}
+		}
+	
+		
+		\label{alg:MinCoverLin}
+	\end{algorithm}
+\end{minipage}
+
+\vspace{1.2em}
+
+In \textsc{MinCoverLin} we used a function called \textsc{LinClosureInit}. In fact, this function is the initialization step of \textsc{LinClosure}. It sets up the containers \textit{list} and \textit{count}. Then, when we call \textsc{LinClosure}, we juste consider pure computation of the closure for a given set. In both versions, redundancy elimination is done the same way.
+
+\begin{itemize}
+	\item results of tests and so forth
+\end{itemize}
+
+\subsection{\textsc{BercziMinimization}}
+
+The algorithm issued by Berczi and al in \cite{berczi_directed_2017} (algoritm \ref{alg:Berczi-min}) can be fine-tuned at first sight without considering closure operators. Indeed, recall that we compute only closure of premises under
+$\I$ being our input basis, and $\I_c$ our output one. Furthermore, the algorithm suggests to compute the closure of some premises under $\I$ several 
+times, which is extensive and redundant. Furthermore, because we build $\I_c$ only by adding implications, all the closure previously computed can only grow.
+Therefore we can improve \textsc{BercziMinimization} by the next means:
+\begin{itemize}
+	\item[-] compute all $\I(A), A \in \B(\I)$, and store them in a list: $C_{\I}$,
+	\item[-] keep a list of growing $\I_c(A), A \in \B(\I)$: $C_{\I_c}$.
+\end{itemize}
+\noindent To illustrate, we can observe the pseudo-code \textsc{BercziImp}. This algorithm does not strictly reflect its implementation of course, but it
+presents the two ideas we were talking about previously. Observe that the closures under $\I$ are the most complicated to compute (because $|\B(\I_c)| \leq |\B(\I)|$ even though we repeatedly add implications to $\I_c$) whence
+the interest of avoiding useless computations especially for $\I$.
+
+\begin{algorithm}
+	\KwIn{$\I$: an implication theory}
+	\KwOut{$\I_c$: the DQ-basis of $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	$\I_c := \emptyset$ \;
+	$C_{\I} := \emptyset, \; C_{\I_c} := \emptyset $ \;
+	
+	\ForEach{$A \imp B \in \I$}{
+		$C_{\I}[A] = \I(A)$ \;
+		$C_{\I_c}[A] = A$ \;
+	}
+
+	\BlankLine
+	
+	\While{$\exists A \in \B(\I)$ s.t $C_{\I_c}[A] \neq C_{\I}[A]$}{
+		\ForEach{$A \imp B \in \I$}{
+			\If{$C_{\I}[A] \neq C_{\I_c}[A]$}{
+				$C_{\I_c}[A] = \I_c(C_{\I_c}[A])$ \;
+			}
+		}
+	
+		\BlankLine
+	
+		$A_P, P := \min\{A, C_{\I_c}[A]: \;  C_{\I_c}[A] \neq C_{\I}[A] \}$ \;
+		$\I_c := \I_c \cup \{P \imp C_{\I}[A_P] \}$ \
+		
+	}
+
+	\BlankLine
+	
+	return $\I_c$ \;
+	
+	\caption{\textsc{BercziImp}}
+	\label{alg:Berczi-imp}
+\end{algorithm}
+
+When getting the minimum, note that we get both the minimum $\I_c$-closed set not closed in $\I$ and its associated premise (or equivalently, the associated $\I$-closure). Because notations may be a bit heavy, let us illustrate the meaning of $C_{\I}$ and $C_{\I_c}$ in an example.
+
+
+\paragraph{Example} As usual, let us retake our small example:
+\begin{itemize}
+	\item $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, 
+		abcd $\imp$ ef} \} 
+\end{itemize}
+\noindent Table \ref{tab:berczi-tra} is a trace of the algorithm, using $C_{\I}$ and $C_{\I_c}$. The first column contains premises of $\I$, the second one elements of $C_{\I}$ (that is closures of premises of $\I$ under $\I$) and
+the third one, $C_{\I_c}$ (closures of $\B(\I)$ under $\I_c$). The last column
+says whether $C_{\I}[A] = C_{\I_c}[A]$.
+
+\begin{table}[ht]
+\centering
+\subfloat[after initialization step and first loop]{
+	\begin{tabular}{| c | c | c | c |}
+		\hline \rowcolor{clouds}
+		$\B(\I)$ & $C_{\I}$ & $C_{\I_c}$ & $=$ \\ \hline
+		$ab$     & $abcdef$ & $ab$ & $\times$ \\ \hline
+		$cd$     & $abcdef$ & $cd$ & $\times$  \\ \hline \rowcolor{emerald!40!white}
+		$c$      & $ca$     & $c$ & $\times$ \\ \hline 
+		$d$      & $db$     & $d$ & $ \times$ \\ \hline
+		$abcd$   & $abcdef$ & $abcd$ & $\times$ \\ \hline
+	\end{tabular}
+	\begin{tabular}{c}
+		$\I_c$ before \\ 
+		$\emptyset$   \\ \\
+		$\I_c$ after \\
+		$c \imp ca$
+	\end{tabular}	
+}\quad
+\subfloat[second loop]{
+	\begin{tabular}{| c | c | c | c |}
+		\hline \rowcolor{clouds}
+		$\B(\I)$ & $C_{\I}$ & $C_{\I_c}$ & $=$ \\ \hline
+		$ab$     & $abcdef$ & $ab$ & $\times$ \\ \hline
+		$cd$     & $abcdef$ & $acd$ & $\times$ \\ \hline
+		$c$      & $ca$     & $ca$ & $\lor$ \\ \hline \rowcolor{emerald!40!white}
+		$d$      & $db$     & $d$ & $\times$ \\ \hline
+		$abcd$   & $abcdef$ & $abcd$ & $\times$ \\ \hline
+	\end{tabular}
+	\begin{tabular}{c}
+		$\I_c$ before \\ 
+		$c \imp ca$   \\ \\
+		$\I_c$ after \\
+		$c \imp ca, \ d \imp bd$
+	\end{tabular}	
+}
+
+\subfloat[third loop]{
+	\begin{tabular}{| c | c | c | c |}
+		\hline \rowcolor{clouds}
+		$\B(\I)$ & $C_{\I}$ & $C_{\I_c}$ & $=$ \\ \hline \rowcolor{emerald!40!white}
+		$ab$     & $abcdef$ & $ab$  & $\times$ \\ \hline
+		$cd$     & $abcdef$ & $abcd$ & $\times$ \\ \hline
+		$c$      & $ca$     & $ca$ & $\lor$ \\ \hline 
+		$d$      & $db$     & $db$  & $\lor$ \\ \hline
+		$abcd$   & $abcdef$ & $abcd$ & $\times$\\ \hline
+	\end{tabular}
+	\begin{tabular}{c}
+		$\I_c$ before \\ 
+		$c \imp ca, \ d \imp bd$   \\ \\
+		$\I_c$ after \\
+		$c \imp ca, \ d \imp bd, \ ab \imp abcdef$
+	\end{tabular}	
+}
+
+\subfloat[final loop]{
+	\begin{tabular}{| c | c | c | c |}
+		\hline \rowcolor{clouds}
+		$\B(\I)$ & $C_{\I}$ & $C_{\I_c}$ & $=$ \\ \hline 
+		$ab$     & $abcdef$ & $abcdef$ & $\lor$ \\ \hline 
+		$cd$     & $abcdef$ & $abcdef$ & $\lor$ \\ \hline 
+		$c$      & $ca$     & $ca$ & $\lor$ \\ \hline 
+		$d$      & $db$     & $db$ & $\lor$ \\ \hline
+		$abcd$   & $abcdef$ & $abcdef$ & $\lor$ \\ \hline
+	\end{tabular}
+	\begin{tabular}{c}
+		Resulting $\I_c$  \\ 
+		$c \imp ca, \ d \imp bd, \ ab \imp abcdef$
+	\end{tabular}	
+}
+\caption{Example of execution of \textsc{BercziImp} using $C_{\I}$ and $C_{\I_c}$}
+\label{tab:berczi-tra}
+\end{table}
+
+At each step, the highlighted row is the set of premises and closure satisfying $\min \{ C_{\I_c}[A]: \ C_{\I_c}[A] \neq C_{\I}[A] \}$, or this row contains the
+minimal (inclusion-wise) $\I_c$-closed set not closed in $\I$. As wished, the
+only some closures of $\I_c$ are updated at each step, instead of re-computing all of them every time.
+
+\vspace{1.2em}
+
+ More than fine-tuning the principle, we can optimize the use of \textsc{LinClosure} on two aspects:
+\begin{itemize}
+	\item[(i)] in the loop where we initialize lists, we can use the same
+	pruning as in the right-closing step in \textsc{MinCover},
+	\item[(ii)] when computing closures of $\I_c$, because $\I_c$ is only
+	increasing in implications, updating list and counters can be done in $O(|\Sg|)$,	hence better than the initialization step of $O(|\I|)$.
+\end{itemize}
+\noindent Consequently, we will again compare for this algorithm two versions, given as 
+
+\begin{algorithm}[H]
+	\TitleOfAlgo{\textsc{BercziImpClo}}
+	\KwIn{$\I$: an implication theory}
+	\KwOut{$\I_c$: the DQ-basis of $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	$\I_c := \emptyset$ \;
+	$C_{\I} := \emptyset, \; C_{\I_c} := \emptyset $ \;
+	
+	\ForEach{$A \imp B \in \I$}{
+		$C_{\I}[A] = \textsc{Closure}(\I, A)$ \;
+		$C_{\I_c}[A] = A$ \;
+	}
+	
+	\BlankLine
+	
+	\While{$\exists A \in \B(\I)$ s.t $C_{\I_c}[A] \neq C_{\I}[A]$}{
+		\ForEach{$A \imp B \in \I$}{
+			\If{$C_{\I}[A] \neq C_{\I_c}[A]$}{
+				$C_{\I_c}[A] = \textsc{Closure}(\I_c, C_{\I_c}[A])$ \;
+			}
+		}
+		
+		\BlankLine
+		
+		$A_P, P := \min\{A, C_{\I_c}[A]: \;  C_{\I_c}[A] \neq C_{\I}[A] \}$ \;
+		$\I_c := \I_c \cup \{P \imp C_{\I}[A_P] \}$ \;
+		
+	}
+	
+	\BlankLine
+	
+	return $\I_c$ \;
+	
+
+	\label{alg:BercziImpClo}
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\TitleOfAlgo{\textsc{BercziImpLin}}
+	\KwIn{$\I$: an implication theory}
+	\KwOut{$\I_c$: the DQ-basis of $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	$\I_c := \emptyset$ \;
+	$C_{\I} := \emptyset, \; C_{\I_c} := \emptyset $ \;
+	
+	\textsc{LinClosureInit}($\I$) \;
+	
+	\ForEach{$A \imp B \in \I$}{
+		$C_{\I}[A] = \textsc{LinClosure}(\I, A)$ \;
+		$C_{\I_c}[A] = A$ \;
+	}
+	
+	\BlankLine
+	
+	\While{$\exists A \in \B(\I)$ s.t $C_{\I_c}[A] \neq C_{\I}[A]$}{
+		\ForEach{$A \imp B \in \I$}{
+			\If{$C_{\I}[A] \neq C_{\I_c}[A]$}{
+				$C_{\I_c}[A] = \textsc{LinClosure}(\I_c, C_{\I_c}[A])$ \;
+			}
+		}
+		
+		\BlankLine
+		
+		$A_P, P := \min\{A, C_{\I_c}[A]: \; C_{\I_c}[A] \neq C_{\I}[A] \}$ \;
+		$\I_c := \I_c \cup \{P \imp C_{\I}[A_P] \}$ \;
+		\textsc{LinClosureAddImp}($\I_c, P \imp C_{\I}[A_P]$)\;
+		
+	}
+	
+	\BlankLine
+	
+	return $\I_c$ \;
+	
+	\label{alg:BercziImpLin}
+\end{algorithm}
+
+
+
 
 \section{Joint comparison}
