@@ -325,10 +325,69 @@ and other algorithms we found. As exposed, \textsc{MinCover} summarizes and
 corrects all material we covered here, and hence justifies not to implement
 all of them. The next section defines a different algorithm.
 
-
-\subsection{Lattice-theoretic approach}
-
 \subsection{Duquenne algorithm}
+
+Later, also based on Day lattice theoretic work and its own approach, Duquenne
+proposed a variation of \textsc{MinCover} based on first computing quasi-closed
+sets and then using the recursive characterization of pseudo-closed sets to iteratively build the Duquenne-Guigues basis. Recall that pseudo-closed sets
+are particular open sets that can be defined by two means:
+\begin{itemize}
+	\item a set $P$ is pseudo-closed if it is larger than all the closure of any
+	sub pseudo-closed set,
+	\item $P$ is pseudo-closed if it is quasi-closed and minimal among quasi-closed sets of $\left[ P \right]_{\I}$.
+\end{itemize}
+
+\begin{algorithm}
+	\KwIn{$\I$ a theory to minimize}
+	\KwOut{$\I_c$ the DQ-basis of $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	\ForEach{$A \imp B \in \I$}{
+		$\I = \I - \{ A \imp B \}$ \;
+		$A := \I(A)$ \;
+		
+		\If{$B \not\subseteq A$}{
+			$B = B \cup A$ \;
+			$\I := \I \cup \{ A \imp B \}$ \;	
+		}
+
+	}
+
+	\BlankLine
+	
+	\textsc{LecticOrder}($\I$) \;
+	$\I_c := \emptyset$ \;
+	
+	\BlankLine
+	
+	\ForEach{$A \imp B \in \I$}{
+		\ForEach{$\alpha \imp \beta \in \I_c$}{
+			\If{$\alpha \subset A \land \beta \nsubseteq A$}{
+				$\I = \I - \{ A \imp B \}$ \;
+				\textbf{goto next $A \imp B \in \I$} \;
+		
+			}
+	
+		}
+	
+		$B = \I(B)$ \;
+		$\I_c := \I_c \cup \{ A \imp B \}$ \;
+	}
+
+	\BlankLine
+	
+	return $\I_c$ \;
+	
+	\caption{\textsc{DuquenneMinimization}}
+	\label{alg:Duquenne-min}
+\end{algorithm}
+
+\begin{itemize}
+	\item prove the first part is quasi-closure + contains all PC sets.
+	\item prove we are iteratively building DG-basis.
+\end{itemize}
 
 
 
@@ -701,7 +760,7 @@ ausiello_minimal_1986} as an improvement of the structure proposed in
 a framework simpler than hypergraphs. It has been recently re-issued in 
 \cite{ausiello_directed_2017} being a survey.
 
-\begin{definition}[(\midemp{FD-Graph})] Given a theory $\I$ over some $\Sg$, 
+\begin{definition}[\midemp{FD-Graph}] Given a theory $\I$ over some $\Sg$, 
 the directed graph $G_{\I} = (V, \  E)$ such that:
 \begin{itemize}
 	\item $V = V_0 \cup V_1$ is the set of nodes where:
@@ -728,7 +787,7 @@ associated to $\I$.
 
 
 Again, the definition may be quite confusing. Therefore, let us pause our 
-explanations with some toy examples, presented in \ref{fig:FD-Graph-1}. 
+explanations with some toy examples, presented in figure \ref{fig:FD-Graph-1}. 
 Out of those graphs, we can give a way \textit{"with hands"}
 to build an FD-graph out of some $\I$:
 \begin{itemize}
@@ -747,9 +806,9 @@ this algorithm, we consider a basis $\I$ over an attribute set $\Sg$, such that:
 \end{itemize}
 \noindent this is a \belemp{reduced} basis for the recall.
 
-\begin{center}
+\begin{figure}[ht]
 	\input{Pictures/Graph.1-FD-Ex.tex}
-\end{center}
+\end{figure}
 
 \vspace{1.2em}
 

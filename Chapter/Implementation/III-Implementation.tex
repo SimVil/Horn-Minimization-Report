@@ -370,7 +370,9 @@ only some closures of $\I_c$ are updated at each step, instead of re-computing a
 	\item[(ii)] when computing closures of $\I_c$, because $\I_c$ is only
 	increasing in implications, updating list and counters can be done in $O(|\Sg|)$,	hence better than the initialization step of $O(|\I|)$.
 \end{itemize}
-\noindent Consequently, we will again compare for this algorithm two versions, given as 
+\noindent Consequently, we will again compare for this algorithm two versions, given as \textsc{BercziImpClo} and \textsc{BercziImpLin} (\ref{alg:BercziImpClo}, \ref{alg:BercziImpLin}).
+
+\vspace{1.2em}
 
 \begin{algorithm}[H]
 	\TitleOfAlgo{\textsc{BercziImpClo}}
@@ -454,7 +456,13 @@ only some closures of $\I_c$ are updated at each step, instead of re-computing a
 	\label{alg:BercziImpLin}
 \end{algorithm}
 
+\vspace{1.2em}
 
-
+In fact, \textsc{BercziImpClo} does differ from \textsc{BercziImp} only by the closure notations. However, when dealing with \textsc{LinClosure} in \textsc{BercziImpLin}, we use first \textsc{LinClosureInit} to instanciate 
+\textit{list} and \textit{count} for \textsc{LinClosure} in $\I$. Hence a call
+to this procedure performs only the effective closure computations. Then, 
+\textsc{LinClosureAddImp} just updates \textit{list} and \textit{count} for $\I_c$ by adding a new implication in them. Note that before the first call to
+this subroutine, \textit{list} and \textit{count} for $I_c$ are empty, hence
+\textsc{LinClosure}($\I_c$, $X$) returns $X$.
 
 \section{Joint comparison}
