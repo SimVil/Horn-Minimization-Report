@@ -1,0 +1,42 @@
+\centering
+\subfloat[Partial order $(2^{\Sg}, \subseteq)$]{
+	\begin{tikzpicture}[scale=0.7]
+	\node[Vertex, label=below:{$\emptyset$}] (epty) at (0, -3) {};
+	\node[Vertex, label=left:{$a$}] (a) at (-2, -1) {};
+	\node[Vertex, label=right:{$b$}] (b) at (0, -1) {};
+	\node[Vertex, label=right:{\quad $c$}] (c) at (2, -1) {};
+	\node[Vertex, label=left:{$ab$}] (ab) at (-2, 1) {};
+	\node[Vertex, label=left:{$ac$}] (ac) at (0, 1) {};
+	\node[Vertex, label=right:{\quad $bc$}] (bc) at (2, 1) {};
+	\node[Vertex, label=above:{$abc$}] (abc) at (0, 3) {};
+	
+	\draw (epty) -- (a) -- (ac) -- (c) -- (epty) --
+	(b) -- (ab) -- (abc) -- (bc) -- (b);
+	\draw (ab) -- (a);
+	\draw (bc) -- (c);
+	\draw (abc) --(ac);
+	
+	
+	\end{tikzpicture}
+}\qquad
+\subfloat[Total order $(2^{\Sg}, \leq_{\Sg})$]{
+\begin{tikzpicture}[scale=0.7]
+\node[Vertex, label=below:{$\emptyset$}] (epty) at (0, -3) {};
+\node[Vertex, label=right:{$c$}] (c) at (0, -2) {};
+\node[Vertex, label=right:{$b$}] (b) at (0, -1) {};
+\node[Vertex, label=right:{$bc$}] (bc) at (0, 0) {};
+\node[Vertex, label=right:{$a$}] (a) at (0, 1) {};
+\node[Vertex, label=right:{$ac$}] (ac) at (0, 2) {};
+\node[Vertex, label=right:{$ab$}] (ab) at (0, 3) {};
+\node[Vertex, label=above:{$abc$}] (abc) at (0, 4) {};
+
+\draw (epty) -- (c) -- (b) -- (bc) -- (a) -- (ac) -- (ab) -- (abc);
+
+\node (b1) at (-2, 0) {};
+\node (b2) at (2, 0) {};
+
+\end{tikzpicture}
+}
+
+\caption{Subset and lectic ordering}
+\label{fig:II-LecticSubset}

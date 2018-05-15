@@ -2,51 +2,37 @@
 
 In the first chapter, we settled the context of our study. We introduced our 
 subject of interest and defined the theoretical ground it is built on. In this
-chapter, we discuss several algorithms and their complexity. The objective of
-such (bounded) review is implementation for practical comparison, in next 
-chapter. Our first section within this part will be dedicated to bound the study
-to some algorithms and to explain those boundaries. Next, we will effectively
-dive into in-depth studies of minimization procedure. 
+chapter, we discuss several algorithms and their complexity. Our aim with this
+review is to provide understanding of the algorithms, study their complexity.
+We also describe them to prepare their implementation in the next chapter.  Our first section within this part will be dedicated to give a general outline of our review. Next, we will effectively dive into in-depth studies of minimization procedure. 
 
-\section{Field of study}
 
-Here, we limit our study to some algorithms. As we explained during
-the short state-of-the-art of chapter 1 around the task of closure systems 
-minimization. Within the scope of the internship we will be interested in the
-algorithms \textsc{MinCover} (\cite{b._ganter_conceptual_2016}), 
-\textsc{MaierMinimization} the procedure on functional dependency by Maier in 
-\cite{david_minimum_1980, maier_theory_1983}, \textsc{BercziMinimization} 
-derived from \cite{berczi_directed_2017}.
+\section{Overview of the study}
+
+Here, we draw the main lines of our subsequent explanations. First and foremost, we shall try as much as possible to express all algorithms in our framework of closure systems and orders. Nevertheless, to draw parallels
+and understand the translation from one framework to another we may proceed to 
+some travels in other terminologies such as query learning or directed graphs.
 
 \vspace{1.2em}
 
-The question is, why? It turns out that we can easily study those algorithms
-within the framework of closure systems. One could argue that this is also the
-case for procedures offered by Shock (\cite{shock_computing_1986}),
-Day (\cite{day_lattice_1992}) and Wild (\cite{wild_implicational_1989, 
-	wild_theory_1994}). As we shall see, those three routines are 
-intimately related to \textsc{MinCover} (not to say they are the same) and as 
-such, studying this one is sufficient to explain the three of them. Regarding
-graph algorithm by Ausiello in \cite{ausiello_graph_1983, 
-	ausiello_minimal_1986}, it seems to us (at the best of our understanding) 
-	that
-one step of the algorithm is not valid in general if taken as written. Namely,
-redundancy elimination. Considering the structure of FD-Graph, first 
-determining the closure and then removing all redundant nodes may alter 
-the initial basis. The last algorithm proposed by Duquenne in 
-\cite{duquenne_variations_2007} has been found too late in the internship to
-be considered as well. Eventually, Angluin algorithm (see 
-\cite{angluin_learning_1992, arias_canonical_2009}) is not designed to minimize 
-a given basis but to learn Horn representation. Hence, even though this 
-algorithm can be used somehow for minimization, this is not the purpose it has 
-been designed for. Consequently, we will not add it to our study.
-Another reason is conciseness. Because we have various mathematical domains
-involved (logic, closure systems, lattices, graphs, functional dependencies),
-limiting ourselves to algorithms within one framework ease detailed exposition
-and comprehension of the closure system terminology instead of overhaul covering
-of all distinct fields, which would have resulted in a definition chapter much 
-heavier regarding to the following material. This detailed overhaul review is
-left for further work, or to the master thesis associated to this internship.
+The study will be divided into three parts. First, we will study algorithms 
+coming from the FCA (Formal Concept Analysis) community. This includes 
+algorithms \textsc{MinCover} from \cite{bazhanov_optimizations_2014, day_lattice_1992, wild_implicational_1989} and \textsc{DuquenneMinimization}
+being a variation of \textsc{MinCover} (more precisely, to the algorithm
+provided by Day in a lattice-theoretic framework). This second procedure can
+be found in \cite{duquenne_variations_2007}. Even though \textsc{ShockMinimization} is an algorithm from FCA community, we may include
+discussion about it in this part because of the theorem it is based on. Secondly, we will dive into DB (Database) and graphs domains by working on
+\textsc{MaierMinimization} (see \cite{maier_theory_1983, david_minimum_1980}) and FD-Graphs, an extension of minimization to graphs provided by Ausiello and al; in \cite{ausiello_graph_1983, ausiello_minimal_1986, ausiello_directed_2017}. Eventually we get into algorithms coming out of 
+boolean logic and query learning communities with \textsc{BercziMinimization}
+and \textsc{AFPMinimization} (see \cite{berczi_directed_2017} and \cite{angluin_learning_1992, arias_canonical_2009} resp.).
+
+\vspace{1.2em}
+
+Regarding the order in which we will study the algorithms, there is no particular choice but our proximity with the domains. Because \textsc{MinCover} 
+is the algorithm we are starting from, it seemed logical for us to explain
+it first. 
+
+
 
 
 % ---------------------------------------------------------------------------- %
@@ -61,7 +47,7 @@ left for further work, or to the master thesis associated to this internship.
 \subsection{Minimal Cover}
 
 The minimization procedure we will describe in this section, soberly called
-\textsc{MinCover} is the starting point from this internship. It can be found
+\textsc{MinCover} is the starting point for this master thesis. It can be found
 in \cite{b._ganter_conceptual_2016}. As we shall explain, it has roots in
 Day lattice-based algorithm \cite{day_lattice_1992}, and more surprisingly, 
 "unknown" ancestor in Shock algorithm \cite{shock_computing_1986}. 
@@ -69,8 +55,7 @@ Day lattice-based algorithm \cite{day_lattice_1992}, and more surprisingly,
 \vspace{1.2em}
 
 The principle is to perform \belemp{right-saturation}, and then \belemp{body 
-	redundancy} elimination. In fact, not only this is the general idea 
-	recently 
+redundancy} elimination. In fact, not only this is the general idea recently 
 issued in \cite{boros_strong_2017}, but it is also the main theorem of Shock in 
 \cite{shock_computing_1986} and the part of a theorem by Wild 
 (\cite{wild_implicational_1989, wild_theory_1994}). This procedure has the 
@@ -126,7 +111,7 @@ closure are computed with \textsc{LinClosure}, the overhaul complexity of
 the algorithm is $O(|\B||\I|)$. To see correctness of the algorithm, observe
 that the resulting $\I_c$ is equivalent to $\I$ at the end of the algorithm.
 Indeed, at the end of the first loop, we replaced $B$ in every implications $A 
-\imp B$ of $\I$ by $\I(A)$. But by definition, $\I \models A \imp B$ if and 
+\imp B$ of $\I$ by $\I(A)$. But by proposition 1, $\I \models A \imp B$ if and 
 only if $B \subseteq \I(A)$. This is in particular the case for $B = \I(A)$.
 In the second loop we remove an implication only if it is redundant, thus
 the resulting $\I_c$ is indeed equivalent to $\I$. The main question is 
@@ -137,9 +122,7 @@ is the purpose of next "hand-made" proposition:
 
 \begin{proposition} Let $\I$ be a \belemp{right-closed} implication theory. 
 	Denote $\I^{-}(A) := (\I - \{ A \imp \I(A) \})(A)$, the following holds for 
-	all 
-	$A \imp 
-	\I(A) \in \I$:
+	all $A \imp \I(A) \in \I$:
 	\begin{itemize}
 		\item[(i)] if $\I(A) = \I^{-}(A)$, $A \imp \I(A)$ is redundant in $\I$,
 		\item[(ii)] if $\I(A) \neq \I^{-}(A)$, $\I^{-}(A)$ is pseudo-closed.
@@ -274,11 +257,7 @@ general:
 	be $\{ a \imp ab, \ \emptyset \imp ab \}$ being redundant.
 \end{itemize} 
 In fact, this error has already been pointed out in 1995 by Wild in 
-\cite{wild_computations_1995}. In Wild work, we can also find another proof
-for the theorem of Shock, jointly with minimality of DQ-basis (theorem 5 of
-\cite{wild_theory_1994, wild_computations_1995}). Let us discuss now the 
-algorithm proposed by A. Day in 1992 (see pseudo-code \ref{alg:Day}: 
-\textsc{DayMinimization}).
+\cite{wild_computations_1995}. However, the implications given by Shock may have quasi-closed premises and present similarities with the algorithm for generating quasi-closed sets \textsc{FindCrucialGenerators}.In Wild work, we can also find another proof for the theorem of Shock, jointly with minimality of DQ-basis (theorem 5 of \cite{wild_theory_1994, wild_computations_1995}). Let us discuss now the algorithm proposed by A. Day in 1992 (see pseudo-code \ref{alg:Day}: \textsc{DayMinimization}). We express it through our framework of closure systems and implications. Since it would only complicate our explanations, we do not integrate definitions of lattice theory. However, for the reader with few background in lattice theory, we can mention Day's overhaul framework in some sentences. The main idea is to focus on the partial order $(2^{\Sg}, \subseteq)$ being a complete join-semilattice (or just complete lattice when we consider finite $\Sg$) where the closure operator $\I(\cdot)$ is in fact a $\bigvee$-morphism from $(2^{\Sg}, \subseteq)$ to $(\Sg^{\I}, \subseteq)$. In $(2^{\Sg}, \subseteq)$, the join operation ($\lor$) is set union. Consequently, the equivalence classes of $\I$ define a congruence on the powerset of $\Sg$ being the kernel of $\I(\cdot)$. The approach developed by A. Day is then to build congruences (hence closure operators) through ordered pairs (or quotients) of the same equivalence class, representing implications.
 
 \begin{algorithm}
 	\KwIn{$\I$: a theory to minimize}
@@ -323,7 +302,8 @@ In this section we reviewed the algorithm acting as our starting point, by
 studying its complexity and principle. We also linked it to research we made
 and other algorithms we found. As exposed, \textsc{MinCover} summarizes and 
 corrects all material we covered here, and hence justifies not to implement
-all of them. The next section defines a different algorithm.
+all of them. The next section defines a slightly different algorithm, being a
+variation of the work from \cite{day_lattice_1992}.
 
 \subsection{Duquenne algorithm}
 
@@ -336,6 +316,12 @@ are particular open sets that can be defined by two means:
 	sub pseudo-closed set,
 	\item $P$ is pseudo-closed if it is quasi-closed and minimal among quasi-closed sets of $\left[ P \right]_{\I}$.
 \end{itemize}
+We will call this procedure \textsc{DuquenneMinimization} (see algorithm \ref{alg:Duquenne-min}). In fact, It uses the algorithm 2 from \cite{day_lattice_1992} to compute quasi-closed sets from premises of $\I$,
+this is the first loop. Observe that in fact, \textsc{ShockMinimization} does
+not compute pseudo-closed sets but quasi-closed sets. All pseudo-closed sets are included in the resulting $\I$ after this first step. Then, we use
+\belemp{lectic ordering} to have a $\subseteq$-compatible way to process 
+implications before building $\I_c$.
+
 
 \begin{algorithm}
 	\KwIn{$\I$ a theory to minimize}
@@ -384,15 +370,165 @@ are particular open sets that can be defined by two means:
 	\label{alg:Duquenne-min}
 \end{algorithm}
 
+Before proving the algorithm, let us define lectic ordering $\leq_{\Sg}$. First, we must assume that $\Sg$ can be assigned a total order $\leq$. For the recall, an order is total if for all pairs $(x, \ y)$ of $\Sg$, $x \leq y$ or $y \leq x$. Hence, provided $\Sg$ is a chain, we can define $\leq_{\Sg}$ on
+$2^{\Sg}$ as follows: $\forall A, B \subseteq \Sg$ $A \leq_{\Sg} B$ if the
+smallest element in which $A$ and $B$ differ belongs to $B$. We say that $A$ is \belemp{lectically smaller than} B. Note that $\leq_{\Sg}$ is \belemp{$\subseteq$-compatible}, that is $A \subseteq B \imp A \leq_{\Sg} B$.
+The opposite direction however does not hold since $\subseteq$ is a partial 
+ordering, while $\leq_{\Sg}$ is total. 
+
+\paragraph{Example} Consider $\Sg = \{ a, b, c \}$ with $a < b < c$. In
+this setting, $b \leq_{\Sg} a$, $b \leq_{\Sg} ab$ and $b \leq_{\Sg} bc$ for instance. To observe $\subseteq$-compatibility, we can refer to figure \ref{fig:II-LecticSubset} illustrating the two orderings side-by-side. 
+
+\begin{figure}[ht]
+	\input{Pictures/II/Lectic.tex}
+\end{figure}
+
+\vspace{1.2em}
+
+The advantages of lectic ordering is to allow for easier checking of pseudo-closeness recursive property: if we test sets in lectic order,
+we are sure not to avoid any pseudo-closed subset of a given set when
+looking at previously considered ones. Furthermore, because this is 
+a total order, we can use fast logarithmic sorting procedure to order 
+efficiently sets. Next, let us give some elements of proof for this 
+algorithm.
+
+
+\begin{proposition} The following statements hold for all $A \imp B \in \I$, $\I^{-} = \I - \{ A \imp B \}$:
+	\begin{itemize}
+		\item[(i)] $\I^{-}(A) = \I(A)$, then $A \imp B$ is redundant,
+		\item[(ii)] $\I^{-}(A) \neq \I(A)$, then $\I^{-}(A)$ is quasi-closed in $\I$.
+	\end{itemize}
+\end{proposition}
+
+\begin{proof} \textit{(i)}. $\I^{-}(A) = \I(A)$ is equivalent to $B \subseteq \I^{-}(A)$, that is $\I - \{ A \imp B \} \models A \imp B$. \textit{(ii)}. Assume $\I^{-}(A) \neq \I(A)$ and $\I^{-}(A)$ not quasi-closed. Then we must be
+able to find an implication $\alpha \imp \beta$ such that $\alpha \subseteq \I^{-}(A)$ and $ \I(\alpha) \nsubseteq \I^{-}(A)$. We have also $\I(\alpha) \subset \I(A)$. $\I^{-}$ is a closure operator, hence $\alpha \subseteq \I^{-}(A) \imp \I^{-}(\alpha) \subseteq \I^{-}(A)$. $\I^{-}(\alpha) \subseteq \I^{-}(A)$ and $ \I(\alpha) \nsubseteq \I^{-}(A)$ leads to $\I^{-}(\alpha) 
+\subset \I(\alpha)$. Because of $\I^{-}$ computations, this leads to $A \subseteq \I(\alpha)$, hence by monotonicity of $\I$, $\I(A) \subseteq \I(\alpha)$ contradicting $\I(\alpha) \subset \I(A)$.
+
+\end{proof}
+
+Next, we will assume a lemma given in \cite{duquenne_variations_2007} from where
+the algorithm comes:
+
+\begin{lemma} For lists $\I$, $\mathcal{H}$ of implications, with $\mathcal{H} \subseteq \I$, the following statements are equivalent:
 \begin{itemize}
-	\item prove the first part is quasi-closure + contains all PC sets.
-	\item prove we are iteratively building DG-basis.
+	\item[(i)] $\I \equiv \mathcal{H}$,
+	\item[(ii)] $\I$ has the same canonical basis as $\mathcal{H}$,
+	\item[(iii)] for every pseudo-closed set $P$ of $\I$, there is at least
+	one $A \imp B \in \mathcal{H}$ for which $A \subseteq P \subset \I(P) = \mathcal{H}(A)$.
 \end{itemize}
+\end{lemma}
 
+Because $\I^{-}$ is a closure operator, if $\I^{-}(A)$ is not closed under $\I$,
+it is then the smallest quasi-closed set containing $A$. Furthermore, both $A$
+and $\I^{-}(A)$ belong to $\left[ A \right]_{\I}$. With lemma 1 where $\mathcal{H} = \I$, one has that every pseudo-closed sets of $\I$ must be a premise of $\I$ after the first loop.
 
+\begin{proposition} At the end of \textsc{DuquenneMinimization} $\I_c$ is the
+DG-basis of $\I$.
+\end{proposition}
 
+\begin{proof} We proved that after the first step, all pseudo-closed sets
+	appeared as premise of $\I$. Because we use a $\subseteq$-compatible ordering on premises of $\I$ with lectic order, the nested loop on $\I_c$
+	checks the recursive property of being pseudo-closed. Hence we only add
+	implications $P \imp \I(P)$ where $P$ is $\I$-pseudo-closed to $\I_c$.
+\end{proof}
 
+\paragraph{Example} In order to clarify the algorithm, let us execute it on a
+small example. Because we may have a lazy imagination, consider the example we used for \textsc{MinCover}:
+\begin{itemize}
+	\item $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, 
+		abcd $\imp$ ef} \} 
+\end{itemize}
+We proceed by steps:
+\begin{enumerate}
+	\item \midemp{left-saturation}. For all implications $A \imp B$ of $\I$,
+	we compare $\I(A)$ and $\I^{-}(A)$ where $\I^{-}$ is $\I$ from which we removed $A \imp B$. We should keep in mind that $\I^{-}$ is different 
+	for every $A \imp B$ then, not only because previous implications are altered or remove, but also since at each step we delete a different implication from $\I$. Let us present results of this step through table \ref{tab:duq-red}.
+\begin{table}[ht]
+	\begin{tabular}{| c || p{2.7cm} | c | p{2.5cm} | c | c | p{2.7cm} | }
+	\hline \rowcolor{clouds}
+	$\B(\I)$ & $\I$ before & $\I(\cdot)$ & $\I^{-}$ & $\I^{-}(\cdot)$ & imp ? & $\I$ after \\ \hline
+	
+	$ab$ & $ab \smimp cde, cd \smimp f,$ \newline $c \smimp a, d \smimp b,$ \newline  $abcd \smimp ef$ & $abcdef$ & $cd \smimp f, c \smimp a,$ \newline $d \smimp b,$ \newline $abcd \smimp ef$ & $ab$ & $ab \imp abcde$ & $ab \smimp abcde,$ \newline $cd \smimp f, c \smimp a,$ \newline $d \smimp b, abcd \smimp ef$ \\	\hline
+	 
+	$cd$ & $ab \smimp abcde,$ \newline $cd \smimp f, c \smimp a,$ \newline $d \smimp b, abcd \smimp ef$ &	$abcdef$ & $ab \smimp abcde,$ \newline $c \smimp a, d \smimp b,$ \newline $abcd \smimp ef$ & $abcdef$ & \aliemp{removed} & $ab \smimp abcde, c \smimp a,$ \newline $d \smimp b, abcd \smimp ef$ \\ \hline
+	
+	$c$ & $ab \smimp abcde, c \smimp a,$ \newline $d \smimp b, abcd \smimp ef$ & $ca$ & $ab \smimp abcde$ \newline $d \smimp b, abcd \smimp ef$ & $c$ & 
+	$c \imp ca$ & $ab \smimp abcde,$ \newline $c \smimp ca, d \smimp b,$ \newline $abcd \smimp ef$ \\ \hline
+	
+	$d$ & $ab \smimp abcde,$ \newline $c \smimp ca, d \smimp b,$ \newline $abcd \smimp ef$ & $db$ & $ab \smimp abcde,$ \newline $c \smimp ca,$ \newline $abcd \smimp ef$ & $d$ & $d \imp db$ & $ab \smimp abcde,$ \newline $c \smimp ca, d \smimp db,$ \newline $abcd \smimp ef$ \\ \hline
+	
+	$abcd$ & $ab \smimp abcde,$ \newline $c \smimp ca, d \smimp db,$ \newline $abcd \smimp ef$ & $abcdef$ & $ab \smimp abcde,$ \newline $c \smimp ca, d \smimp db$ & $abcde$ & $abcde \imp abcdef$ & $ab \smimp abcde,$ \newline $c \smimp ca, d \smimp db,$ \newline $abcde \smimp abcdef$ \\ \hline
+		
+	\end{tabular}
 
+\caption{First step of \textsc{DuquenneMinimization}}
+\label{tab:duq-red}
+\end{table}
+Observe that at the second step, when we consider $cd$, because $\I(cd) = \I^{-}(cd)$, the implication $cd \imp f$ is removed from $\I$. The basis we get
+after this step is: $ab \imp abcde, \ c \imp ca, \ d \imp db, \  abcde \imp abcdef$.
+
+\item \midemp{lectic ordering} Here we will not follow the sorting procedure, but instead, we will illustrate how does lectic ordering work in practice, and how to compute it at hands easily. Say we have the following \belemp{total} order in elements of $\Sg$: $a < b < c < d < e < f$. We can imagine represent
+a subset of $\Sg$ by a binary string of size $|\Sg|$ where the least significant bit (on the right) corresponds to $f$, and the most significant bit
+(on the left) matches $a$. The binary string associated to some $A \subset \Sg$ will have ones in place of elements it contains. For instance, the subset 
+$acef$ will have $101011$ as binary string:
+
+\[\begin{matrix}
+	$a$ & $b$ & $c$ & $d$ & $e$ & $f$ \\
+	1 & 0 & 1 & 0 & 1 & 1 \\
+\end{matrix}\]
+
+From this point of view, lectic ordering is just binary enumeration. A premise $A_1$ will be lower than $A_2$ under lectic order if the binary string
+associated to $A_1$ comes before the word related to $A_2$  when enumerating naturally binary numbers. In our case, we have:
+\begin{itemize}
+	\item[-] $ab$: $110000$,
+	\item[-] $c$: $001000$,
+	\item[-] $d$: $000100$,
+	\item[-] $abcde$: $111110$.
+\end{itemize}
+Ordering those premises by their order of appearance under binary counting, we
+get $\I$ swapped as follows: $ d \imp db, \ c \imp ca, \ ab \imp abcde, \ abcde \imp abcdef$.
+
+\item \midemp{getting pseudo-closed implications} For each implication of $\I$, we want to check whether its premise is pseudo-closed or not. To do this, we will build iteratively our resulting basis $\I_c$, containing left-pseudo-closed and right-closed implications (see table \ref{tab:duq-PC}).
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{| c | p{3cm} | c | p{3cm} |}
+		\hline \rowcolor{clouds}
+		implication & input $\I_c$ & pseudo-closed ? & output $\I_c$ \\ \hline
+		$d \smimp db$ & $\emptyset$ & $\lor$ & $d \smimp db$ \\ \hline
+		$c \smimp ca$ & $d \smimp db$ & $\lor$ & $d \smimp db, c \smimp ca$ \\ \hline
+		$ab \smimp abcde$ & $d \smimp db, c \smimp ca$ & $\lor$ & 
+		$d \smimp db, c \smimp ca$ \newline $ab \smimp abcdef$ \\ \hline
+		$abcde \smimp abcdef$ & $d \smimp db, c \smimp ca$ \newline $ab \smimp abcdef$ & $\times$: \aliemp{ab $\smimp$ abcdef} & $d \smimp db, c \smimp ca$ \newline $ab \smimp abcdef$ \\ \hline
+	\end{tabular}
+			
+\caption{\textsc{DuquenneMinimization} third step}
+\label{tab:duq-PC}
+\end{table}
+
+As one can see, when we add an implication from $\I$ to $\I_c$ we perform 
+right-closing. This is necessary to check pseudo-closeness. Consequently for
+the last step, because $ab \imp \I(abcde) = abcdef \in \I_c$, $abcde$ is not
+pseudo-closed: $ab \subseteq abcde$ and $\I(ab) = abcdef \nsubseteq abcde$. Thus we do not add it to $\I_c$. At the end of the algorithm we have $\I_c = 
+d \imp db, \ c \imp ca, \ ab \imp abcdef$.
+\end{enumerate}
+
+Regarding the complexity of the algorithm, one may note that the first loop has
+the same complexity as the second step of \textsc{MinCover}, that is $O(|\B||\I|)$ provided we use \textsc{LinClosure} for lowering theoretical complexity of closure computations. Observe then that the lectic order is a total order, hence we can use a logarithmic sorting function as quick-sort for
+\textsc{LecticOrder}, resulting in $O(|\Sg||\B|\log_2(|\B|))$ due to $O(|\Sg|)$
+comparison of two sets. Eventually, for each $A \imp B$, the nested for each loop may require $O(|\I|)$ since we are performing set operations on at most as much implications as $|\B|$. Then we may perform a closure under $\I$, being
+$O(|\I|)$ also. Therefore, the overhaul loop should require $O(|\B||\I|)$ time.
+From the three steps we have, we can conclude that the whole algorithm has complexity $O(|\B||\I|)$ as \textsc{MinCover}. However, the first loop of 
+\textsc{DuquenneMinimization} act as a redundancy elimination which helps to
+reduce the cost of closure computations in the whole algorithm. This could be
+an improvement of \textsc{MinCover} to test in practical implementation.
+
+\vspace{1.2em}
+
+In this section we were interested in studying algorithms built on the work of
+Wild, Day, Duquenne-Guigues and Ganter mainly relying on left and right-saturation of implications to produce the canonical basis. In the next section we will be involved in studying algorithms based on the work of Maier
+and later, Ausiello.
 
 
 % ---------------------------------------------------------------------------- %
@@ -406,8 +542,7 @@ are particular open sets that can be defined by two means:
 
 Here we will consider one of the first algorithm given for the minimization 
 task. It has been proposed by Maier in \cite{maier_theory_1983, 
-	david_minimum_1980} and rely notably on the algorithm \textsc{LinClosure} 
-	issued
+david_minimum_1980} and rely notably on the algorithm \textsc{LinClosure} issued
 in \cite{beeri_computational_1979}. For understandability we will explain this
 algorithm through implication theories framework while drawing parallel with
 Maier's notation and definitions. As a soft introduction, we will develop an
@@ -418,9 +553,8 @@ interesting and simple example in Maier's algorithm context.
 \paragraph{Example} Let $\Sg$ and $\I$ be as follows (in fact, same example as 
 in previous section):
 \begin{itemize}
-	\item $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
-	\item $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, 
-		abcd $\imp$ ef} \} 
+	\item[-] $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item[-] $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, abcd $\imp$ ef} \} 
 \end{itemize}
 \noindent Let us try to minimize it "with hands". First, we see \textit{abcd 
 	$\imp$ ef} to be redundant. Indeed, if we remove it from $\I$, we still have
@@ -472,11 +606,8 @@ $O(|\B| \times |\I|)$.
 
 \paragraph{Equivalence classes} As briefly described previously, we can identify
 equivalence classes within $\Sg^{\I}$. For $X \subseteq \Sg$, we can set up
-$\left[ X \right]_{\I} = \{ Y \subseteq \Sg \ | \ \I(Y) = \I(X) \}$. Notice 
-that this is the definition of an \belemp{equivalence class} we informally 
-presented in the first chapter. More than
-this, we can limit those equivalence classes to bodies of $\I$, i.e for some
-$A \subseteq \Sg$ let
+$\left[ X \right]_{\I} = \{ Y \subseteq \Sg \ | \ \I(Y) = \I(X) \}$. Recall 
+that this is the definition of an \belemp{equivalence class} we presented in the first chapter. More than this, we can limit those equivalence classes to premises of $\I$, i.e for some $A \subseteq \Sg$ let
 \begin{itemize}
 	\item[(i)] $E_{\I}(A) = \{ X \imp Y \in \I \ | \ X \in \left[ A 
 	\right]_{\I} \}$ 
@@ -488,16 +619,11 @@ $A \subseteq \Sg$ let
 in \cite{maier_theory_1983, david_minimum_1980} is the following: 
 
 \begin{proposition} Let $\I$ be an irredundant theory. If $A \imp B, \ C \imp D 
-	\in \I$ (distinct) are such that $C \equiv A$ and $A \ddv C$, then we can 
-	remove $A \imp B$ from $\I$ and replace $C \imp D$ by $C \imp D \cup B$ 
-	without 
-	altering $\Sg^{\I}$.
+\in \I$ (distinct) are such that $C \equiv A$ and $A \ddv C$, then we can remove $A \imp B$ from $\I$ and replace $C \imp D$ by $C \imp D \cup B$ without 
+altering $\Sg^{\I}$.
 \end{proposition}
 
-\begin{proof}(\midemp{sketch}) Suppose we removed $A \imp B$ and modified
-$C \imp D$ to $C \imp D \cup B$. Put $\I^{-}$ as the system we obtained. 
-The main point is to show that we still have $\I^{-} \models A \imp B$. Recall 
-$A \ddv C$, thus:
+\begin{proof} Suppose we removed $A \imp B$ and modified $C \imp D$ to $C \imp D \cup B$. Put $\I^{-}$ as the system we obtained. The main point is to show that we still have $\I^{-} \models A \imp B$. Recall $A \ddv C$, thus:
 
 \begin{align*}
 	\I - E_{\I}(A) \models A \imp C & \implies \I - A \imp B \models A \imp 
@@ -538,14 +664,7 @@ The main question is: how to get the equivalence classes efficiently? It turns
 out this can be done using a modified version of \textsc{LinClosure}. It is 
 sufficient to embed in the function a vector of implied premises. That is, 
 for a given premise $X$, we provide to \textsc{LinClosure} a bit-vector 
-$implied$ of size
-$|\B|$. Within the procedure, whenever we reach $count\left[A \imp B \right] = 
-0$ for some $A \imp B \in \I$, then $A$ is implied by $X$ under $\I$. Hence we 
-set $implied\left[ A \imp B\right]$ to 1. Doing this operation for all 
-implications in $\I$ provide a matrix $M$ of size $|\B| \times |\B|$. Then, to 
-compute equivalence classes, a travel over the matrix is enough. Two 
-implications $A \imp B$ and $C \imp D$ of $\I$ belong to the same equivalence 
-class if 
+$implied$ of size $|\B|$. Within the procedure, whenever we reach $count\left[A \imp B \right] = 0$ for some $A \imp B \in \I$, then $A$ is implied by $X$ under $\I$. Hence we set $implied\left[ A \imp B\right]$ to 1. Doing this operation for all implications in $\I$ provide a matrix $M$ of size $|\B| \times |\B|$. Then, to compute equivalence classes, a travel over the matrix is enough. Two implications $A \imp B$ and $C \imp D$ of $\I$ belong to the same equivalence class if 
 
 \[ M\left[A \imp B, \ C \imp D \right] = 1 \quad \text{and} \quad 
 M\left[C \imp D, \ A \imp B \right] = 1 \]
@@ -613,13 +732,11 @@ next example, acting as a trace.
 
 \vspace{1.2em}
 
-\paragraph{Example} Let us use the example we presented at the beginning of
-the section, but this time, applying formally Maier's algorithm on it. Hence,
+\paragraph{Example} Let us use the example we presented when studying the first algorithm, but this time, applying formally Maier's algorithm on it. Hence,
 as a reminder, we had:
 \begin{itemize}
-	\item $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
-	\item $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, 
-		abcd $\imp$ ef} \} 
+	\item[-] $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item[-] $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, abcd $\imp$ ef} \} 
 \end{itemize}
 \noindent We will proceed by steps.
 \begin{enumerate}
@@ -1314,6 +1431,8 @@ discussion about complexity and effective algorithm to delete superfluous nodes.
 
 \section{Propositionnal logic based approach}
 
+\subsection{Representing implications as Horn clauses}
+
 \subsection{Hypergraphs out of a bounding theorem}
 
 Here, we will study an algorithm proposed by Berczi and al. in 
@@ -1426,9 +1545,8 @@ algorithms. Before discussing any improvement, we will give an example.
 
 \paragraph{Example} To be coherent, let us take again our perpetual example:
 \begin{itemize}
-	\item $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
-	\item $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, 
-		abcd $\imp$ ef} \} 
+	\item[-] $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item[-] $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, abcd $\imp$ ef} \} 
 \end{itemize}
 Let us illustrate the algorithm through a graphical trace (see figure 
 \ref{fig:berczi-trace}). In this figure, we represented the 4 steps of 
@@ -1536,14 +1654,9 @@ a basis $\I$ over $\Sg$:
 	\end{itemize}
 \end{enumerate}
 \noindent To clarify, the terms negative/positive are related to the base $\I$
-we want to learn.
-
-\subsubsection{Algorithm}
-
-The algorithm has been proved to end up with the Duquenne-Guigue Basis, again 
-we can refer to \cite{angluin_learning_1992, arias_canonical_2009} for further
-explanations. The first algorithm provided by Angluin et al. relies on clauses
-with unitary heads. It uses two operations allowing to reduce implications:
+we want to learn. \textsc{AngluinAlgorithm} is the algorithm presented by Angluin, Frazer and Pitts in \cite{angluin_learning_1992} as \textsc{Horn1}. 
+Initially, it is based on learning logical representation of implication theories: Horn clauses. This learning algorithm has been shown first to terminate on a minimal representation of the basis we want to learn (\cite{angluin_learning_1992}) and more than that, to end up on the canonical
+basis by Arias and al. \cite{arias_canonical_2009}. It uses two operations allowing to reduce implications:
 \begin{itemize}
 	\item $refine(A \imp B, M)$: produces $M \imp \Sg$ if $B = \Sg$, 
 	$M \imp B \cup A - M$ otherwise,
@@ -1589,13 +1702,8 @@ with unitary heads. It uses two operations allowing to reduce implications:
 	\label{alg:Angluin}
 \end{algorithm}
 
-\paragraph{Some Observations} \begin{itemize}
-	\item Proved to be polynomial (\cite{angluin_learning_1992})
-	\item Proved to end up on the DG basis (\cite{arias_canonical_2009})
-	\item We can see that (apart from previous remark) that we end up 
-	on implications of the form $A \imp \I(A)$ (induction)
-	\item .
-\end{itemize}
+\noindent In practice, this procedure is likely to be somehow random because
+of the oracle. To get rid of non-determinism, one can derive from \textsc{AngluinAlgorithm} the algorithm \textsc{AFPMinimization}.
 
 
 \begin{algorithm}
@@ -1629,17 +1737,12 @@ with unitary heads. It uses two operations allowing to reduce implications:
 							change $\alpha \imp \beta$ by $C \imp D$ in $\I_c$\;
 							push($X \cup D$, $\mathcal{S}$) \;
 							
-							\If{$B \neq D$}{
+							\If{$\beta \neq D$}{
 								push($\alpha$, $\mathcal{S}$)\;
 							}
 							\textbf{exit for}
-					
 						}
-						
-						
 					}
-			
-		
 				}
 			
 				\BlankLine
@@ -1655,45 +1758,111 @@ with unitary heads. It uses two operations allowing to reduce implications:
 	return $\I_c$ \;
 	
 	
-	\caption{\textsc{AFPAlgorithm}}
+	\caption{\textsc{AFPMinimization}}
 	\label{alg:AFP}
 \end{algorithm}
+
+\noindent In this function, questions to and answers from the oracle are replaced by a stack and closure operations. Indeed, membership queries can
+be done by computing closures under $\I$, $\I_c$. Regarding the stopping 
+criterion equivalence query, observe that premises of $\I$ are a sufficient set of negative counter-example to find $\I_c$: when a premise is no more a negative counter-example, it means that it is neither closed in $\I$ nor in 
+$\I_c$. Furthermore, since implications of $\I_c$ are $\I$-right-closed, every
+premise $A$ of $\I$ has the same closure in $\I$ and $\I_c$. Hence, when there
+is no premise left being negative counter-example, $I \equiv \I_c$. Note that this approach does not require positive counter-examples. 
+
+\vspace{1.2em}
+
+Up to know, we are not sure of the correctness of the algorithm, since we do
+not know whether an implication can be refined twice, hence if the stack can
+grow more than twice the number of implications in $\I$ (asymptotically). Still, if an implication is refined more than one time, the elements stacked shrink in size. Hence we are sure to have a finite loop. This leads to an approximation of the complexity. Indeed, even though we do not know the number of time one could iterate over the repeat loop, we still have nested
+iterations over implications of $\I$ and $\I_c$. Furthermore, because the run
+over implications of $\I_c$ contains computations of elements in $\I$, the 
+overhaul algorithm may be cubic in the number of premises in $\I$. Therefore,
+this would be the worst time complexity.
+
+\vspace{1.2em}
+
+\paragraph{Example} Let us observe a trace with our toy example:
+\begin{itemize}
+	\item[-] $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item[-] $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, abcd $\imp$ ef} \} 
+\end{itemize}
+\noindent We will proceed by implications in $\I$:
+\begin{enumerate}
+	\item $ab \imp cde$, $\I_c = \emptyset$. We want to build a negative example with $ab$. The smallest closed set of $\I_c$ containing $ab$ is
+	$\I_c(ab) = ab$. $ab$ is not closed in $\I$, hence it is itself a counter-example. Because $\I_c$ is empty, we can only add $ab \imp abcdef$ to $\I_c$.
+	
+	\item $cd \imp f$, $\I_c = \{ ab \imp abcdef \}$. Again, $cd$ is a negative
+	counter example to $\I$: it is a model of $\I_c$, but not of $\I$. Furthermore, the only smaller example we build is $ab \cap cd = \emptyset$ 
+	not being a negative one. Hence, we add $cd \imp abcdef$ to $\I_c$.
+	
+	\item $c \imp a$, $\I_c = \{ ab \imp abcdef, cd \imp abcdef \}$. $c$ is a
+	negative example: $\I_c(c) = c \neq \I(c)$. For all implications of $\I_c$,
+	we try to compute a new example:
+	\begin{itemize}
+		\item[-] $ab \cap c = \emptyset$, which is not a negative counter example,
+		\item[-] $cd \cap c = c$. It is a negative example.
+	\end{itemize}
+	For $c$, we replace $cd \imp abcdef$ by $c \imp ca$ to correct $\I_c$. We push $ca$ in the stack since it may generate an counter-example. Furthermore, because we replaced $cd \imp abcdef$ by $c \imp ca$ and $abcdef \neq ca$, the closure of $cd$ under $\I_c$ is no more its closure under $\I$, it may also produce a counter-example, we push it into the stack.
+	
+	The next attribute set in the stack is $cd$. The corresponding example is
+	$\I_c(cd) = acd$ not closed in $\I$:
+	\begin{itemize}
+		\item[-]$acd \cap ab = a$: $a$ is closed both under $\I$ and $\I_c$,
+		\item[-]$acd \cap c = c$: $c$ has the same closure under $\I$ and $\I_c$.
+	\end{itemize}
+	we found no counter example, we add $acd \imp abcdef$ to $\I_c$.
+	
+	The last element of the stack is $ca$. It is closed under $\I$ hence it cannot be a counter example.
+	
+	\item $d \imp b$, $\I_c = \{ ab \imp abcdef, c \imp ca, acd \imp abcdef \}$.
+	$\I_c(d) = d \neq \I(d)$ is a negative counter example:
+	\begin{itemize}
+		\item[-] $ab \cap d = \emptyset$
+		\item[-] $c \cap d = \emptyset$
+		\item[-] $acd \cap d = d$, being a negative counter example
+	\end{itemize}
+	For $d$, we replace $acd \imp abcdef$ by $d \imp bd$. Then we push it then stack $bd$ and because $bd \neq abcdef$, we also push $acd$.
+	
+	The next element in the stack is $acd$ for which the closure under $\I_c$
+	is the same as the closure under $\I$: $abcdef$. It is not a counter example.
+	
+	The last element before the stack goes empty is $bd$ being a model of $\I$.
+	
+	\item $abcd \imp ef$, $\I_c = \{ ab \imp abcdef, c \imp ca, d \imp bd \}$.
+	$\I_c(abcd) = abcdef = \I(abcd)$. It is not a counter example.
+\end{enumerate}
+\noindent The resulting basis $\I_c =  \{ ab \imp abcdef, c \imp ca, d \imp bd \}$ is indeed the DG basis of $\I$.
 
 
 \section{Theoretical expectations and conclusion}
 
-All along the previous section, we discussed independently several algorithms.
-When comparing them, it turns out that \textsc{MinCover} and 
-\textsc{MaierMinimization} has the same complexity. Indeed, they are both 
-quadratic in the number of implications in $\I$. For 
-\textsc{BercziMinimization}, the complexity is worse, being cubic in the number 
-of implications. What to expect from those algorithms in practice? It should 
-come at no surprise that in any case, Berczi algorithm will perform much worse
-than Maier algorithm and \textsc{MinCover}, unless we are able to find a 
-suitable order as mentioned for an improvement. Actually, we did not manage to
-find such an order not relying on computations of closures and pseudo-closed 
-sets. So let us focus on \textsc{MinCover} and \textsc{MaierMinimization}. They
-have the same complexity but in practice, we do not really know what would 
-happend depending on the case. From our point of view, it is worth noting that
-the asymptotic number of \textsc{LinClosure} uses is higher in Maier's 
-procedure. \textsc{MinCover} performs 2 closure for every implications,
-while \textsc{MaierMinimization} performs 3 (redundancy, equivalence, direct 
-determination). Hence, in most cases in practice, \textsc{MinCover} should
-raise better results.
+All along previous sections, we discussed in detail several minimization
+algorithms. To summarize, we studied:
+\begin{itemize}
+	\item[-] \textsc{MinCover} with complexity $O(|\B||\I|)$,
+	\item[-] \textsc{DuquenneMinimization} with complexity $O(|\B||\I|)$,
+	\item[-] \textsc{MaierMinimization}, $O(|\B||\I|)$,
+	\item[-] \textsc{BercziMinimization}, $O(|\B|^2|\I|)$,
+	\item[-] \textsc{AFPMinimization}, with an unknown time complexity.
+\end{itemize}
+\noindent Note that we did not truly listed all the algorithm we have been
+talking about more than the algorithms we will indeed study in practical terms
+in the next chapter. As one can observe, at least 3 of the algorithms have 
+the same complexity even though being quite different. It turns out anyway that
+among the first three algorithms, \textsc{MinCover, DuquenneMinimization} are
+quite similar. Indeed they both rely on using quasi-closure, right-closure and
+redundancy elimination. Those three steps first issued in works by Day in \cite{day_lattice_1992}, Duquenne-Guigues in \cite{duquenne_variations_2007, guigues_j.l_familles_1986}, Wild in \cite{wild_theory_1994, wild_computations_1995, wild_implicational_1989} have been recently discussed
+by Boros and al in \cite{boros_strong_2017}. \textsc{MaierMinimization} however
+relies on quite different structure. The most interesting difference with the two previous algorithms (or in fact all other algorithms but \textsc{AusielloMinimization} being based on \textsc{MaierMinimization}) is that the resulting implication base may not be the Duquenne-Guigues basis. Still, it uses redundancy elimination even though an implication being redundant in \textsc{MinCover} may not be considered as redundant in Maier's terms (because of right-closure in the latter one). Nevertheless, we still
+have a common point within those three first procedures: we are minimizing 
+a given basis. Quite the opposite, \textsc{BercziMinimization} and \textsc{AFPMinimization} are building a canonical representation of an input
+basis. Speaking of theoretical complexity, it seems like those approaches are not the most efficient. Still, we may keep in mind that we based our study of complexity on \textsc{LinClosure} which may not be the fastest closure algorithm in practice (see \cite{bazhanov_optimizations_2014}). 
 
-\vspace{1.2em}
 
-\paragraph{Conclusion} In this chapter, our task was to present and review 
-some algorithms for reducing implication theories. After explaining the bounds
-of our work within this internship we discussed three procedures: 
-\textsc{MinCover}, \textsc{MaierMinimization} and \textsc{ShockMinimization} 
-(algorithms \ref{alg:MinCover}, \ref{alg:Maier-Min} and \ref{alg:Berczi-min} 
-respectively). For all of them we explained the principle, drew at least a 
-sketch of proof within the context of closure systems/implications, and studied
-complexity. In the last part, we tried to compare their complexity and give
-some hypothesis on their relative practical efficiency. In order to test our
-hypothesis, we will dedicate the final chapter of this report to practical 
-experiences under implementation in C++ 11.
+\paragraph{Conclusion} In this chapter, we studied several algorithms for 
+minimization task coming from various communities. Starting from algorithms
+heavily using quasi-closure of FCA community (\textsc{MinCover}, \textsc{DuquenneMinimization}), moving to Maier's database approach and Ausiello graphical representation. Eventually we studied algorithms from boolean logic and query learning with \textsc{BercziMinimization} and \textsc{AFPMinimization}. After having studied their operations we will in
+the next chapter implement and compare them under practical computations.
 
 
 
