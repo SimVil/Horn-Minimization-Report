@@ -1,20 +1,20 @@
 \centering
-\subfloat[][FD-Graph of $1 \imp 23$]{
+\subfloat[FD-Graph of $a \imp bc$]{
 \begin{tikzpicture}
-\node[Vertex, label=left:{1}] (1) at (-0.5, 0) {};
-\node[Vertex, label=right:{2}] (2) at (0.5, 0.5) {};
-\node[Vertex, label=right:{3}] (3) at (0.5, -0.5) {};
+\node[Vertex, label=left:{$a$}] (1) at (-0.5, 0) {};
+\node[Vertex, label=right:{$b$}] (2) at (0.5, 0.5) {};
+\node[Vertex, label=right:{$c$3}] (3) at (0.5, -0.5) {};
 
 \draw[->] (1) -- (2);
 \draw[->] (1) -- (3);
 \end{tikzpicture}
 }\qquad
-\subfloat[][FD-Graph of $23 \imp 1$]{
+\subfloat[FD-Graph of $bc \imp a$]{
 \begin{tikzpicture}
-\node[Vertex, label=below:{23}] (23) at (0, 0) {};
-\node[Vertex, label=right:{1}] (1) at (1, 0) {};
-\node[Vertex, label=left:{2}] (2) at (-1, 0.5) {};
-\node[Vertex, label=left:{3}] (3) at (-1, -0.5) {};
+\node[Vertex, label=below:{$bc$}] (23) at (0, 0) {};
+\node[Vertex, label=right:{$a$}] (1) at (1, 0) {};
+\node[Vertex, label=left:{$b$}] (2) at (-1, 0.5) {};
+\node[Vertex, label=left:{$c$}] (3) at (-1, -0.5) {};
 
 \draw[->, dotted] (23) -- (2);
 \draw[->, dotted] (23) -- (3);
@@ -22,13 +22,13 @@
 \end{tikzpicture}		
 }
 
-\subfloat[][FD-Graph of $12 \imp 34$]{
+\subfloat[FD-Graph of $ab \imp cd$]{
 \begin{tikzpicture}
-\node[Vertex, label=below:{12}] (12) at (0, 0) {};
-\node[Vertex, label=left:{1}] (1) at (-1, 0.5) {};
-\node[Vertex, label=left:{2}] (2) at (-1, -0.5) {};
-\node[Vertex, label=right:{3}] (3) at (1, -0.5) {};
-\node[Vertex, label=right:{4}] (4) at (1, 0.5) {};
+\node[Vertex, label=below:{$ab$}] (12) at (0, 0) {};
+\node[Vertex, label=left:{$a$}] (1) at (-1, 0.5) {};
+\node[Vertex, label=left:{$b$}] (2) at (-1, -0.5) {};
+\node[Vertex, label=right:{$c$}] (3) at (1, -0.5) {};
+\node[Vertex, label=right:{$d$}] (4) at (1, 0.5) {};
 
 \draw[->, dotted] (12) -- (2);
 \draw[->, dotted] (12) -- (1);

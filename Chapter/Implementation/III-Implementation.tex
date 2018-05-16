@@ -92,11 +92,7 @@ this as an issue. Generating theories then is as follows:
 \end{enumerate}
 \noindent Note that this method can be discussed and probably improved. For us,
 it seems like this method is sufficient to provide theories with informative
-implications, and uniformly distributed sizes of premises and conclusions thus
-a "good" representation of the theories space. We did not investigate further 
-ways of generations since the main task was to test algorithms and not to study
-implication structures in depth. This anyway is an interesting question for
-further work.
+implications, and various sizes of premises and conclusions. We did not investigate further ways of generations since the main task was to test algorithms and not to study implication structures in depth. This anyway is an interesting question for further work.
 
 \subsection{Real data}
 
@@ -162,7 +158,7 @@ We can represent a context $\Ens{K} = (G, M, I)$ as an array, see table \ref{tab
 
 As shown, contexts contain binary informations. Unfortunately, we may usually be
 confronted to multi-valued data. If we stick to our green example, we could have
-an attribute "size" having possibly many values. With such attributes we could get closer from relational databases. Because real datasets we are going to use
+an attribute \textit{"size"} having possibly many values. With such attributes we could get closer from relational databases. Because real datasets we are going to use
 contains multi-valued attributes, we will need \belemp{FCA-scaling}. We will not
 go into technical details. The idea however is the following:
 \begin{itemize}
@@ -292,8 +288,7 @@ we will rely on the next assumption based on the result of \cite{bazhanov_optimi
 that \textsc{LinClosure} performs worst in general than \textsc{Closure}. However, as we will see there are some possible optimizations for \textsc{LinClosure} dealing with initialization steps. Consequently, 
 we will first give priority to \textsc{Closure}, and try to replace it 
 by \textsc{LinClosure} whenever we find a possible optimized use of 
-for this closure method. We will keep as the "best version" the most efficient
-in the tests we will run.
+for this closure method. We will keep as the \textit{"best version"} the most efficient in the tests we will run.
 
 \subsection{\textsc{MinCover}}
 
