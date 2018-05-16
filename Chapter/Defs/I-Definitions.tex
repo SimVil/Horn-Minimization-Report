@@ -4,12 +4,12 @@ In this first chapter, we will be involved in presenting our topic of
 minimization. For this ground to be understandable by as much readers as 
 possible, we will heavily rely on toy examples to illustrate and provide 
 intuition on the various notions we will introduce. To be more precise on the
-path we are about to follow in this chapter, we are first to expose an informal
+path we are about to follow here, we are first to expose an informal
 small example of the task we want to achieve. Then, we shall investigate the
 history of research on our topic, to act as an exposition of the actual 
 knowledge on the question and to give a context to our study. For the rest of
 this chapter we will get familiar with mathematical objects called 
-\midemp{closure operators} and \midemp{closure systems} modelling our problem.
+\belemp{closure operators} and \belemp{closure systems} modelling our problem.
 As we shall observe, the topic of minimization can be described in several 
 mathematical frameworks. However, even if we describe briefly other objects
 in next chapters, we will stick to our closure framework in all the report in
@@ -34,9 +34,8 @@ depict correlation between attributes (not cause/consequence!). It is important
 to stress on the knowledge those relations bring. They just indicate that 
 whenever we have say \textit{flower}, we have also \textit{colourful}. This is 
 very different from saying that \textit{because} some plant is a flower, it 
-will be colourful. We call those correlation relations \belemp{implication}
-and use $ flower \imp colourful$ to denote \textit{"if we have the attribute
-flower, then we have colourful"}. Now let us give some implications:
+will be colourful. We call those correlation relations \belemp{implications}
+and use \textit{flower $\imp$ colourful} to denote \textit{"if we have the attribute flower, then we have colourful"}. Now let us give some implications:
 
 \begin{center}
 	\textit{(colourful, bloom $\imp$ seasonal), (colourful, wither $\imp$ 
@@ -88,7 +87,7 @@ unique. Indeed, one can define several type of minimality among implication
 systems. For instance, not only we can define minimality with respect to the 
 number of implication within a system (which is our interest) but also with 
 respect to the number of attributes in each implications. The former one is 
-called \textit{canonical} in relational database field, and \textit{hyperarc 
+called \midemp{canonical} in relational database field, and \midemp{hyperarc 
 	minimum} within the graph context. Especially in the graph-theoretic and 
 boolean logic settings, one can derive more types of minimality. For general 
 introduction to boolean logic notations, we invite the reader to see 
@@ -113,13 +112,8 @@ properties of minimality arose are Formal Concept Analysis (FCA) (see
 \cite{maier_theory_1983}). Both sides were developed independently in the early 
 80's. For the first domain, characterization of minimality goes to Duquenne and 
 Guigues \cite{guigues_j.l_familles_1986}, in which they describe the so-called 
-\textit{canonical basis} (also called \textit{Duquenne-Guigues basis} after its 
-authors) relying on the notion of pseudo-closed sets. For the database part, 
-study of implications is made by Maier through FD's (\cite{maier_theory_1983, 
-	david_minimum_1980}). The polynomial time algorithm he gives for 
-	minimization 
-heavily relies on a fast subroutine discovered by Beeri and Bernstein in 
-\cite{beeri_computational_1979}, 1979.
+\belemp{canonical basis} (also called \belemp{Duquenne-Guigues basis} after its 
+authors, abbreviated DG all along this report) relying on the notion of \belemp{pseudo-closed sets}. For the database part, study of implications is made by Maier through FD's (\cite{maier_theory_1983, david_minimum_1980}). The polynomial time algorithm he gives for minimization heavily relies on a fast subroutine discovered by Beeri and Bernstein in \cite{beeri_computational_1979}, 1979.
 
 \vspace{1.2em}
 
@@ -151,7 +145,7 @@ have been used in the lattice-theoretic context by Day in
 For in-depth knowledge of implication system within lattice terminology, we can 
 see \cite{davey_introduction_2002} as an introduction and 
 \cite{bertet_lattices_2016} for a survey. Later, Duquenne proposed some 
-variations in Day's work with another algorithm in 
+variations of Day's work with another algorithm in 
 \cite{duquenne_variations_2007}. More recently, Bor\`os and al. by 
 working in a boolean logic framework, exhibited a theorem on the size of
 canonical basis \cite{boros_exclusive_2010, boros_strong_2017}. They also gave
@@ -159,7 +153,7 @@ a general theoretic approach that algorithm should do one way or another on
 reduction purpose. Out of these papers, Berczi \& al. derived a new 
 minimization procedure based on hypergraphs in \cite{berczi_directed_2017}. 
 Furthermore, an algorithm for computing the canonical basis starting from any 
-system is given in \cite{b._ganter_conceptual_2016}.
+system is given in \cite{b._ganter_conceptual_2016}. This last algorithm was our starting point for this study.
 
 \vspace{1.2em}
 
@@ -203,8 +197,7 @@ wild_joy_2017}. Readers with knowledge in relational databases will recognize
 most of functional dependency notations. The reason is close vicinity between 
 implications and functional dependencies. Talking about our needs, we can 
 consider them as equivalent notations. Actually, the real-life application our 
-set up will be the closest from is FCA (\cite{ganter_formal_1999}) as we shall
-see in the last chapter.
+set up will be the closest from is FCA (Formal Concept Analysis, \cite{ganter_formal_1999}) as we shall see in the last chapter.
 
 
 % ==== Subsection: implications and closure system
@@ -216,7 +209,7 @@ set. For all the report, we fix $\Sg$ to be a set of \belemp{attributes}.
 Usually, we will denote attributes by small letters: \textit{a, b, c, \dots} 
 and subsets of $\Sg$ (groups of attributes) will be denoted by capital letters: 
 \textit{A, B, C, \dots} We assume the reader to have few background in 
-elementary set-theoretic notations. 
+elementary set-theoretic and logical notations. 
 
 \begin{definition}[\midemp{Implication, implication system}] An 
 \belemp{implication} over $\Sg$ is a pair $(A, B)$ with $A, B \subseteq \Sg$. 
@@ -258,23 +251,21 @@ syntactic deduction (see \cite{cori_mathematical_2000}). By a fortunate twist of
 fate, semantic entailment is our next step:
 
 \begin{definition}[\midemp{Semantic entailment}] We say that an implication 
-	$A \imp B$ \belemp{semantically follows} from $\I$, denoted $\I \models A 
-	\imp 
-	B$, if all models $M$ of $\I$ are models of $A \imp B$.
+$A \imp B$ \belemp{semantically follows} from $\I$, denoted $\I \models A 
+\imp B$, if all models $M$ of $\I$ are models of $A \imp B$. Given two basis $\I_1$, $\I_2$, $\I_1 \models \I_2$ if $\I_1 \models A \imp B$ for all
+implications $A \imp B$ of $\I_2$. Furthermore, $\I_1$ and $\I_2$ are \belemp{equivalent} if $\I_1 \models \I_2$ and $\I_2 \models \I_1$.  
 	
 \end{definition} 
 
-\noindent Because next definitions are going to be on a slightly different 
+\noindent In fact, we can also say that $A \imp B$ \belemp{holds} in $\I$. Because future definitions are going to be on a slightly different 
 structure, even though closely related to implication systems of course, let us
 rest for a while and illustrate our definitions with an example.
 
-\vspace{1.2em}
 
 \paragraph{Example} Consider again our plant properties. Let $\Sg = $ 
 \{\textit{colourful, bloom, wither, seasonal, aquatic, perennial, flower, 
 	scented}\}. An implication could be \textit{flower $\imp$ scented}, or even
-\textit{(bloom, aquatic) $\imp$ colourful} if we get rid off semantic 
-interpretations. An implication basis $\I$ is for instance:
+\textit{(bloom, aquatic) $\imp$ colourful} if we do not care anymore about semantic interpretations. An implication basis $\I$ is for instance:
 
 \begin{center}
 	\textit{(colourful, bloom $\imp$ seasonal), (colourful, wither $\imp$ 
@@ -323,13 +314,11 @@ surprising, but it has been chosen purposefully. Indeed, to each closure system
 $\Sg^{\phi}$ over $\Sg$, we can associate a closure operator $\phi$ and 
 vice-versa:
 \begin{itemize}
-	\item from $\phi$ to $\Sg^{\phi}$: compute all closed sets of $\phi$ to
+	\item[-] from $\phi$ to $\Sg^{\phi}$: compute all closed sets of $\phi$ to
 	obtain $\Sg^{\phi}$,
-	\item from $\Sg^{\phi}$ to $\phi$: define $\phi(X)$ as the smallest element
-	of $\Sg^{\phi}$ (inclusion-wise) containing $X$. Observe that such a set
-	always exists in $\Sg^{\phi}$ because $\Sg \in \Sg^{\phi}$.
+	\item[-] from $\Sg^{\phi}$ to $\phi$: define $\phi(X)$ as the smallest element of $\Sg^{\phi}$ (inclusion-wise) containing $X$. Observe that such a set always exists in $\Sg^{\phi}$ because $\Sg \in \Sg^{\phi}$.
 \end{itemize}
- In any case, this notation used for clear exposition of the link
+In any event, this notation used for clear exposition of the link
 between closure systems and closure operators will be adapted to our context
 of implication systems as we shall see later on. Notice that one can encounter 
 another object, \belemp{closure space}, being a pair ($\Sg$, $\phi$) where
@@ -337,12 +326,11 @@ $\Sg$ is a set and $\phi$ a closure operator over $\Sg$. We are likely to find
 this notation notably in \cite{wild_implicational_1989, 
 	wild_theory_1994} where a general theory of closure spaces is addressed.
 
-\vspace{1.2em}
 
 \paragraph{Example} Let us imagine we have four people: \textit{Jezabel, Neige, 
 Seraphin} and \textit{Narcisse}. Let us assume they all know each other and then
 define a relation \textit{"like"} between them. For instance, say 
-\textit{Séraphin likes Jezabel}. this relation is a \belemp{binary relation}: 
+\textit{Seraphin likes Jezabel}. this relation is a \belemp{binary relation}: 
 it relates pairs of elements. We can represent this relation by a graph where 
 nodes are people and edges represent relations:
 
@@ -353,22 +341,21 @@ nodes are people and edges represent relations:
 The arrow from \textit{Seraphin} to \textit{Jezabel} stands for 
 \textit{"Seraphin likes Jezabel"} and the arrow from \textit{Narcisse} to itself
 means equivalently \textit{"Narcisse likes Narcisse"}. With this clear, let 
-us introduce an operation of gathering people. Starting from any group $A$ of 
+us introduce an operation gathering people. Starting from any group $A$ of 
 persons presented here, let's add to $A$ every person liked by at least one 
-element of $A$, until we can no more add people. For instance:
+element of $A$, until adding new people is not possible any more. For example:
 \begin{itemize}
-	\item[-] if we start from \textit{Neige}, because \textit{Neige} likes
-	\textit{Jezabel} and \textit{Jezabel} likes \textit{Narcisse} we will add
+	\item[-] if we start from \textit{Neige}, because \textit{Neige likes
+	Jezabel} and \textit{Jezabel likes Narcisse} we will add
 	both of them to the group of \textit{Neige},
-	\item[-] because \textit{Narcisse} only likes himself, we have no people
-	to add in his group.
+	\item[-] because \textit{Narcisse} is related to himself only, we have no people to add in his group.
 \end{itemize}
 \noindent Now observe that this operation of gathering people is in fact a
 closure operator:
 \begin{itemize}
 	\item[(i)] it is \midemp{extensive}: starting from any group of people,
 	we can only add new ones, hence either the group does not change (e.g: 
-	\textit{Narcisse}) or it grows,
+	\textit{Narcisse}) or grows,
 	\item[(ii)] it is \midemp{monotone}: if we start from a group $A$ containing
 	a group $B$, it is clear that we will at least gather in $A$ all the people
 	we would add with $B$,
@@ -417,7 +404,7 @@ sets is the following:
 
 Having presented the main definitions we shall need, we are to investigate 
 practical computation of closures and more elaborated structures like the 
-canonical basis (or Duquenne-Guigues basis) in the next section.
+\belemp{canonical basis} (or \belemp{Duquenne-Guigues basis}) in the next section.
 
 
 
@@ -428,15 +415,12 @@ canonical basis (or Duquenne-Guigues basis) in the next section.
 Before giving the definition of canonical basis, we should consider special 
 kind of sets given $\I$ over $\Sg$. Also, we will need to expose particular
 implications. First of all, let us introduce a property through a proposition
-we will assume (we redirect the reader to \cite{b._ganter_conceptual_2016}
-for another proof). When not introduced, we consider a system $\I$
-of implications, over some attribute set $\Sg$.
+on the link between an implication and the closure of its premise (we redirect the reader to \cite{b._ganter_conceptual_2016} for another proof). When not introduced, we consider a system $\I$ of implications, over some attribute set $\Sg$.
 
-\begin{proposition} Let $A \imp B$ be an implication. $\I \models A \imp B$
-	if and only if $B \subseteq \I(A)$.	
+\begin{proposition} Let $\I$ be a theory of $\Sg$. Let $A \imp B$ be an implication. $\I \models A \imp B$ if and only if $B \subseteq \I(A)$.	
 \end{proposition}
 
-\begin{proof} $\I \models A \imp B \implies B \subseteq \I(A)$. Every model
+\begin{proof} $(\I \models A \imp B) \imp B \subseteq \I(A)$. Every model
 of $\I$ models $A \imp B$, hence for each closed set $X$ of $\I$, either 
 $A \subseteq X $ and $B \subseteq X$, or $A \nsubseteq X$. Consider all closed 
 $X$ for which $A \subseteq X$. By definition $\I(A) = \bigcap \{X \in 
@@ -444,10 +428,10 @@ $X$ for which $A \subseteq X$. By definition $\I(A) = \bigcap \{X \in
 
 \vspace{1.2em}
 
-$B \subseteq \I(A) \implies \I \models A \imp B$. By contraposition suppose 
+$(B \subseteq \I(A)) \imp (\I \models A \imp B)$. By contraposition suppose 
 $\I \not\models A \imp B$. Then there must exist at least one model $X$ of $\I$
 such that $A \subseteq X$ and $B \nsubseteq X$. Because $A \subseteq X$, 
-$\I(A) \subseteq X$ hence $B \nsubseteq \I(A)$.
+$\I(A) \subseteq X$ and $B \nsubseteq \I(A)$.
 	
 \end{proof}
 
@@ -530,16 +514,16 @@ present some properties:
 	\item[(vi)] \belemp{transitivity}: $\forall x, y, z \in E, x \rel{R} y 
 	\land y \rel{R} z \imp x \rel{R} z$
 \end{itemize}
-All possible properties are not given here, see \cite{cori_mathematical_2000} 
+As a reminder for some statements $a$ and $b$, $\lnot a$ denotes logical negation ($\lnot a$ is true when $a$ is not), $a \land b$ is the conjunction (the statement $a \land b$ is true if both $a$ and $b$ are) and $a \lor b$ is the disjunction ($a \lor b$ is true if at least one of $a$, $b$ is). $a \imp b$ is a logical implication, if $a$ is true, so is $b$. All possible properties are not given here, see \cite{cori_mathematical_2000} 
 for more. With those properties anyway, we can define several types of 
 relations:
 
-\begin{definition} Let $E$ be a set and $\rel{R}$ a binary relation on $E$:
+\begin{definition}[\midemp{Equivalence, order}] Let $E$ be a set and $\rel{R}$ a binary relation on $E$:
 \begin{itemize}
 	\item[(i)] $\rel{R}$ is an \belemp{equivalence} relation (denoted by $=$) 
 	if it is \midemp{reflexive, transitive} and \midemp{symmetric},
 	
-	\item[(ii)] $\rel{R}$ is a \belemp{(partial) order} ($\leq$) if 
+	\item[(ii)] $\rel{R}$ is an \belemp{(partial) order} ($\leq$) if 
 	\midemp{reflexive, transitive} and \midemp{antisymmetric},
 	
 	\item[(iii)] $\rel{R}$ is a \belemp{strict order} ($<$) if 
@@ -551,7 +535,7 @@ relations:
 \paragraph{Example} Time has come for some illustrations. First, let us imagine
 we are looking at some tree in a meadow. Because the season is spring, this tree
 has branches and leaves. We are interested in the set of all leaves, and we 
-would like to relate them by the branch they are one. Hence define $\rel{R}$ as
+would like to relate them by the branch they are on. Hence define $\rel{R}$ as
 \textit{"is on the same branch as"}, being a binary relation. It turns out
 that $\rel{R}$ is an equivalence relation:
 \begin{itemize}
@@ -568,7 +552,7 @@ $\Ens{N}$ ($= \Ens{N}_0 $) of positive integers, including 0. The natural
 relation $\leq$ is an order, and the pair $(\Ens{N}, \leq)$ is an ordered set.
 In particular it is a \belemp{totally ordered set} or \belemp{chain} because 
 every pair of integers can be compared. $<$ is a strict total ordering on 
-$\Ens{N}$. Another example,let $\Sg = \{a, b, c \}$ be a set of attributes and
+$\Ens{N}$. Another example, let $\Sg = \{a, b, c \}$ be a set of attributes and
 consider $\subseteq$ as a binary relation on $2^{\Sg}$. Again, $(2^{\Sg}, 
 \subseteq)$ is a \belemp{partially ordered set} (or \belemp{poset} under 
 abbreviation):
@@ -675,7 +659,7 @@ relies on some particular sets in the closure systems.
 	that $P \subseteq \Sg$ is \belemp{pseudo-closed} if:
 	\begin{itemize}
 		\item[(i)] $P \neq \I(P)$,
-		\item[(ii)] $Q \subset P$ and $Q$ pseudo-closed, implies $\I(Q) 
+		\item[(ii)] $Q \subset P$ and $Q$ pseudo-closed implies $\I(Q) 
 		\subseteq P$.
 	\end{itemize}
 \end{definition}
@@ -704,16 +688,15 @@ and it is somehow since the problem of determining whether a set is
 pseudo-closed or not has been proven to be NP-Hard (see 
 \cite{b._ganter_conceptual_2016}). Fortunately, quasi-closed sets and 
 equivalence classes give another definition to pseudo-closeness: a set is 
-pseudo-closed if it is quasi-closed and minimal (inclusion-wise) in its 
-equivalence class. Let us illustrate those notions with some diagrams.
+pseudo-closed if it is quasi-closed and minimal (inclusion-wise) among quasi-closed sets in its equivalence class. Let us illustrate those notions with some diagrams.
 
 
 \paragraph{Example} Let us consider the following case:
 \begin{itemize}
-	\item $\Sg = \{a, \ b, \ c \}$,
-	\item $\I = $ \{\textit{a $\imp$ b, b $\imp$ a, c $\imp$ ab}\}.
+	\item[-] $\Sg = \{a, \ b, \ c \}$,
+	\item[-] $\I = $ \{\textit{a $\imp$ b, b $\imp$ a, c $\imp$ ab}\}.
 \end{itemize}
-As in \ref{fig:I-def-CS}, we will represent the power set of $\Sg$ and 
+We could replace $a \imp b$ and $b \imp a$ by $ a \longleftrightarrow b$ since it means that $a$ and $b$ are equivalent attributes. As in figure \ref{fig:I-def-CS}, we will represent the power set of $\Sg$ and 
 equivalence classes of $\I$. Two subsets of $\Sg$ are in the same class if they
 have the same closure in $\I$. First, one can observe the effective class 
 representation in figure \ref{fig:I-def-EQC}. Models of $\I$ are indeed 
@@ -760,18 +743,18 @@ following is true:
 \noindent where $\downarrow Q$ is the ideal generated by $Q$ (see dashed line
 in figure \ref{fig:I-def-QCS}). 
 
-\newpage
-
 \paragraph{Example} Now let us take 
 \begin{itemize}
-	\item $\Sg = \{a, \ b, \ c \}$,
-	\item $\I = $ \{\textit{c $\imp$ ab, b $\imp$ ab}\}.
+	\item[-] $\Sg = \{a, \ b, \ c \}$,
+	\item[-] $\I = $ \{\textit{c $\imp$ ab, b $\imp$ ab}\}.
 \end{itemize}
 Again, we will use equivalence classes and Hasse diagram to represent the 
 closure system of $\I$, see figure \ref{fig:I-def-PCS}. In this representation
 we coloured all quasi-closed sets at least in grey. Red (or lighter) nodes are
 precisely pseudo-closed sets: they are the minimal quasi-closed sets among the
 equivalence class defined by $abc$. 
+
+\newpage
 
 \begin{figure}[ht]
 	\input{Pictures/I/PseudoClosed.tex}
@@ -787,7 +770,7 @@ notions, we can move on and define the canonical basis.
 
 \begin{definition}[\midemp{Duquenne-Guigues basis}] The basis $\I$ defined by
 	
-	\[ \I = \{ P \imp \I(P) \; | \; P \text{ is pseudo-closed } \} \]
+	\[ \I = \{ P \imp \I(P) \; | \; P \text{ is pseudo-closed in $\I$ } \} \]
 	
 	\noindent is called the \belemp{Duquenne-Guigues} or \belemp{canonical} 
 	basis. 
@@ -798,8 +781,7 @@ notions, we can move on and define the canonical basis.
 \noindent This definition does not say that the canonical basis is the only one
 being minimal. Actually, it says that every minimal basis should have the same
 number of implications than this one. We can find a deeper argument in 
-\cite{b._ganter_conceptual_2016} on links between any minimal basis and the 
-canonical one.
+\cite{b._ganter_conceptual_2016} (chapter III, proposition 17) on links between any minimal basis and the canonical one.
 
 \vspace{1.2em}
 
@@ -816,17 +798,12 @@ david_minimum_1980, b._ganter_conceptual_2016, shock_computing_1986,
 day_lattice_1992}. Before describing those procedures, let us introduce our 
 complexity notations:
 \begin{itemize}
-	\item $|\Sg|$ will denote the size of the attribute set $\Sg$,
-	\item $|\B|$ will be the number of implications in $\I$ ($\B$ stands
+	\item[-] $|\Sg|$ will denote the size of the attribute set $\Sg$,
+	\item[-] $|\B|$ will be the number of implications in $\I$ ($\B$ stands
 	for body),
-	\item $|\I|$ is the number of symbols used to represent $\I$.
+	\item[-] $|\I|$ is the number of symbols used to represent $\I$.
 \end{itemize}
-We consider $|\I|$ to be in reduced form for complexity results. By "reduced" 
-we mean that we do not have distinct implications with same bodies. Indeed, if
-say, $a \imp b$ and $a \imp c$ holds in some $\Sg^{\I}$ then we can replace 
-those two implications by $a \imp bc$. Moreover, we shall not explain in details
-$O$ notation for complexity since we do not need in-depth knowledge within 
-this field. For us, it is enough to say that $O$ is the 
+We consider $|\I|$ to be in reduced form for complexity results. By \textit{"reduced"} we mean that we do not have distinct implications with same bodies. Indeed, if say, $a \imp b$ and $a \imp c$ holds in some $\Sg^{\I}$ then we can replace those two implications by $a \imp bc$. Moreover, we shall not explain in details $O$ notation for complexity since we do not need in-depth knowledge within this field. For us, it is enough to say that $O$ is the 
 asymptotically worst case complexity (in time or space). For instance, in the 
 worst case, $|\I| = |\B|\times|\Sg|$, thus $|\I| = O(|\B|\times|\Sg|)$. 
 \textsc{Closure} and \textsc{LinClosure} are algorithms \ref{alg:closure}, 
@@ -869,7 +846,7 @@ operation. The principle is to re-roll over the set of implications $\I$ to see
 whether there exists an implication $A \imp B$ in $\I$ such that $\I(X) 
 \not\models A \imp B$ up to stability. Asymptotically, we will need $O(|\B|^2 
 \times |\Sg|)$ if we remove only one implication per loop. the $|\Sg|$ cost
-comes from the set union.
+comes from the set union. $\bot$ stands for \textit{false} and $\top$ for \textit{true}.
 
 \vspace{1.2em}
 
@@ -945,15 +922,5 @@ for efficiently computing closures have been presented.
 
 
 \paragraph{Conclusion} In this chapter we first gave a soft introduction to our 
-task with a somehow "physical" example. Then we described briefly advances 
-starting from the first properties found independently in Concept Analysis and 
-Relational Databases fields. We have seen that the question of Horn 
-minimization has been studied in various fields such as graphs, closure spaces, 
-logic (where the name Horn comes from), functional dependencies, lattices. 
-Then, we placed our study within this context. The aim of this study has been 
-exposed as providing a review of some algorithms we talked about, and comparing 
-them under implementation. The last part of the chapter was dedicated to a more 
-formal and theoretical ground necessary for a good understanding of subsequent 
-parts. In the next chapter, we will theoretically discuss in details several 
-algorithms.
+task with a somehow \textit{"physical"} example. Then we described briefly advances starting from the first properties found independently in Concept Analysis and Relational Databases fields. We have seen that the question of Horn minimization has been studied in various fields such as graphs, closure spaces, logic (where the name Horn comes from), functional dependencies, lattices. Then, we placed our study within this context. The aim of this study has been exposed as providing a review of some algorithms we talked about, and comparing them under implementation. The last part of the chapter was dedicated to a more formal and theoretical ground necessary for a good understanding of subsequent parts. In the next chapter, we will theoretically discuss in details several algorithms.
 

@@ -391,7 +391,7 @@ two series of tests corresponding to fixing one of the two parameters of its com
 
 
 \begin{figure}[ht]
-	\input{Pictures/III/MinCover/Operators.tex}
+	\input{Pictures/III/MinCover/ClosureOperators.tex}
 \end{figure}
 
 \vspace{1.2em}
@@ -656,14 +656,24 @@ to this procedure performs only the effective closure computations. Then,
 this subroutine, \textit{list} and \textit{count} for $I_c$ are empty, hence
 \textsc{LinClosure}($\I_c$, $X$) returns $X$.
 
+\vspace{1.2em}
+
+We may observe tests of \textsc{BercziMinimization} (or more precisely, \textsc{BercziImp}) in graphs and tables of figure \ref{fig:Berczi-Prune}. As in previous cases we represent two range-based test on one parameter, when the other is fixed. On the left part we have a graph and a table of tests with fixed $|\Sg| = 100$. On the other side, we fixed $|\B|$ to $100$ also (and not 1000 as in previous cases!). We lowered the boundary $|\B|$ because of the complexity of the algorithm. As one can observe if we recall previous tests, even if $|\B| = 100$ the results are of the same order as previous tests where $|\B| = 1000$. Or course we should consider this quick comparison as no more but a quick glance to previous results since tests are not ran on the same basis (because of randomness). In any event, in spite of the noisy behaviour when $|\Sg|$ tends to $100000$, we can observe a linear growth of the execution time in accordance with the theoretical complexity of \textsc{BercziMinimization}.
+
 
 \begin{figure}[ht]
-	\input{Pictures/III/Berczi/Operators_SgFixed.tex}
+	\input{Pictures/III/Berczi/ClosureOperators.tex}
 \end{figure}
 
-\begin{figure}[ht]
-	\input{Pictures/III/Berczi/Operators_BFixed.tex}
-\end{figure}
+\vspace{1.2em}
+
+Regarding the evolution of time when $|\Sg|$ is fixed we denote a highly chaotic
+behaviour. However, we may perceive a polynomial growth of the time required by
+\textsc{BercziMinimization} when used with \textsc{LinClosure} matching theoretical expectations. If we keep on throwing an eye on previous results,
+it seems like \textsc{BercziMinimization} performs better than \textsc{MinCover}
+for some values, notably in the table, for $|\B| = 10000$ and $15000$. In fact,
+those values can somehow be considered as outliers in the graph we gave (they are convexities in the curve). Because the mean measure is sensitive to outlier
+basis, we can suppose that in those particular cases we generated some highly redundant basis decreasing the cost of operations. As we will see with real datasets in joint comparison, the difference between \textsc{MinCover} and \textsc{BercziMinimization} is clearly in favour of \textsc{MinCover}. Again, the difference between \textsc{Closure} and \textsc{LinClosure} is clearly visible and we can take \textsc{Closure} as our fastest closure operator.
 
 \subsection{\textsc{AFPMinimization}}
 
@@ -768,4 +778,29 @@ procedure when it comes at minimizing a basis already minimal.
 We would like to remind that this explanation holds within the scope of our
 tests. We cannot assume it in general and it should be tested in further work on other datasets. Let us say this is a valid hypothesis. In this case, one
 should be first worried about removing as much  redundant implications as possible to lighten the burden of subsequent closure computations, whether it is for getting the canonical basis or not.
+
+
+\section{Perspectives and difficulties}
+
+So far we have developed and explained our work during this master thesis. However, there are two points we should mention at last being in a sense out of 
+the scope of the algorithms, namely difficulties we encountered and perspectives
+our study leave for future work. 
+
+\vspace{1.2em}
+
+First, let us discuss difficulties. Apart from having to deal with various mathematical frameworks we concentrated to closure systems, some algorithms
+or articles appeared to be very demanding. This the case for instance with the work of Ausiello and al. which took us about one month of work before concluding to a potential mistake. Often, those technical difficulties to understand some articles as much as knowing whether to study or not some frameworks found solutions in discussions with the academic supervisor. Tests have also been a problem since most of them are time-consuming (up to several days) relatively to the time we had to work on this thesis. Even though tests were performed in parallel with other work, having only one computer slows down tests because of side tasks. Still, we got some results allowing for hypothesis
+on the behaviour of several algorithms leading to hints and tracks to follow for future work.
+
+\vspace{1.2em}
+
+Speaking about future work, let us talk about perspectives. We provided both theoretical and practical review. The two approaches benefit from possible improvement or in-depth look. First on a theoretical point of view, the algorithm \textsc{AFPMinimization} derived from query learning still requires
+a proof of correctness, even if we observed a dreadful efficiency in practice. Furthermore, we may still investigate Ausiello to sharpen our insight of redundancy elimination and removing superfluous nodes. An interesting question
+drawing a link between theoretical and practical study would be to get more
+understanding of redundancy so as to regulate its generation under testing and
+improving algorithms by pointing out special kinds of redundancies. Talking about testing, the main perspective on a practical side would be first to run tests on new real datasets to see whether our hypothesis hold or not. One may also be interested in testing more combinations of closure algorithms or finding
+more optimizations in each minimization procedure.
+
+
+\paragraph{Conclusion}
 
