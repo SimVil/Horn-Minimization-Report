@@ -30,7 +30,10 @@ and \textsc{AFPMinimization} (see \cite{berczi_directed_2017} and \cite{angluin_
 
 Regarding the order in which we will study the algorithms, there is no particular choice but our proximity with the domains. Because \textsc{MinCover} 
 is the algorithm we are starting from, it seemed logical for us to explain
-it first. 
+it first. Furthermore, we try as much as possible to provide hands made elements
+of proof so that the study would be self-sufficient. Still, we may find in all
+the papers we cite more technical definitions and proofs extending 
+the knowledge we summarize here.
 
 
 
@@ -75,9 +78,7 @@ reach starting from $A$. Then, we perform body redundancy elimination. That is,
 for each right-closed implication, we check whether the amount of knowledge 
 represented by $\I(A)$ depends necessarily on $A$. In other words, we remove
 $A \imp \I(A)$ from $\I$, and if starting from $A$ we still get the same amount 
-of information ($\I^{-}_{A \rightarrow \I(A)}(A) = \I(A)$), then
-$A$ is not required to get $\I(A)$: $A \imp \I(A)$ can be removed. Now that 
-the principle is explained in words, let us introduce the pseudo-code (see 
+of information ($\I^{-}(A) = \I(A)$), then $A$ is not required to get $\I(A)$: $A \imp \I(A)$ can be removed. The second loop can also be named \belemp{left-saturation} since we are maximizing a premise up to its implication. As we will see, because implications are right-closed, this is left-saturation is pseudo-closing  or closing a premise. Now that the principle is explained in words, let us introduce the pseudo-code (see 
 algorithm \ref{alg:MinCover}).
 
 \vspace{1.2em}
@@ -160,12 +161,9 @@ $\I^{-}$, which concludes the proof.
 
 \vspace{1.2em}
 
-This proposition is sufficient for the algorithm to correctly end up on the 
-canonical basis. Interestingly, the main idea of \textsc{MinCover} is similar to
-the theorem 2.1 of Shock in \cite{shock_computing_1986}, but the algorithm in
-practice is much closer from the procedure given by Day in section 6 of 
-\cite{day_lattice_1992}. Before moving to their work, let us settle down an 
-example of trace for \textsc{MinCover}.
+In fact, the second loop of \textsc{MinCover} is performing somehow the following operation: $\I^{-}(A) := A \cup \bigcup \{\I(B) \ | \ B \subset A\}$
+related to \midemp{proper implications} we shall encounter in the third chapter.
+Still, This proposition is sufficient for the algorithm to correctly end up on the canonical basis. Interestingly, the main idea of \textsc{MinCover} is similar to the theorem 2.1 of Shock in \cite{shock_computing_1986}, but the algorithm in practice is much closer from the procedure given by Day in section 6 of \cite{day_lattice_1992}. Before moving to their work, let us settle down an example of trace for \textsc{MinCover}.
 
 \vspace{1.2em}
 

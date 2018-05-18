@@ -1,6 +1,10 @@
-\chapter{Implementation}
+\chapter{Implementation of algorithms}
 
-
+In previous chapter we were interested in exposing our problem of minimization
+and reviewing several algorithms dedicated to this task. In the present chapter we will study the implementation of those algorithms and their speed in practice
+under testing. First, we will set up our ground for testing and the data we generated or used. Then we will observe the efficiency of each algorithm using 
+different closure operators. Eventually we compare algorithms on real datasets,
+and discuss perspectives of our work.
 
 \section{Test set up}
 
@@ -55,13 +59,6 @@ ImplicationTools::WriteFile("output_file.imp", Lc);
 
 \noindent Note that the meaning of attributes here is somehow lost. So far, this is not an issue and it may be fixed by keeping a trace of correspondence between indices and attributes names. To test minimization, we use a class
 \lil{GridTester} writing CSV results.
-
-
-
-\begin{itemize}
-	\item csv exportation, bitfiles
-	\item quickly describe the class GridTest
-\end{itemize}
 
 \subsection{Randomly generated data}
 
@@ -209,29 +206,138 @@ any true knowledge about biology, this stands only for appealing examples.
 
 \vspace{1.2em}
 
-Eventually, we shall discuss various possible basis one can build out of a context. We will use 4 of them: the canonical basis, the minimal basis resulting from Maier's algorithm, the basis of minimal generators and the
-proper basis. We already discussed the two first ones. We derive them from the
-non minimal ones:
+Eventually, we shall discuss various possible basis one can build out of a context. We will use 5 of them: the canonical basis, the minimal basis resulting from Maier's algorithm (twice), the basis of minimal generators and the proper basis. We already discussed the two first ones. We derive them from the non minimal:
 \begin{itemize}
-	\item[(i)] minimal generators: a set $X$ is a minimal generator of its closure $\I(X)$ if it is minimal in $[ X]_{\I}$,
-	\item[(ii)] proper implications: implications $A \imp A^{\bullet}$ where 
-	$\bullet$ is a saturation operator 
+	\item[(i)] minimal generators: a set $X$ is a minimal generator of its closure $\I(X)$ if it is minimal in $[ X]_{\I}$. The basis will contain
+	right-closed implications $X \imp \I(X)$ where $X$ is a minimal generator,
+	\item[(ii)] proper implications: implications $X \imp X^{\bullet}$ where 
+	$\bullet$ is a saturation operator:
+	
+		\[ X^{\bullet} = \I(X) - X \cup \bigcup \{ \I(B) \ | \ B \subset X \} \]
+		
+	in words, $X^{\bullet}$ is the set of attributes in the closure of $X$ to
+	which no proper subset of $X$ can lead. $X$ is the \textit{"minimal"} set required to get those attributes in $\I(X)$. We redirect the reader to 
+	\cite{b._ganter_conceptual_2016} for more details. If $X^{\bullet} = \I(X) - X$, $X^{\bullet}$ is pseudo-closed. In fact, this union operation is somehow the operation we use in the second loop of \textsc{MinCover} when
+	computing when computing quasi-closure on the left side of implications.
+	It is also used in \cite{duquenne_variations_2007} to prove \textsc{DuquenneMinimization}.
 \end{itemize}
+\noindent We use the theory produced by \textsc{MaierMinimization} on both proper and minimal generator basis since the results may differ. algorithms to compute those basis from a context are included in the code we got from \url{https://github.com/yazevnul/fcai}. We give pseudo-code algorithm here, but we will not review them in details. \textsc{MininalGeneratorBasis} (algorithm \ref{alg:MinGen}) generates minimal 
+generators. recall that $>_{M}$ is lectic ordering in $M$. Given a set we popped
+from $\mathcal{Q}$, we test all sets with only 1 more elements and lectically
+greater. Because we begin by the empty set, we are sure to go over all possible
+subsets whenever they are to be investigated. Using lectic ordering avoids to
+test a subset twice. Note that implication of $\I$ are indeed right-close.
+Note that the conditional statement for adding an implication in $\I$ is useful
+since an equivalence class can contain only one set. This (closed) set will
+be by definition minimal, even though the corresponding implication is useless,
+whence the test.
+
+\begin{algorithm}[ht]
+	\KwIn{A context $(G, M, I)$ and a closure operator $''$}
+	\KwOut{$\I$ the basis of minimal generators}
+	
+	\BlankLine
+	
+	queue $\mathcal{Q}$ \;
+	$\I := \emptyset$ \;
+	push($\mathcal{Q}$, $\emptyset \imp \emptyset''$) \;
+
+	
+	\While{$\mathcal{Q} \neq \emptyset$}{
+		$A \imp B :=$ pop($\mathcal{Q}$) \;
+		\textbf{if} $A \neq B$
+		\textbf{then} $\I := \I \cup \{ A \imp B \}$ \;
+		
+	
+		\ForEach{$C \subseteq M$: $(|C| = |A| + 1) \land (C >_{M} A)$}{
+			\If{$(C - c)'' \neq C''$, $\forall c \in C$}{
+				push($\mathcal{Q}$, $C \imp C''$) \;
+			}
+		}
+	}
+	
+	return $\I$\;
+	
+	\caption{\textsc{MinimalGeneratorBasis}}
+	\label{alg:MinGen}
+\end{algorithm}
+
+\begin{algorithm}[ht]
+	\KwIn{A context $(G, M, I)$ and a closure operator $''$}
+	\KwOut{$\I$ the basis of proper implications}
+	
+	
+	\BlankLine
+	
+	$\I := \emptyset \imp \emptyset''$ \;
+	
+	\ForEach{$m \in M$}{
+		$\I_t = \I$ \;
+		\ForEach{$A \imp B \in \I$}{
+			$C := A \cup \{ m \}$ \;
+			$D := C'' - C$ \;
+			
+			\If{$D \neq \emptyset$}{
+				\ForEach{$\alpha \imp \beta \in \I_t$}{
+					\textbf{if} $(A \subset \alpha) \land ( \alpha - A \subseteq D)$
+					\textbf{then} remove $\alpha \imp \beta$ from $\I_t$ \;
+					
+				}
+				
+				
+				\ForEach{$\alpha \imp \beta \in \I$}{
+					\textbf{if} $\alpha \subset C$
+					\textbf{then} $D := D - \beta$ \;
+					
+				}
+			}
+			
+			$\I := \I \cup \{ C \imp D \}$ \;
+			
+		}
+	}
+	
+	\ForEach{$A \imp B \in \I$}{
+		\textbf{if} $(A \cup B \neq \emptyset) \land (A \neq B)$ 
+		\textbf{then} $B := B - A$ \;
+	}
+	
+	return $\I$ \;
+	
+	\caption{\textsc{ProperBasis}}
+	\label{alg:proper}
+	
+\end{algorithm}
+
+\vspace{1.2em}
+
+Algorithm \textsc{ProperBasis} (\ref{alg:proper}) computes proper implications of a given context. Again, starting from $\emptyset \imp \emptyset''$ we cover all possibilities. For all implications of $\I$ we try to build new sets out of
+its premises and a given attribute. Observe that $D := C'' - C$ is the \textit{"first part"} of saturating $C$. If $C$ is not closed, then we may refine $D$ by removing elements so that $D = C^{\bullet}$ after the $D \neq \emptyset$ conditional statement. Especially the second for loop, which removes
+from $D$ all element of $C''$ we would get with another implication than $C \imp D$.
+
+\vspace{1.2em}
+
+Having reviewed the application to FCA as much as the main definitions we shall need from this domain, we can move to describin the real datasets we used for our tests.
+
+
 
 
 \subsubsection{Some real datasets}
 
-For our tests, we took the datasets used in \cite{bazhanov_optimizations_2014} \url{https://archive.ics.uci.edu/ml/datasets.html}. They are the following ones:
+For our tests, we took the datasets used in \cite{bazhanov_optimizations_2014} from the UCI Machine Learning repository \url{https://archive.ics.uci.edu/ml/datasets.html}. Therefore, all scaling credits go to the authors of \cite{bazhanov_optimizations_2014}: Sergei Obiedkov and Konstantin Bazhanov. They are the following ones:
 \begin{itemize}
 	\item[-] \midemp{"Zoo"}: it contains animals described by attributes such as "mammals", their number of legs and so forth. Because all attributes are discrete valued, the dataset is scaled as explained previously. For 101 animals, we go from 17 attributes to 28 by scaling.
 	\item[-] \midemp{"Flare"}: describes various solar flares by their position, size, flare classification, activity... With 1389 objects, we ended up on 49 attributes by flattening all multi-valued ones.
-	\item[-] \midemp{"Breast cancer"}:
-	\item[-] \midemp{"Breast Wisconsin"}:
+	\item[-] \midemp{"Breast cancer"}: diagnostic of breast cancer. For 286 patients, we have 9 multi-valued attributes (nominal or ranged). Getting rid of the first attribute, and removing values never assigned, we end up
+	on 43 attributes by scaling.
+	\item[-] \midemp{"Breast Wisconsin"}: the purpose is still diagnostic of
+	breast cancer. Based on 9 attributes scaled from 1 to 10 being various measures and a binary classification attribute, scaling resulted in 91 attributes on 699 records.
 	\item[-] \midemp{"Post-operative"}: this dataset is dedicated to determine in which service should a patient go after its operation. All parameters are indicators on the metabolism of the patient such as body temperature,
-	blood pressure and so forth. For 90 patients and 8 attributes, we scaled
-	to 26 attributes.
-	\item[-] \midemp{"SPECT"}:
-	\item[-] \midemp{"Vote"}:
+	blood pressure and so forth. For 90 patients and 8 attributes, scaling leads to 26 attributes.
+	\item[-] \midemp{"SPECT"}: cardiac data took from tomography. Out of patterns, 23 binary attributes help to provide a diagnosis. Because attributes are binary we do not need scaling. There are 267 objects.
+	\item[-] \midemp{"Vote"}: records from a congressional voting in USA
+	(1984). For 435 records, there are 18 binary attributes being resolutions
+	to accept or reject.
 \end{itemize}
 
 To summarize characteristics of all datasets, we may observe table \ref{tab:real-DS}. For the recall $|\Sg|$ is the number of attributes, and 
@@ -308,71 +414,40 @@ $A \imp B$ in counters may be as complex as \textsc{LinClosure} itself:
 \end{itemize}
 \noindent We did not test the last possible optimizations due to lack of time,
 but also because of the results we shall exhibit hereafter about \textsc{MinCover}, stressing on the bad behaviour of \textsc{LinClosure} in practice. Therefore, the two pseudo-codes we compared for \textsc{MinCover} are
-algorithms \ref{alg:MinCoverClo}, \ref{alg:MinCoverLin}.
+\textsc{MinCover} only using \textsc{Closure} and algorithm \ref{alg:MinCoverLin} where we used an improvement for \textsc{LinClosure}.
 
 \vspace{1.2em}
 
-\begin{minipage}[t]{0.4\textwidth}
-	\begin{algorithm}[H]
-		\TitleOfAlgo{\textsc{MinCoverClo}}
-		\KwIn{$\I$: an implication base}
-		\KwOut{the canonical base of $\I$}
-		
-		\BlankLine
-		\BlankLine
-		
-		\ForEach{$A \imp B \in \I$}{
-			$\I := \I - \{ A \imp B \}$ \;
-			$B  := \textsc{Closure}(\I, A \cup B)$ \;
-			$\I := \I \cup \{ A \imp B \}$ \;
-		}
-		
-		\BlankLine
-		
-		\ForEach{$A \imp B \in \I$}{
-			$\I := \I - \{ A \imp B \}$ \;
-			$A  := \textsc{Closure}(\I, A)$ \;
-			\If{$A \neq B$}{
-				$\I := \I \cup \{ A \imp B \}$ \;	
-			}
-		}
+\begin{algorithm}[H]
+	\TitleOfAlgo{\textsc{MinCoverLin}}
+	\KwIn{$\I$: an implication base}
+	\KwOut{the canonical base of $\I$}
 	
-		
-		\label{alg:MinCoverClo}
-	\end{algorithm}
-\end{minipage}
-~
-\begin{minipage}[t]{0.4\textwidth}
-	\begin{algorithm}[H]
-		\TitleOfAlgo{\textsc{MinCoverLin}}
-		\KwIn{$\I$: an implication base}
-		\KwOut{the canonical base of $\I$}
-		
-		\BlankLine
-		\BlankLine
-		
-		\textsc{LinClosureInit}$(\I)$ \;
-		
-		\ForEach{$A \imp B \in \I$}{
-			$\I := \I - \{ A \imp B \}$ \;
-			$B  := \textsc{LinClosure}(\I, A \cup B)$ \;
-			$\I := \I \cup \{ A \imp B \}$ \;
-		}
-		
-		\BlankLine
-		
-		\ForEach{$A \imp B \in \I$}{
-			$\I := \I - \{ A \imp B \}$ \;
-			$A  := \textsc{Closure}(\I, A)$ \;
-			\If{$A \neq B$}{
-				$\I := \I \cup \{ A \imp B \}$ \;	
-			}
-		}
+	\BlankLine
+	\BlankLine
 	
-		
-		\label{alg:MinCoverLin}
-	\end{algorithm}
-\end{minipage}
+	\textsc{LinClosureInit}$(\I)$ \;
+	
+	\ForEach{$A \imp B \in \I$}{
+		$\I := \I - \{ A \imp B \}$ \;
+		$B  := \textsc{LinClosure}(\I, A \cup B)$ \;
+		$\I := \I \cup \{ A \imp B \}$ \;
+	}
+	
+	\BlankLine
+	
+	\ForEach{$A \imp B \in \I$}{
+		$\I := \I - \{ A \imp B \}$ \;
+		$A  := \textsc{Closure}(\I, A)$ \;
+		\If{$A \neq B$}{
+			$\I := \I \cup \{ A \imp B \}$ \;	
+		}
+	}
+
+	
+	\label{alg:MinCoverLin}
+\end{algorithm}
+
 
 \vspace{1.2em}
 
@@ -398,6 +473,15 @@ we can conclude that \textsc{Closure} is a better choice.
 \subsection{\textsc{DuquenneMinimization}}
 
 \subsection{\textsc{MaierMinimization}}
+
+Recall that the procedure given by Maier relies on three steps (on some theory $\I$): removing redundant implications, finding equivalence classes among premises of $\I$, removing direct determinations. Because we remove implication in the first and last step, we applied \textsc{Closure} in all cases for those
+parts. However, when it comes at determining equivalence classes, one can use
+only one initialization of counters and list for \textsc{LinClosure}. For this
+reason we tested two versions of \textsc{MaierMinimization}: one only using \textsc{Closure}, the other using \textsc{LinClosure} for the second step.
+
+\vspace{1.2em}
+
+Those tests allowed to emphasize on a practical desirable property of \textsc{MaierMinimization}
 
 \begin{figure}[ht]
 	\input{Pictures/III/Maier/Operators_BFixed.tex}
@@ -461,9 +545,8 @@ When getting the minimum, note that we get both the minimum $\I_c$-closed set no
 
 \paragraph{Example} As usual, let us retake our small example:
 \begin{itemize}
-	\item $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
-	\item $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, 
-		abcd $\imp$ ef} \} 
+	\item[-] $\Sg = \{a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item[-] $\I =$ \{\textit{ab $\imp$ cde, cd $\imp$ f, c $\imp$ a, d $\imp$ b, abcd $\imp$ ef} \} 
 \end{itemize}
 \noindent Table \ref{tab:berczi-tra} is a trace of the algorithm, using $C_{\I}$ and $C_{\I_c}$. The first column contains premises of $\I$, the second one elements of $C_{\I}$ (that is closures of premises of $\I$ under $\I$) and
 the third one, $C_{\I_c}$ (closures of $\B(\I)$ under $\I_c$). The last column
@@ -556,49 +639,9 @@ only some closures of $\I_c$ are updated at each step, instead of re-computing a
 	\item[(ii)] when computing closures of $\I_c$, because $\I_c$ is only
 	increasing in implications, updating list and counters can be done in $O(|\Sg|)$,	hence better than the initialization step of $O(|\I|)$.
 \end{itemize}
-\noindent Consequently, we will again compare for this algorithm two versions, given as \textsc{BercziImpClo} and \textsc{BercziImpLin} (\ref{alg:BercziImpClo}, \ref{alg:BercziImpLin}).
+\noindent Consequently, we will again compare for this algorithm two versions, using only \textsc{Closure} and one using improvements of \textsc{LinClosure} (see \ref{alg:BercziImpLin}).
 
 \vspace{1.2em}
-
-\begin{algorithm}[H]
-	\TitleOfAlgo{\textsc{BercziImpClo}}
-	\KwIn{$\I$: an implication theory}
-	\KwOut{$\I_c$: the DQ-basis of $\I$}
-	
-	\BlankLine
-	\BlankLine
-	
-	$\I_c := \emptyset$ \;
-	$C_{\I} := \emptyset, \; C_{\I_c} := \emptyset $ \;
-	
-	\ForEach{$A \imp B \in \I$}{
-		$C_{\I}[A] = \textsc{Closure}(\I, A)$ \;
-		$C_{\I_c}[A] = A$ \;
-	}
-	
-	\BlankLine
-	
-	\While{$\exists A \in \B(\I)$ s.t $C_{\I_c}[A] \neq C_{\I}[A]$}{
-		\ForEach{$A \imp B \in \I$}{
-			\If{$C_{\I}[A] \neq C_{\I_c}[A]$}{
-				$C_{\I_c}[A] = \textsc{Closure}(\I_c, C_{\I_c}[A])$ \;
-			}
-		}
-		
-		\BlankLine
-		
-		$A_P, P := \min\{A, C_{\I_c}[A]: \;  C_{\I_c}[A] \neq C_{\I}[A] \}$ \;
-		$\I_c := \I_c \cup \{P \imp C_{\I}[A_P] \}$ \;
-		
-	}
-	
-	\BlankLine
-	
-	return $\I_c$ \;
-	
-
-	\label{alg:BercziImpClo}
-\end{algorithm}
 
 \begin{algorithm}[H]
 	\TitleOfAlgo{\textsc{BercziImpLin}}
@@ -644,7 +687,7 @@ only some closures of $\I_c$ are updated at each step, instead of re-computing a
 
 \vspace{1.2em}
 
-In fact, \textsc{BercziImpClo} does differ from \textsc{BercziImp} only by the closure notations. However, when dealing with \textsc{LinClosure} in \textsc{BercziImpLin}, we use first \textsc{LinClosureInit} to instanciate 
+When dealing with \textsc{LinClosure} in \textsc{BercziImpLin}, we use first \textsc{LinClosureInit} to instanciate 
 \textit{list} and \textit{count} for \textsc{LinClosure} in $\I$. Hence a call
 to this procedure performs only the effective closure computations. Then, 
 \textsc{LinClosureAddImp} just updates \textit{list} and \textit{count} for $\I_c$ by adding a new implication in them. Note that before the first call to
@@ -671,6 +714,19 @@ those values can somehow be considered as outliers in the graph we gave (they ar
 basis, we can suppose that in those particular cases we generated some highly redundant basis decreasing the cost of operations. As we will see with real datasets in joint comparison, the difference between \textsc{MinCover} and \textsc{BercziMinimization} is clearly in favour of \textsc{MinCover}. Again, the difference between \textsc{Closure} and \textsc{LinClosure} is clearly visible and we can take \textsc{Closure} as our fastest closure operator.
 
 \subsection{\textsc{AFPMinimization}}
+
+Regarding \textsc{AFPMinimization}, we can consider using an optimization as
+previously mentioned on $\I$, our input basis. Because $\I$ is not altered, we can consider initializing counters only one time for this theory. For $\I_c$, when we refine an implication we may need not only to update the counter of 
+the implication, but also to go over every list to potentially remove the
+refined implication, being as complex as \textsc{LinClosure} itself, unless we 
+perform the same operation as mentioned for deleting an implication in \textsc{MinCover} which we did not test due to lack of time and already observed difference between \textsc{LinClosure} and \textsc{Closure}. 
+
+\vspace{1.2em}
+
+Hence we test here two versions: 1 - only using \textsc{Closure}, 2 - using
+\textsc{LinClosure} for $\I$ with \textsc{InitCounters} jointly with 
+\textsc{Closure} for $\I_c$. We do not write the two procedures here since
+it may be too heavy (regarding the structure of \textsc{AFPMinimization}) for operations we already developed.
 
 
 \vspace{1.2em}
@@ -716,38 +772,45 @@ pseudo-closed. This break point permits to omit closure computations and in prac
 	\hline \rowcolor{clouds}
 	\multicolumn{2}{c}{$\I$} & \textsc{MinCover} & \textsc{Duquenne} & \textsc{Maier} & \textsc{Berczi} & \textsc{AFP} \\ \hline
 	
-	\multirow{4}{*}{Zoo} & DQ & < 0.001 & < 0.001 & < 0.001 & < 0.001 & 0.016 \\
-	& min & < 0.001 & < 0.001 & 0.015 & < 0.001 & 0.016 \\
+	\multirow{5}{*}{Zoo} & DG & < 0.001 & < 0.001 & < 0.001 & < 0.001 & 0.016 \\
+	& min (mingen) & < 0.001 & < 0.001 & 0.015 & < 0.001 & 0.016 \\
+	& min (proper) & < 0.001 & < 0.001 & 0.015 & < 0.001 & 0.016 \\
 	& proper & 0.007 & < 0.001 & < 0.001 & 0.016 & 0.063 \\
 	& mingen & 0.009 & 0.016 & < 0.001 & 0.047 & 0.094 \\ \hline
 	
-	\multirow{4}{*}{Flare} & DQ & 0.110 & 0.203 & 0.328 & 27.922 & 115.656 \\
-	& min & 0.162 & 0.219 & 0.406 & 27.750 & 116.594 \\
+	\multirow{5}{*}{Flare} & DG & 0.110 & 0.203 & 0.328 & 27.922 & 115.656 \\
+	& min (mingen) & 0.162 & 0.219 & 0.406 & 27.750 & 116.594 \\
+	& min (proper) & 0.162 & 0.219 & 0.406 & 27.750 & 116.594 \\
 	& proper & 2.166 & 0.953 & 1.250 & 88.375 & 524.031 \\
 	& mingen & 19.382 & 9.906 & 11.344 & 160.328 & 2810.620 \\ \hline
 	
-	\multirow{4}{*}{Breast Cancer} & DQ & 0.120 & 0.140 & 0.234 & 33.047 & 90.031 \\
-	& min & 0.147 & 0.156 & 0.297 & 26.578 & 89.516 \\
+	\multirow{5}{*}{Breast Cancer} & DG & 0.120 & 0.140 & 0.234 & 33.047 & 90.031 \\
+	& min (mingen) & 0.147 & 0.156 & 0.297 & 26.578 & 89.516 \\
+	& min (proper) & 0.147 & 0.156 & 0.297 & 26.578 & 89.516 \\
 	& proper & 2.712 & 1.031 & 1.219 & 93.266 & 429.844 \\
 	& mingen & 2.850 & 1.578 & 1.703 & 102.562 & 598.172 \\ \hline
 	
-	\multirow{4}{*}{Breast Wisconsin} & DQ & 1.333 & 1.703 & 2.8125 & 1005.750 & 3109.920 \\
-	& min & 1.801 & 2.016 & 3.531 & 949.953 & 3140.940 \\
+	\multirow{5}{*}{Breast Wisconsin} & DG & 1.333 & 1.703 & 2.8125 & 1005.750 & 3109.920 \\
+	& min (mingen) & 1.801 & 2.016 & 3.531 & 949.953 & 3140.940 \\
+	& min (proper) & 1.801 & 2.016 & 3.531 & 949.953 & 3140.940 \\
 	& proper & 88.188 & 33.688 & 46.312 & 3675.910 & 40521.0 \\
 	& mingen & 51.378 & 32.859 & 33.843 & 2772.980 & 38310.200 \\ \hline
 	
-	\multirow{4}{*}{Operative} & DQ & 0.004 & < 0.001 & 0.015 & 0.219 & 0.734 \\
-	& min & 0.005 & < 0.001 & 0.031 & 0.219 & 0.719 \\
+	\multirow{5}{*}{Operative} & DG & 0.004 & < 0.001 & 0.015 & 0.219 & 0.734 \\
+	& min (mingen) & 0.005 & < 0.001 & 0.031 & 0.219 & 0.719 \\
+	& min (proper) & 0.005 & < 0.001 & 0.031 & 0.219 & 0.719 \\
 	& proper & 0.048 & 0.016 & 0.016 & 0.594 & 2.422 \\
 	& mingen & 0.085 & 0.063 & 0.109 & 0.813 & 4.063 \\ \hline
 	
-	\multirow{4}{*}{SPECT} & DQ & 0.040 & 0.078 & 0.141 & 10.328 & 23.609 \\
-	& min & 0.055 & 0.094 & 0.203 & 8.156 & 22.906 \\
+	\multirow{5}{*}{SPECT} & DG & 0.040 & 0.078 & 0.141 & 10.328 & 23.609 \\
+	& min (mingen) & 0.055 & 0.094 & 0.203 & 8.156 & 22.906 \\
+	& min (proper) & 0.055 & 0.094 & 0.203 & 8.156 & 22.906 \\
 	& proper & 1.270 & 0.484 & 0.531 & 51.063 & 118.531 \\
 	& mingen & 32.580 & 13.375 & 13.609 & 194.875 & 930.578 \\ \hline
 	
-	\multirow{4}{*}{Vote} & DQ & 0.007 & 0.016 & 0.032 & 0.484 & 1.579 \\ 
-	& min & 0.009 & 0.016 & 0.047 & 0.469 & 1.516 \\
+	\multirow{5}{*}{Vote} & DG & 0.007 & 0.016 & 0.032 & 0.484 & 1.579 \\ 
+	& min (mingen) & 0.009 & 0.016 & 0.047 & 0.469 & 1.516 \\
+	& min (proper) & 0.009 & 0.016 & 0.047 & 0.469 & 1.516 \\
 	& proper & 0.090 & 0.047 & 0.078 & 1.625 & 6.203 \\
 	& mingen & 0.682 & 0.313 & 0.485 & 4.109 & 22.875 \\ \hline
 	
@@ -769,6 +832,22 @@ twice for each implications, while with the algorithm by Duquenne, we only compu
 procedure when it comes at minimizing a basis already minimal.
 
 \vspace{1.2em}
+
+This yields another idea on the worst case of minimization. In fact, the case
+where we would require more time given fixed parameters $|\Sg|$ and $|\B|$,
+is when there is no implication to remove. From our point of view, having
+no implication to remove maximizes the computations, because all operations
+of removing redundant implications, figuring out closures and so forth do
+not reduce the basis. To see whether our idea is interesting or not, we ran few more tests: we took the first three algorithms (because they are faster) and
+for each minimum basis from the real datasets, 
+
+\begin{figure}[ht]
+	\input{Pictures/III/Comp/WorstCase.tex}
+\end{figure}
+
+\vspace{1.2em}
+
+
 
 We would like to remind that this explanation holds within the scope of our
 tests. We cannot assume it in general and it should be tested in further work on other datasets. Let us say this is a valid hypothesis. In this case, one
