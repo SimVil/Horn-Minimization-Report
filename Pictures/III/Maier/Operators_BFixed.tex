@@ -1,24 +1,25 @@
-\centering
+
+\begin{minipage}{0.55\textwidth}
 \subfloat[Graphical representation of average time (in $s$)]{
-	\scalebox{0.7}{\input{Pictures/III/Maier/Operators_BFixed.pgf}}
+	\scalebox{0.55}{\input{Pictures/III/Maier/Maier_BFixed_Asymp.pgf}}
 }
-
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
 \subfloat[Some landmarks times]{
-\begin{tabular}{| c || c | c |}
-	\hline \rowcolor{clouds}
-	$|\Sigma|$ & \textsc{LinClosure} & \textsc{Closure} \\ \hline
-	10000  & 4.101  & 0.045 \\ \hline
-	20000  & 5.632  & 0.030 \\ \hline
-	30000  & 11.293 & 0.043 \\ \hline 
-	40000  & 11.280 & 0.035 \\ \hline 
-	50000  & 13.870 & 0.035 \\ \hline
-	60000  & 16.271 & 0.040 \\ \hline
-	70000  & 17.023 & 0.036 \\ \hline
-	80000  & 19.337 & 0.038 \\ \hline 
-	90000  & 22.013 & 0.040 \\ \hline 
-	100000 & 24.312 & 0.042 \\ \hline
-\end{tabular}
+	\begin{tabular}{| c || c |}
+		\hline \rowcolor{clouds}
+		$|\Sigma|$ & \textsc{Closure} \\ \hline
+		1000   &  0.004 \\ \hline
+		5000   &  0.006 \\ \hline
+		25000  &  0.009 \\ \hline
+		45000  &  0.010 \\ \hline 
+		65000  &  0.013 \\ \hline 
+		85000  &  0.016 \\ \hline
+		100000 &  0.016 \\ \hline
+	\end{tabular}
 }
+\end{minipage}
 
-\caption{Average execution time of \textsc{MaierMinimization} when $|\B| = 1000$}
+\caption{Average execution time of \textsc{MaierMinimization} when $|\B| = 500$}
 \label{fig:Maier-BFixed}

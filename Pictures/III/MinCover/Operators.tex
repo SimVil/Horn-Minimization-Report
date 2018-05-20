@@ -1,0 +1,41 @@
+
+\subfloat[Average time (in $s$), $|\Sg| = 100$]{
+	\hspace{-3em}
+	\scalebox{0.44}{\input{Pictures/III/MinCover/Closure_SgFixed.pgf}}
+}
+\subfloat[Average time (in $s$), $|\B| = 1000$]{
+	\scalebox{0.5}{\input{Pictures/III/MinCover/Closure_BFixed.pgf}}
+}
+
+\centering
+
+\subfloat[Some landmarks times, $|\Sg| = 100$]{
+\begin{tabular}{| c || c | c |}
+	\hline \rowcolor{clouds}
+	$|\B|$ & \textsc{LinClosure} & \textsc{Closure} \\ \hline
+	5000  & 15.846  & 0.688 \\ \hline
+	10000 & 65.930  & 2.724 \\ \hline
+	15000 & 115.627 & 4.784 \\ \hline 
+	20000 & 223.453 & 9.721 \\ \hline 
+\end{tabular}
+}\qquad
+\subfloat[Some landmarks times]{
+	\begin{tabular}{| c || c | c |}
+		\hline \rowcolor{clouds}
+		$|\Sigma|$ & \textsc{LinClosure} & \textsc{Closure} \\ \hline
+		10000  & 4.873  & 0.058 \\ \hline
+		20000  & 7.187  & 0.045 \\ \hline
+		30000  & 9.432  & 0.038 \\ \hline 
+		40000  & 10.862 & 0.034 \\ \hline 
+		50000  & 12.923 & 0.032 \\ \hline
+		60000  & 16.721 & 0.040 \\ \hline
+		70000  & 17.023 & 0.036 \\ \hline
+		80000  & 19.337 & 0.038 \\ \hline 
+		90000  & 22.013 & 0.040 \\ \hline 
+		100000 & 24.312 & 0.042 \\ \hline
+	\end{tabular}
+}
+
+
+\caption{Comparison of closure operators for \textsc{MinCover}}
+\label{fig:MinCover-useless}

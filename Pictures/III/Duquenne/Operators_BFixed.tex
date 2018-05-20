@@ -1,0 +1,25 @@
+
+\begin{minipage}{0.55\textwidth}
+	\subfloat[Graphical representation of average time (in $s$)]{
+		\scalebox{0.45}{\input{Pictures/III/Duquenne/Duquenne_BFixed_Asymp.pgf}}
+	}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+	\subfloat[Some landmarks times]{
+		\begin{tabular}{| c || c |}
+			\hline \rowcolor{clouds}
+			$|\Sigma|$ & \textsc{Closure} \\ \hline
+			1000   &  0.007 \\ \hline
+			5000   &  0.007 \\ \hline
+			25000  &  0.011 \\ \hline
+			45000  &  0.012 \\ \hline 
+			65000  &  0.015 \\ \hline 
+			85000  &  0.019 \\ \hline
+			100000 &  0.016 \\ \hline
+		\end{tabular}
+	}
+\end{minipage}
+
+\caption{Average execution time over $100$ bases of \textsc{DuquenneMinimization} when $|\B| = 500$}
+\label{fig:Duquenne-BFixed}

@@ -87,7 +87,24 @@ this as an issue. Generating theories then is as follows:
 	a maximal amount of re-roll with a variable \lil{MAX_ITER}. Passed this 
 	number of failure, we accept an empty premise anyway.
 \end{enumerate}
-\noindent Note that this method can be discussed and probably improved. For us,
+\noindent Later, we will tests randomly generated basis on two parameters, the number of implications and the number of attributes. More precisely, we will set one of them, and let the other go over a range. When $|\B|$ is fixed, and $|\Sg|$ grows, especially when $|\Sg| \gg |\B|$, we may encounter the problem of generating only non-redundant basis, because we are more likely to generate
+disjoints sets (the attribute set being very large, for few implications) and hence non-redundant implications only. To bypass this problem, we introduce
+another randomisation based on Armstrong rules \cite{armstrong_dependency_1974, b._ganter_conceptual_2016}. Given some implications, those rules are an inference system to derive new implications out of others. Some of them are:
+\begin{itemize}
+	\item[-] $\I \models A \imp B$, then $\I \models A \cup C \imp B$ (\midemp{augmentation})
+	\item[-] $\I \models A \imp B$ and $ \I \models C \imp D$, then $\I \models A \cup C \imp B \cup D$ (\midemp{union})
+	\item[-] $\I \models A \imp B$ and $ \I \models B \cup C \imp D$, then 
+	$\I \models A \cup C \imp D$ (\midemp{pseudo-transitivity})
+\end{itemize}
+\noindent Therefore, when we generate theories with an increasing attribute sets, given a number of implications $|\B|$, we only generate randomly a part of (by tenth for simplicity) and we use randomly Armstrong rules to generate
+the remainder. This creates then a certain amount of redundancy even if $|\Sg| >> |\B|$. Nevertheless, for the other case around, redundancy is very likely to
+be built in, since there is much more implications than attributes. In this case
+we just generates the required number of implications. Ideally, we would like to
+generate a certain amount of non-redundancy for which we did not do enough research to find a solution. 
+
+\vspace{1.2em}
+
+Note that this method can be discussed and probably improved. For us,
 it seems like this method is sufficient to provide theories with informative
 implications, and various sizes of premises and conclusions. We did not investigate further ways of generations since the main task was to test algorithms and not to study implication structures in depth. This anyway is an interesting question for further work.
 
@@ -394,7 +411,14 @@ we will rely on the next assumption based on the result of \cite{bazhanov_optimi
 that \textsc{LinClosure} performs worst in general than \textsc{Closure}. However, as we will see there are some possible optimizations for \textsc{LinClosure} dealing with initialization steps. Consequently, 
 we will first give priority to \textsc{Closure}, and try to replace it 
 by \textsc{LinClosure} whenever we find a possible optimized use of 
-for this closure method. We will keep as the \textit{"best version"} the most efficient in the tests we will run.
+for this closure method. We will keep as the \textit{"best version"} the most efficient in the tests we will run. 
+
+\vspace{1.2em}
+
+Usually we will compare two versions of each algorithm. Moreover, improving
+the procedures will rely on generating random basis with fixing either the
+number of attributes ($|\Sg|$) or the number of implications ($|\B|$). Recall from the paragraph dedicated to random generation that to avoid constant non-redundancy when the number of attributes grows, we generate only a random part of a given number of implications and then, use randomly Armstrong rules to increase the size of the basis up to our need. When $|\B|$ evolves however,
+we just generate implications since redundancy may occur often.
 
 \subsection{\textsc{MinCover}}
 
@@ -457,20 +481,100 @@ In \textsc{MinCoverLin} we used a function called \textsc{LinClosureInit}. In fa
 
 The main idea to test efficiency of each version of the algorithm is to perform
 two series of tests corresponding to fixing one of the two parameters of its complexity : $|\Sg|$ or $|\B|$. Each series consists in fixing one of those parameters and testing a range of value for the other. We can observe figure
-\ref{fig:MinCover-Prune} as results of those experiments.
+\ref{fig:MinCover-Prune} as results of those experiments. One may denote in all
+following tests (for all algorithms) a much more noisy curve when we fix $|\B|$. This has 2 possible explanations. The most important is the way we generate implications as explained previously, it is plausible that we generate a less general sets of basis when $|\Sg|$ is fixed therefore resulting in less noisy results. Second, as one will observe, times recorded when $|\B|$ is fixed are much smaller and more close from one point to another, increasing differences. In the case where $|\Sg|$ is fixed however, there are less points usually and because of the impact of $|\B|$ in the cost of computations, we may
+find less cases where a measure is lower than its ancestors. We should keep
+this explanation in mind for all upcoming results, for all algorithms.
 
 
-\begin{figure}[ht]
+\begin{figure}[H]
 	\input{Pictures/III/MinCover/ClosureOperators.tex}
 \end{figure}
 
 \vspace{1.2em}
 
-The top left figure represents the time spent in \textsc{MinCover} when $|\Sg|$ is fixed to 100, and $|\B|$ goes from 1000 to 20000 by steps of 1000. The top right one, is $|\B| = 100$ and $|\Sg|$ running from 1000 to 100000 by step of 2000. In both cases We associated an array (right under) with some particular values, being useful to see evolution of \textsc{Closure}, flattened by \textsc{LinClosure}. The reason for this limitation is time spent in test relatively to the information it brings. As one can see, there is a huge difference of speed between \textsc{MinCoverLin} and \textsc{MinCoverClo} even if they differ only in the first loop. For each test case, we iterate the algorithm over 100 randomly generated basis so as to explore somehow the space of implication theories. Hence, we see for instance that when the number of implications $|\B|$ reaches 20000, with $|\Sg| = 100$, \textsc{MinCover} with \textsc{LinClosure} needs roughly 225 seconds to run on average for one execution. Assume we would like to go up to $|\B| = 100000$. Then, we would need at least $225 \times 100 \times 80 = 1800000s$ being approximately 3 weeks of test. Of course, we could change the range function to reduce the number of step, but still in our case we want to compare efficiency of \textsc{Closure} against \textsc{LinClosure}. According to the results, we admitted this range was sufficient to see the gap between those two closure operator. Interestingly, \textsc{LinClosure} permits to see practical complexity of \textsc{MinCover}: while the evolution of $|\B|$ draws a somehow quadratic curve of time, $|\Sg|$ matches a linear growth in spite of noisy points. This matches the theoretical complexity $O(|\B||\I|)$ required by \textsc{MinCover}. One could argue that the algorithms we tested both used \textsc{Closure} in the
-second loop, altering the overhaul complexity. Indeed, but as we said, \textsc{LinClosure} performs much worse than \textsc{Closure} so that the practical complexity is driven by \textsc{LinClosure}. For \textsc{MinCover}
+The top left figure represents the time spent in \textsc{MinCover} when $|\Sg|$ is fixed to 100, and $|\B|$ goes from 1000 to 20000 by steps of 1000. Below is $|\B| = 100$ and $|\Sg|$ running from 1000 to 100000 by step of 2000. For the first one we associated an array (on the right) with some particular values, being useful to see evolution of \textsc{Closure}, flattened by \textsc{LinClosure}. In the case of $|\B| = 100$, \textsc{MinCover} using \textsc{Closure} does not exceed $1.e^{-4}$ seconds. The reason for this limitation is time spent in test relatively to the information it brings. As one can see, there is a huge difference of speed between \textsc{MinCoverLin} and \textsc{MinCoverClo} even if they differ only in the first loop. For each test case, we iterate the algorithm over 100 randomly generated basis so as to explore somehow the space of implication theories. Hence, we see for instance that when the number of implications $|\B|$ reaches 20000, with $|\Sg| = 100$, \textsc{MinCover} with \textsc{LinClosure} needs roughly 225 seconds to run on average for one execution. Assume we would like to go up to $|\B| = 100000$. Then, we would need at least $225 \times 100 \times 80 = 1800000s$ being approximately 3 weeks of test. Of course, we could change the range function to reduce the number of step, but still in our case we want to compare efficiency of \textsc{Closure} against \textsc{LinClosure}. According to the results, we admitted this range was sufficient to see the gap between those two closure operator. Interestingly, \textsc{LinClosure} permits to see practical complexity of \textsc{MinCover}: while the evolution of $|\B|$ draws a somehow quadratic curve of time, $|\Sg|$ matches a linear growth in spite of noisy points. This matches the theoretical complexity $O(|\B||\I|)$ required by \textsc{MinCover}. In fact, when we fix $|\B|$, the performance of \textsc{LinClosure} can be explained by the fact that, when computing a closure it first runs over attributes (\textit{list}), and then implications. Therefore, when $|\Sg| >> |\B|$ a run of \textsc{LinClosure} becomes extremely expensive. When $|\Sg|$ is fixed however, we can see that the gap between the two versions of \textsc{MinCover} reduces. An idea for this is that because we have few attributes and several implications, an implication is likely to appear several time among the implication lists, therefore increasing the number
+of elements to proceed. Plus, it may appear for the same reason that no more than 2 run over $\I$ are sufficient for \textsc{Closure} to compute closures. 
+Still, because benchmarking \textsc{Closure} and \textsc{LinClosure} on their own is not our objective, we must leave these hypothesis for further experiment.
+
+\vspace{1.2em}
+
+One could argue that the algorithms we tested both used \textsc{Closure} in the second loop, altering the overhaul complexity. Indeed, but as we said, \textsc{LinClosure} performs much worse than \textsc{Closure} so that the practical complexity is driven by \textsc{LinClosure}. For \textsc{MinCover}
 we can conclude that \textsc{Closure} is a better choice.
 
 \subsection{\textsc{DuquenneMinimization}}
+
+In the algorithm provided by Duquenne, the first step consists in redundancy elimination. For this step, let us use \textsc{Closure} anyway since as we
+explained in previous paragraphs, removing an implications in counters and
+lists may be as time consuming as a run of \textsc{LinClosure} itself. However,
+in the second loop, we could use an improvement of \textsc{LinClosure} provided
+we do not remove any implication from $\I$. In this algorithm, removal occurs
+when a premise is not pseudo-closed, but the closure system defined by $\I$
+does not change. Hence, we could instead keep such useless implication in 
+$\I$ and use previously computed lists and counters to speed up closure computations. Here again, we test two versions of the algorithm: either all
+closures, or one using an improvement of \textsc{LinClosure} as following pseudo-code shows.
+
+\vspace{1.2em}
+
+\begin{algorithm}[H]
+	\TitleOfAlgo{\textsc{DuquenneMinimization (LinClosure)}, last step}
+	\KwIn{$\I$ a theory to minimize (non-redundant, lectically ordered)}
+	\KwOut{$\I_c$ the DQ-basis of $\I$}
+	
+	\BlankLine
+	\BlankLine
+	
+	$\I_c := \emptyset$ \;
+	\textsc{LinClosureInitCounters}($\I$) \;
+	
+	\ForEach{$A \imp B \in \I$}{
+		\ForEach{$\alpha \imp \beta \in \I_c$}{
+			\textbf{if} $\alpha \subset A \land \beta \nsubseteq A$
+				\textbf{goto next $A \imp B \in \I$} \;		
+		}
+		
+		$B = \textsc{LinClosure}(\I, B)$ \;
+		$\I_c := \I_c \cup \{ A \imp B \}$ \;
+	}
+	
+	return $\I_c$ \;
+
+	\label{alg:DuquenneLin}
+	
+\end{algorithm}
+
+\vspace{1.2em}
+
+First, let us focus on the behaviour of those two algorithms when we fix the number of implications to 500, and $\Sg$ runs from 1000 to 100000 attributes (see figure \ref{fig:Duquenne-BFixed}). As previously supposed, and also exposed in \cite{bazhanov_optimizations_2014}, keeping track of lists and counters in \textsc{LinClosure} is extremely expensive. Hence on this point, \textsc{Closure} is a clear winner. 
+
+\begin{figure}[H]
+	\input{Pictures/III/Duquenne/Operators_BFixed.tex}
+\end{figure}
+
+However, let us observe what happens when we fix $|\Sg|$. We try $\Sg$ with 100 and 500 attributes (see figure \ref{fig:Duquenne-SFixed}). Here seeing which one
+is the most efficient is much more complicated. Not only \textsc{Closure} and \textsc{LinClosure} have the same efficiency when $|\Sg| = 100$, but also the
+gap between them shrinks when we set $|\Sg| = 500$.
+
+\begin{figure}[H]
+	\input{Pictures/III/Duquenne/Operators_SFixed.tex}
+\end{figure}
+
+These remarks suggests that when we increase the number of implications and not
+the size of $\Sg$, \textsc{LinClosure} is asymptotically better than \textsc{Closure} even in practice. This hypothesis corroborate observations of 
+\cite{bazhanov_optimizations_2014}. Thus, to see which versions will be the most
+efficient when confronted to real datasets, we also tested them on our real data. Because we are more interested in determining which one is the most efficient, we present results through bar plots because they emphasizes differences. Report to figure \ref{fig:Duq-barplot}
+
+\begin{figure}[H]
+	\input{Pictures/III/Duquenne/RealData.tex}
+\end{figure}
+
+\vspace{1.2em}
+
+We represented in those bar plots the time required by both studied versions of \textsc{DuquenneMinimization} to minimize the basis we derive from our bag or real datasets. We did not represent the SPECT dataset because most of the values
+were near 0 except for mingen resulting in a non that attractive view point. Furthermore, it does not bring more informations. We can see that in general
+\textsc{Closure} still performs better than \textsc{LinClosure} even though they are very close for several results. Nevertheless \textsc{LinClosure} performs slightly better than \textsc{Closure} on some minimal generators basis having usually the most implications, strengthening our hypothesis on the asymptotic behaviour of \textsc{LinClosure}. However, this is clearly \textit{"Breast Wisconsin"} dataset having the most attributes and implications and still, this is one of the dataset where the gap between \textsc{LinClosure} and \textsc{Closure} is the widest. This may be because $|\Sg|$ is somehow large
+also, as we have seen in \textsc{MinCover}. Another possible explanation is the structure of randomly generated basis as compared to real data. This is left for further research though. Still, we can conclude here that 
+in spite of our observations, \textsc{Closure} remains a better choice for real data at least. 
 
 \subsection{\textsc{MaierMinimization}}
 
@@ -481,10 +585,23 @@ reason we tested two versions of \textsc{MaierMinimization}: one only using \tex
 
 \vspace{1.2em}
 
-Those tests allowed to emphasize on a practical desirable property of \textsc{MaierMinimization}
+Those tests allowed to emphasize on a practical desirable property of \textsc{MaierMinimization}. Actually we first tested the two versions
+for $|\Sg| = 100$ and growing $|\B|$ and it turned out that both versions
+had similar execution time (up to 10\% of difference from one to another,
+for results not exceeding 6 seconds of executions) even though \textsc{LinClosure} may be the slowest in general. This supposes that the first step always done by \textsc{Closure} may reduce bases so that subsequent steps
+are sped up. The difference however increased when we set $|\Sg|$ to 1000
+as table ... shows.
+
+
+
+\noindent When $|\B|$is fixed the difference is much more visible as one can observe in figure \ref{fig:Maier-BFixed}.
 
 \begin{figure}[ht]
 	\input{Pictures/III/Maier/Operators_BFixed.tex}
+\end{figure}
+
+\begin{figure}[H]
+	\input{Pictures/III/Maier/RealData.tex}
 \end{figure}
 
 \subsection{\textsc{BercziMinimization}}
@@ -696,25 +813,17 @@ this subroutine, \textit{list} and \textit{count} for $I_c$ are empty, hence
 
 \vspace{1.2em}
 
-We may observe tests of \textsc{BercziMinimization} (or more precisely, \textsc{BercziImp}) in graphs and tables of figure \ref{fig:Berczi-Prune}. As in previous cases we represent two range-based test on one parameter, when the other is fixed. On the left part we have a graph and a table of tests with fixed $|\Sg| = 100$. On the other side, we fixed $|\B|$ to $100$ also (and not 1000 as in previous cases!). We lowered the boundary $|\B|$ because of the complexity of the algorithm. As one can observe if we recall previous tests, even if $|\B| = 100$ the results are of the same order as previous tests where $|\B| = 1000$. Or course we should consider this quick comparison as no more but a quick glance to previous results since tests are not ran on the same basis (because of randomness). In any event, in spite of the noisy behaviour when $|\Sg|$ tends to $100000$, we can observe a linear growth of the execution time in accordance with the theoretical complexity of \textsc{BercziMinimization}.
-
-\newpage
+We may observe tests of \textsc{BercziMinimization} (or more precisely, \textsc{BercziImp}) in graphs and tables of figure \ref{fig:Berczi-Prune}. As in previous cases we represent two range-based test on one parameter, when the other is fixed. On the left part we have a graph and a table of tests with fixed $|\Sg| = 100$. On the other side, we fixed $|\B|$ to $100$ also (and not 500 as in previous cases!). We lowered the boundary $|\B|$ because of the complexity of the algorithm. As one can observe if we recall previous tests, even if $|\B| = 100$ the results are of the same order as previous tests where $|\B| = 500$. Or course we should consider this quick comparison as no more but a quick glance to previous results since tests are not ran on the same basis (because of randomness). In any event, in spite of the noisy behaviour when $|\Sg|$ tends to $100000$, we can observe a linear growth of the execution time in accordance with the theoretical complexity of \textsc{BercziMinimization}.
 
 \begin{figure}[ht!]
 	\input{Pictures/III/Berczi/ClosureOperators.tex}
 \end{figure}
 
-\newpage
-
 \vspace{1.2em}
 
 Regarding the evolution of time when $|\Sg|$ is fixed we denote a highly chaotic
 behaviour. However, we may perceive a polynomial growth of the time required by
-\textsc{BercziMinimization} when used with \textsc{LinClosure} matching theoretical expectations. If we keep on throwing an eye on previous results,
-it seems like \textsc{BercziMinimization} performs better than \textsc{MinCover}
-for some values, notably in the table, for $|\B| = 10000$ and $15000$. In fact,
-those values can somehow be considered as outliers in the graph we gave (they are convexities in the curve). Because the mean measure is sensitive to outlier
-basis, we can suppose that in those particular cases we generated some highly redundant basis decreasing the cost of operations. As we will see with real datasets in joint comparison, the difference between \textsc{MinCover} and \textsc{BercziMinimization} is clearly in favour of \textsc{MinCover}. Again, the difference between \textsc{Closure} and \textsc{LinClosure} is clearly visible and we can take \textsc{Closure} as our fastest closure operator.
+\textsc{BercziMinimization} when used with \textsc{LinClosure} matching theoretical expectations. Again, the difference between \textsc{Closure} and \textsc{LinClosure} is clearly visible and we can take \textsc{Closure} as our fastest operator.
 
 \subsection{\textsc{AFPMinimization}}
 
@@ -729,8 +838,21 @@ perform the same operation as mentioned for deleting an implication in \textsc{M
 Hence we test here two versions: 1 - only using \textsc{Closure}, 2 - using
 \textsc{LinClosure} for $\I$ with \textsc{InitCounters} jointly with 
 \textsc{Closure} for $\I_c$. We do not write the two procedures here since
-it may be too heavy (regarding the structure of \textsc{AFPMinimization}) for operations we already developed.
-
+it may be too heavy (regarding the structure of \textsc{AFPMinimization}) for operations we already developed. Results of our tests are represented in 
+figure \ref{fig:AFP-Prune}. As in previous cases we tested both $|\Sg|$ and
+$|\B|$. While it appears as in most of the algorithm we studied that even
+under evolution of $|\B|$, \textsc{Closure} is a clear winner, the overhaul
+behaviour informs us on the complexity of \textsc{AFPMinimization}. In particular it appears that $|\Sg|$ has only a linear cost while $|\B|$ is
+polynomial. This tells us that the repeat-until loop dealing with the stack
+in \textsc{AFP} does not require a time proportional to $|\Sg|$. However it
+may be dependant of $|\B|$ which means that we stack a number of implications
+similar to $|\B|$ at most. In other words, this goes in the direction of the 
+hypothesis where an implication is refine only once. Nevertheless, this act
+just as an observation or an hint in this direction and still we are dealing
+here with practical complexity. We have seen on almost all algorithms that
+in spite of its expensive theoretical complexity, \textsc{Closure} was much
+more appealing than \textsc{LinClosure}. Consequently, we should not take
+this experiment as a general proof of complexity. 
 
 \vspace{1.2em}
 
@@ -740,6 +862,10 @@ other operator. This is in accordance with conclusions and hypothesis drawn in
 \cite{bazhanov_optimizations_2014} about efficiency of \textsc{LinClosure}. However, those tests allowed us to have a glimpse of the correspondence between
 theoretical and practical complexity. Still, we may be able to find various more combinations of closure operations to test to see which one is the best. For us, in the meantime of the master thesis and regarding the performance of \textsc{LinClosure} it seemed that our tests were sufficient. Now that we found out which version of each algorithm was the fastest, we can move forward to 
 further tests and joint comparison.
+
+\begin{figure}[H]
+	\input{Pictures/III/AFP/ClosureOperators.tex}
+\end{figure}
 
 
 \section{Joint comparison}
@@ -754,6 +880,67 @@ for minimizing the given basis. See the results in \ref{tab:real-exe}.
 
 First, one can observe the wide range of performances. On the one hand,
 \textsc{MinCover}, \textsc{DuquenneMinimization}  and \textsc{MaierMinimization} do not exceed 100 seconds of execution time, while \textsc{BercziMinimization} and \textsc{AFPMinimization} can require up to several hours. The most striking case is for Breast Wisconsin, with proper and generators basis. This is probably because of the number of implications in those cases. Anyway, while the two first algorithms require about 30 to 90 seconds for minimization, \textsc{BercziMinimization} needs roughly one hour and \textsc{AFP} up to ten or eleven hours. This stresses on the intractability of \textsc{AFP} in practice, and possibly the Angluin algorithm when we are prevented from the speed of an oracle.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| c | c || c | c | c | c | c |}
+		\hline \rowcolor{clouds}
+		\multicolumn{2}{c}{$\I$} & \textsc{MinCover} & \textsc{Duquenne} & \textsc{Maier} & \textsc{Berczi} & \textsc{AFP} \\ \hline
+		
+		\multirow{5}{*}{Zoo}
+		& DG           & < 0.001 & < 0.001 & < 0.001 & < 0.001 & 0.016 \\
+		& min (mingen) & < 0.001 & < 0.001 & < 0.001 & < 0.001 & 0.016 \\
+		& min (proper) & < 0.001 & < 0.001 & < 0.001 & < 0.001 & 0.016 \\
+		& proper       & 0.005   & 0.002   & 0.003   & 0.016   & 0.063 \\
+		& mingen       & 0.007   & 0.004   & 0.005   & 0.047   & 0.094 \\ \hline
+		
+		\multirow{5}{*}{Flare}
+		& DG           & 0.097 & 0.117 & 0.211 & 27.922 & 115.656 \\
+		& min (mingen) & 0.134 & 0.194 & 0.288 & 27.750 & 116.594 \\
+		& min (proper) & 0.200 & 0.190 & 0.308 & 30.063 & 108.812 \\
+		& proper       & 1.684 & 0.933 & 0.917 & 88.375 & 524.031 \\
+		& mingen       & 16.047 & 7.981 & 7.576 & 160.328 & 2810.620 \\ \hline
+		
+		\multirow{5}{*}{Breast Cancer}
+		& DG           & 0.089 & 0.109 & 0.203 & 33.047 & 90.031 \\
+		& min (mingen) & 0.108 & 0.126 & 0.243 & 26.578 & 89.516 \\
+		& min (proper) & 0.153 & 0.132 & 0.258 & 29.438 & 105.141 \\
+		& proper       & 1.920 & 0.864 & 1.014 & 93.266 & 429.844 \\
+		& mingen       & 2.006 & 1.277 & 1.444 & 102.562 & 598.172 \\ \hline
+		
+		\multirow{5}{*}{Breast Wisconsin} 
+		& DG           & 0.940 & 1.208 & 2.348 & 1005.750 & 3109.920 \\
+		& min (mingen) & 1.277 & 1.533 & 3.314 & 949.953 & 3140.940 \\
+		& min (proper) & 3.121 & 2.225 & 5.514 & 1682.03 & 5408.98 \\
+		& proper       & 67.147 & 28.053 & 30.488 & 3675.910 & 40521.0 \\
+		& mingen       & 35.488 & 30.023 & 29.295 & 2772.980 & 38310.200 \\ \hline
+		
+		\multirow{5}{*}{Operative} 
+		& DG           & 0.005 & 0.006 & 0.011 & 0.219 & 0.734 \\
+		& min (mingen) & 0.007 & 0.007 & 0.012 & 0.219 & 0.719 \\
+		& min (proper) & 0.006 & 0.007 & 0.011 & 0.234 & 0.640 \\
+		& proper       & 0.039 & 0.020 & 0.024 & 0.594 & 2.422 \\
+		& mingen       & 0.078 & 0.055 & 0.055 & 0.813 & 4.063 \\ \hline
+		
+		\multirow{5}{*}{SPECT}
+		& DG           & 0.045 & 0.066 & 0.108 & 10.328 & 23.609 \\
+		& min (mingen) & 0.061 & 0.080 & 0.134 & 8.156 & 22.906 \\
+		& min (proper) & 0.078 & 0.070 & 0.150 & 8.250 & 23.031 \\
+		& proper       & 0.930 & 0.394 & 0.451 & 51.063 & 118.531 \\
+		& mingen       & 24.077 & 10.206 & 10.858 & 194.875 & 930.578 \\ \hline
+		
+		\multirow{5}{*}{Vote}
+		& DG           & 0.006 & 0.008 & 0.015 & 0.484 & 1.579 \\ 
+		& min (mingen) & 0.007 & 0.011 & 0.016 & 0.469 & 1.516 \\
+		& min (proper) & 0.008 & 0.009 & 0.016 & 0.469 & 1.593 \\
+		& proper       & 0.076 & 0.036 & 0.049 & 1.625 & 6.203 \\
+		& mingen       & 0.584 & 0.298 & 0.331 & 4.109 & 22.875 \\ \hline
+		
+		
+	\end{tabular} 
+	\caption{Comparison of the algorithms on real datasets (execution in $s$)}
+	\label{tab:real-exe}
+\end{table}
 
 \vspace{1.2em}
 
@@ -770,66 +957,7 @@ twice: one loop is sufficient to get the closure, but a second is required by th
 
 \vspace{1.2em}
 
-\begin{table}[ht]
-	\centering
-\begin{tabular}{| c | c || c | c | c | c | c |}
-	\hline \rowcolor{clouds}
-	\multicolumn{2}{c}{$\I$} & \textsc{MinCover} & \textsc{Duquenne} & \textsc{Maier} & \textsc{Berczi} & \textsc{AFP} \\ \hline
-	
-	\multirow{5}{*}{Zoo}
-	& DG           & < 0.001 & < 0.001 & < 0.001 & < 0.001 & 0.016 \\
-	& min (mingen) & < 0.001 & < 0.001 & < 0.001 & < 0.001 & 0.016 \\
-	& min (proper) & < 0.001 & < 0.001 & < 0.001 & < 0.001 & 0.016 \\
-	& proper       & 0.005   & 0.002   & 0.003   & 0.016   & 0.063 \\
-	& mingen       & 0.007   & 0.004   & 0.005   & 0.047   & 0.094 \\ \hline
-	
-	\multirow{5}{*}{Flare}
-	& DG           & 0.097 & 0.117 & 0.211 & 27.922 & 115.656 \\
-	& min (mingen) & 0.134 & 0.194 & 0.288 & 27.750 & 116.594 \\
-	& min (proper) & 0.200 & 0.190 & 0.308 & 27.750 & 116.594 \\
-	& proper       & 1.684 & 0.933 & 0.917 & 88.375 & 524.031 \\
-	& mingen       & 16.047 & 7.981 & 7.576 & 160.328 & 2810.620 \\ \hline
-	
-	\multirow{5}{*}{Breast Cancer}
-	& DG           & 0.089 & 0.109 & 0.203 & 33.047 & 90.031 \\
-	& min (mingen) & 0.108 & 0.126 & 0.243 & 26.578 & 89.516 \\
-	& min (proper) & 0.153 & 0.132 & 0.258 & 26.578 & 89.516 \\
-	& proper       & 1.920 & 0.864 & 1.014 & 93.266 & 429.844 \\
-	& mingen       & 2.006 & 1.277 & 1.444 & 102.562 & 598.172 \\ \hline
-	
-	\multirow{5}{*}{Breast Wisconsin} 
-	& DG           & 0.940 & 1.208 & 2.348 & 1005.750 & 3109.920 \\
-	& min (mingen) & 1.277 & 1.533 & 3.314 & 949.953 & 3140.940 \\
-	& min (proper) & 3.121 & 2.225 & 5.514 & 949.953 & 3140.940 \\
-	& proper       & 67.147 & 28.053 & 30.488 & 3675.910 & 40521.0 \\
-	& mingen       & 35.488 & 30.023 & 29.295 & 2772.980 & 38310.200 \\ \hline
-	
-	\multirow{5}{*}{Operative} 
-	& DG           & 0.005 & 0.006 & 0.011 & 0.219 & 0.734 \\
-	& min (mingen) & 0.007 & 0.007 & 0.012 & 0.219 & 0.719 \\
-	& min (proper) & 0.006 & 0.007 & 0.011 & 0.219 & 0.719 \\
-	& proper       & 0.039 & 0.020 & 0.024 & 0.594 & 2.422 \\
-	& mingen       & 0.078 & 0.055 & 0.055 & 0.813 & 4.063 \\ \hline
-	
-	\multirow{5}{*}{SPECT}
-	& DG           & 0.045 & 0.066 & 0.108 & 10.328 & 23.609 \\
-	& min (mingen) & 0.061 & 0.080 & 0.134 & 8.156 & 22.906 \\
-	& min (proper) & 0.078 & 0.070 & 0.150 & 8.156 & 22.906 \\
-	& proper       & 0.930 & 0.394 & 0.451 & 51.063 & 118.531 \\
-	& mingen       & 24.077 & 10.206 & 10.858 & 194.875 & 930.578 \\ \hline
-	
-	\multirow{5}{*}{Vote}
-	& DG           & 0.006 & 0.008 & 0.015 & 0.484 & 1.579 \\ 
-	& min (mingen) & 0.007 & 0.011 & 0.016 & 0.469 & 1.516 \\
-	& min (proper) & 0.008 & 0.009 & 0.016 & 0.469 & 1.516 \\
-	& proper       & 0.076 & 0.036 & 0.049 & 1.625 & 6.203 \\
-	& mingen       & 0.584 & 0.298 & 0.331 & 4.109 & 22.875 \\ \hline
-	
-	
-\end{tabular} 
-\caption{Comparison of the algorithms on real datasets (execution in $s$)}
-\label{tab:real-exe}
-\end{table}
+
 
 One can also denote that \textsc{MaierMinimization} seems to be as efficient as \textsc{DuquenneMinimization} except in the minimal cases where it performs worse (compared to \textsc{DuquenneMinimization} and \textsc{MinCover}). Our hypothesis is the same as for the difference between \textsc{DuquenneMinimization} and \textsc{MinCover}: in fact, the first loop of Maier's algorithm is to get rid of redundant implications, therefore when a 
 basis is highly redundant, first removing them allow to spare numerous closure
@@ -858,10 +986,6 @@ minimization time over 2000 randomly generated theories of corresponding size.
 We omit \textit{"zoo"} and \textit{"Breast cancer"} datasets since the first one has very low results and the characteristics of the second one are almost
 the same as \textit{"Flare"}. Results are presented in figure \ref{fig:barplot}.
 
-\begin{figure}[ht]
-	\input{Pictures/III/Comp/WorstCase.tex}
-\end{figure}
-
 \vspace{1.2em}
 
 Each graph corresponds to a dataset. Inside all of them, we have a series
@@ -878,6 +1002,9 @@ implications are handled before others, we will spare several operations.
 On the contrary, if they are all placed at the end, we will maximize the
 cost.
 
+\begin{figure}[H]
+	\input{Pictures/III/Comp/WorstCase.tex}
+\end{figure}
 
 \vspace{1.2em}
 

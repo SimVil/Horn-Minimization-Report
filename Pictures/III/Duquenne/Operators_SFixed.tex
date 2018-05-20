@@ -1,0 +1,42 @@
+
+\begin{minipage}{0.5\textwidth}
+	\subfloat[Average time (in $s$), $|\Sg| = 100$]{
+		\scalebox{0.4}{\input{Pictures/III/Duquenne/Duquenne_SFixed_100.pgf}}
+	}
+\end{minipage}
+~
+\begin{minipage}{0.5\textwidth}
+\subfloat[Average time (in $s$), $|\Sg| = 500$]{
+	\scalebox{0.4}{\input{Pictures/III/Duquenne/Duquenne_SFixed_500.pgf}}
+}
+\end{minipage}
+
+\hspace{2.5em}
+\begin{minipage}{0.5\textwidth}
+	\subfloat[Some landmarks times, $|\Sg| = 100$]{
+		\begin{tabular}{| c || c | c |}
+			\hline \rowcolor{clouds}
+			$|\B|$ & \textsc{LinClosure} & \textsc{Closure} \\ \hline
+			1000  & 0.016 & 0.012 \\ \hline
+			4000  & 0.118 & 0.113 \\ \hline
+			7000  & 0.341 & 0.337 \\ \hline 
+			10000 & 0.667 & 0.666 \\ \hline 
+		\end{tabular}
+	}
+\end{minipage}
+~
+\begin{minipage}{0.5\textwidth}
+	\subfloat[Some landmarks times, $|\Sg| = 500$]{
+	\begin{tabular}{| c || c | c |}
+		\hline \rowcolor{clouds}
+		$|\B|$ & \textsc{LinClosure} & \textsc{Closure} \\ \hline
+		1000  & 0.295 & 0.020 \\ \hline
+		4000  & 0.537 & 0.206 \\ \hline
+		7000  & 0.912 & 0.592 \\ \hline 
+		10000 & 1.530 & 1.206 \\ \hline 
+	\end{tabular}
+}
+\end{minipage}
+
+\caption{Comparison of closure operators for \textsc{DuquenneMinimization}}
+\label{fig:Duquenne-SFixed}
