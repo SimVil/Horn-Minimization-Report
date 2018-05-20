@@ -483,8 +483,7 @@ The main idea to test efficiency of each version of the algorithm is to perform
 two series of tests corresponding to fixing one of the two parameters of its complexity : $|\Sg|$ or $|\B|$. Each series consists in fixing one of those parameters and testing a range of value for the other. We can observe figure
 \ref{fig:MinCover-Prune} as results of those experiments. One may denote in all
 following tests (for all algorithms) a much more noisy curve when we fix $|\B|$. This has 2 possible explanations. The most important is the way we generate implications as explained previously, it is plausible that we generate a less general sets of basis when $|\Sg|$ is fixed therefore resulting in less noisy results. Second, as one will observe, times recorded when $|\B|$ is fixed are much smaller and more close from one point to another, increasing differences. In the case where $|\Sg|$ is fixed however, there are less points usually and because of the impact of $|\B|$ in the cost of computations, we may
-find less cases where a measure is lower than its ancestors. We should keep
-this explanation in mind for all upcoming results, for all algorithms.
+find less cases where a measure is lower than its ancestors. Consequently, whenever we deal with fixed $|\B|$ we also try to add to graphical representations a \textit{handmade} (always linear) approximation. In every cases, this approximation does \textit{only} deserve to help us see the underlying behaviour of the curve. To plot it, we compute a slope out of our points. We should keep this explanation in mind for all upcoming results, for all algorithms.
 
 
 \begin{figure}[H]
@@ -493,7 +492,7 @@ this explanation in mind for all upcoming results, for all algorithms.
 
 \vspace{1.2em}
 
-The top left figure represents the time spent in \textsc{MinCover} when $|\Sg|$ is fixed to 100, and $|\B|$ goes from 1000 to 20000 by steps of 1000. Below is $|\B| = 100$ and $|\Sg|$ running from 1000 to 100000 by step of 2000. For the first one we associated an array (on the right) with some particular values, being useful to see evolution of \textsc{Closure}, flattened by \textsc{LinClosure}. In the case of $|\B| = 100$, \textsc{MinCover} using \textsc{Closure} does not exceed $1.e^{-4}$ seconds. The reason for this limitation is time spent in test relatively to the information it brings. As one can see, there is a huge difference of speed between \textsc{MinCoverLin} and \textsc{MinCoverClo} even if they differ only in the first loop. For each test case, we iterate the algorithm over 100 randomly generated basis so as to explore somehow the space of implication theories. Hence, we see for instance that when the number of implications $|\B|$ reaches 20000, with $|\Sg| = 100$, \textsc{MinCover} with \textsc{LinClosure} needs roughly 225 seconds to run on average for one execution. Assume we would like to go up to $|\B| = 100000$. Then, we would need at least $225 \times 100 \times 80 = 1800000s$ being approximately 3 weeks of test. Of course, we could change the range function to reduce the number of step, but still in our case we want to compare efficiency of \textsc{Closure} against \textsc{LinClosure}. According to the results, we admitted this range was sufficient to see the gap between those two closure operator. Interestingly, \textsc{LinClosure} permits to see practical complexity of \textsc{MinCover}: while the evolution of $|\B|$ draws a somehow quadratic curve of time, $|\Sg|$ matches a linear growth in spite of noisy points. This matches the theoretical complexity $O(|\B||\I|)$ required by \textsc{MinCover}. In fact, when we fix $|\B|$, the performance of \textsc{LinClosure} can be explained by the fact that, when computing a closure it first runs over attributes (\textit{list}), and then implications. Therefore, when $|\Sg| >> |\B|$ a run of \textsc{LinClosure} becomes extremely expensive. When $|\Sg|$ is fixed however, we can see that the gap between the two versions of \textsc{MinCover} reduces. An idea for this is that because we have few attributes and several implications, an implication is likely to appear several time among the implication lists, therefore increasing the number
+The top left figure represents the time spent in \textsc{MinCover} when $|\Sg|$ is fixed to 100, and $|\B|$ goes from 1000 to 20000 by steps of 1000. Below is $|\B| = 100$ and $|\Sg|$ running from 1000 to 100000 by step of 2000. For the first one we associated an array (on the right) with some particular values, being useful to see evolution of \textsc{Closure}, flattened by \textsc{LinClosure}. In the case of $|\B| = 100$, \textsc{MinCover} using \textsc{Closure} does not exceed $1.e^{-4}$ seconds. The reason for this limitation is time spent in test relatively to the information it brings. As one can see, there is a huge difference of speed between \textsc{MinCoverLin} and \textsc{MinCoverClo} even if they differ only in the first loop. For each test case, we iterate the algorithm over 100 randomly generated basis so as to explore somehow the space of implication theories. Hence, we see for instance that when the number of implications $|\B|$ reaches 20000, with $|\Sg| = 100$, \textsc{MinCover} with \textsc{LinClosure} needs roughly 225 seconds to run on average for one execution. Assume we would like to go up to $|\B| = 100000$. Then, we would need at least $225 \times 100 \times 80 = 1800000s$ being approximately 3 weeks of test. Of course, we could change the range function to reduce the number of step, but still in our case we want to compare efficiency of \textsc{Closure} against \textsc{LinClosure}. According to the results, we admitted this range was sufficient to see the gap between those two closure operator. Interestingly, \textsc{LinClosure} permits to see practical complexity of \textsc{MinCover}: while the evolution of $|\B|$ draws a somehow quadratic curve of time, $|\Sg|$ matches a linear growth in spite of noisy points. This matches the theoretical complexity $O(|\B||\I|)$ required by \textsc{MinCover}. In fact, when we fix $|\B|$, the performance of \textsc{LinClosure} can be explained by the fact that, when computing a closure it first runs over attributes (\textit{list}), and then implications. Therefore, when $|\Sg| \gg |\B|$ a run of \textsc{LinClosure} becomes extremely expensive. When $|\Sg|$ is fixed however, we can see that the gap between the two versions of \textsc{MinCover} reduces. An idea for this is that because we have few attributes and several implications, an implication is likely to appear several time among the implication lists, therefore increasing the number
 of elements to proceed. Plus, it may appear for the same reason that no more than 2 run over $\I$ are sufficient for \textsc{Closure} to compute closures. 
 Still, because benchmarking \textsc{Closure} and \textsc{LinClosure} on their own is not our objective, we must leave these hypothesis for further experiment.
 
@@ -582,23 +581,40 @@ Recall that the procedure given by Maier relies on three steps (on some theory $
 parts. However, when it comes at determining equivalence classes, one can use
 only one initialization of counters and list for \textsc{LinClosure}. For this
 reason we tested two versions of \textsc{MaierMinimization}: one only using \textsc{Closure}, the other using \textsc{LinClosure} for the second step.
+Again, we have two experiments:
+\begin{enumerate}
+	\item $|\B| = 500$, $|\Sg|$ from 1000 to 100000,
+	\item $|\Sg| \in \{ 100, 500\}$, $|\B|$ from 1000 to 10000
+\end{enumerate}
+\noindent the results of first case are given in figure \ref{fig:Maier-BFixed}.
+As in previous cases, \textsc{Closure} performs better than \textsc{LinClosure}
+because it does not run over attributes. However, even though they do not have
+been tested on same theories, times recorded are similar to times of \textsc{DuquenneMinimization} for the same parameters. Furthermore they are
+the lower bounds of times we record over all algorithms as we will see in
+next sections. This similarity is not bounded to one parameter, and we can
+also have a look at the second test case in figure \ref{fig:Maier-SFixed}.
+
+\begin{figure}[H]
+	\input{Pictures/III/Maier/Operators_BFixed.tex}
+\end{figure}
+
+\begin{figure}[H]
+	\input{Pictures/III/Maier/Operators_SFixed.tex}
+\end{figure} 
+
+\vspace{1.2em} 
+
+In this figure too, minimization time is close from \textsc{DuquenneMinimization}. We will discuss this proximity also in joint comparison, but let us observe that they do in fact the same redundancy elimination. This step may also explain their efficiency in practice as compared to other algorithms, especially \textsc{MinCover} expected to have 
+the same complexity. Because theories in practice are likely to be redundant,
+removing them at first sight provides a speed up in following closure computations and loops over the basis we minimize. Furthermore, because we keep the same number of implications in both algorithms (because of minimality on termination) we are likely to perform a similar number of operations in both cases. In \textsc{DuquenneMinimization}, apart from ordering, we first check whether an implication has pseudo-closed premise being $|\I|$ price. If it is the case, we require one more closure computation. If it is not we discard the implication and spare closure operations as much as some inclusion tests in $|\I|$. In \textsc{MaierMinimization}, we are sure to figure out at least one closure for each implication. However we may avoid the second one whenever we find direct determination. In both algorithms we have this principle of avoiding as much operations as possible whenever we declare redundant an implication. And also we are sure to perform all of them on exactly the same number of implications. We will also discuss this idea joint comparison later on.
 
 \vspace{1.2em}
 
-Those tests allowed to emphasize on a practical desirable property of \textsc{MaierMinimization}. Actually we first tested the two versions
-for $|\Sg| = 100$ and growing $|\B|$ and it turned out that both versions
-had similar execution time (up to 10\% of difference from one to another,
-for results not exceeding 6 seconds of executions) even though \textsc{LinClosure} may be the slowest in general. This supposes that the first step always done by \textsc{Closure} may reduce bases so that subsequent steps
-are sped up. The difference however increased when we set $|\Sg|$ to 1000
-as table ... shows.
+\noindent Since the behaviour of \textsc{MaierMinimization} is somehow similar to \textsc{DuquenneMinimization} we also ran tests on our real data to see which
+closure operators suits well real life (see figure \ref{fig:Maier-barplot}). In
+this figure we omitted \textit{SPECT} because of lack of visibility. However, cases where \textsc{LinClosure} is better are more frequent than for \textsc{DuquenneMinimization}. This is in particular the case for the whole \textit{Vote} dataset. Still, \textsc{Closure} is overhaul more efficient and 
+we will keep the associated version as the fastest one.
 
-
-
-\noindent When $|\B|$is fixed the difference is much more visible as one can observe in figure \ref{fig:Maier-BFixed}.
-
-\begin{figure}[ht]
-	\input{Pictures/III/Maier/Operators_BFixed.tex}
-\end{figure}
 
 \begin{figure}[H]
 	\input{Pictures/III/Maier/RealData.tex}
@@ -857,11 +873,9 @@ this experiment as a general proof of complexity.
 \vspace{1.2em}
 
 During all this section we have been testing our minimization procedures with two closure algorithms: \textsc{Closure} and \textsc{LinCLosure}. From all of
-our tests it seemed like \textsc{LinClosure} performs much worse than the 
-other operator. This is in accordance with conclusions and hypothesis drawn in
-\cite{bazhanov_optimizations_2014} about efficiency of \textsc{LinClosure}. However, those tests allowed us to have a glimpse of the correspondence between
-theoretical and practical complexity. Still, we may be able to find various more combinations of closure operations to test to see which one is the best. For us, in the meantime of the master thesis and regarding the performance of \textsc{LinClosure} it seemed that our tests were sufficient. Now that we found out which version of each algorithm was the fastest, we can move forward to 
-further tests and joint comparison.
+our tests it seemed like \textsc{LinClosure} performs worse than the 
+other operator. Potentially, it becomes faster when we deal with a very large amount of implications as shown with \textsc{DuquenneMinimization} and \textsc{MaierMinimization}. However when tested under real data, it seems like \textsc{Closure} remains, within our set of parameters the best operator This is in accordance with conclusions and hypothesis drawn in
+\cite{bazhanov_optimizations_2014} about efficiency of \textsc{LinClosure} as compared to the effective structure of real data and randomly generated systems. Furthermore, those tests allowed us to have a glimpse of the correspondence between theoretical and practical complexity. Also they began to draw argument of practical interest with redundancy elimination. Still, we may be able to find various more combinations of closure operations to test to see which one is the best. For us, in the meantime of the master thesis and regarding the performance of \textsc{LinClosure} it seemed that our tests were sufficient. Now that we found out which version of each algorithm was the fastest, we can move forward to further tests and joint comparison.
 
 \begin{figure}[H]
 	\input{Pictures/III/AFP/ClosureOperators.tex}
@@ -1015,7 +1029,7 @@ Regarding the algorithms, we have shown that \textsc{BercziMinimization} and
 \textsc{AFPMinimization} were not efficient, especially the second one for
 which we still lack the proof. Among \textsc{MinCover}, \textsc{DuquenneMinimization} and \textsc{MaierMinimization} we observed that
 the two last ones were more efficient than \textsc{MinCover} when dealing
-with redundant bases. This case is very likely to occur in real life applications and if one is to use or design an algorithm for minimization, we should either use one of \textsc{DuquenneMinimization}, \textsc{MaierMinimization} or consider removing redundant implications first to lighten subsequent computations. Noting that \textsc{MinCover} was fast in minimal right-close case rise another idea: trying to use right-close implications to maximize the information we get. Of course, this presumes a closure-based approach and in fact closure operations lead the complexity of the algorithms. Another idea (as mentioned in \cite{duquenne_variations_2007}) would be to find a way to avoid closures if possible.We would like to remind that those results within the scope of our tests. We cannot assume it in general and it should be tested in further work on other datasets. Plus, one could enquiry about more statistical measures to sharpen the understanding of those procedures. This relativity allows for perspective in testing, trying to
+with redundant bases. This case is very likely to occur in real life applications and if one is to use or design an algorithm for minimization, we should either use one of \textsc{DuquenneMinimization}, \textsc{MaierMinimization} or consider removing redundant implications first to lighten subsequent computations. Noting that \textsc{MinCover} was fast in minimal right-close case rise another idea: trying to use right-close implications to maximize the information we get. Of course, this presumes a closure-based approach and in fact closure operations lead the complexity of the algorithms. Another idea (as mentioned in \cite{duquenne_variations_2007}) would be to find a way to avoid closures if possible.We would like to remind that those results are valid within the scope of our tests. We cannot assume it in general and it should be tested in further work on other datasets. Plus, one could enquiry about more statistical measures to sharpen the understanding of those procedures. This relativity allows for perspective in testing, trying to
 increase the number of real datasets, testing more combinations of closure
 operators or even extending range-based tests provided some more power or
 more time.
@@ -1038,9 +1052,15 @@ Speaking about future work, let us talk about perspectives. We provided both the
 a proof of correctness, even if we observed a dreadful efficiency in practice. Furthermore, we may still investigate Ausiello to sharpen our insight of redundancy elimination and removing superfluous nodes. An interesting question
 drawing a link between theoretical and practical study would be to get more
 understanding of redundancy so as to regulate its generation under testing and
-improving algorithms by pointing out special kinds of redundancies. Talking about testing, the main perspective on a practical side would be first to run tests on new real datasets to see whether our hypothesis hold or not. One may also be interested in testing more combinations of closure algorithms or finding
-more optimizations in each minimization procedure.
+improving algorithms by pointing out special kinds of redundancies. Talking about testing, the main perspective on a practical side would be first to run tests on new real datasets to see whether our hypothesis hold or not. One may also be interested in testing more combinations of closure algorithms, finding
+more optimizations in each minimization procedure or even conducting experiment on the structure of randomly generated systems.
 
 
 \paragraph{Conclusion}
 
+After a theoretical study of some minimization algorithms, we finally got to implementation in C++. After having explained our experiment framework through
+randomization, short introduction to FCA and real datasets, we were first interested in finding which closure operator has better behaviour. Within the scope of our tests, \textsc{Closure} has been better even though we denoted a possibility for \textsc{LinClosure} to overcome its cousin when increasing 
+implication basis size. Then we moved to joint comparison of the procedure on
+real data. Out of this comparison we observed that in practice, the algorithm
+from Berczi and AFP procedure were inefficient. \textsc{MinCover} however has good results with minimal basis, especially when they are right-closed. Furthermore we saw that Maier's and Duquenne's functions where the most efficient with non-minimal systems probably thanks to their redundancy elimination step. Hence, we concluded that in practice one should
+be interested in this elimination to decrease execution time.

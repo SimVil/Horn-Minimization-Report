@@ -30,7 +30,7 @@ Before any discussion, I would like to thank people having helped me within this
 
 I am also thankful toward people having given me feedback on this report.
 
-Eventually, since this master thesis is for me a representative of a year studying in Russia, I am thankful to Ekaterina Pavlova and Sergei Kusnetsov for their administrative support, and my friends here, Betty and Irina for memories they contributed to build.
+Eventually, since this master thesis is for me a representative of a year studying in Russia, I am thankful to Ekaterina Pavlova and Sergei Kusnetsov for their support, and my friends here, Betty and Irina for memories they contributed to build.
 
 \newpage
 \listoffigures
@@ -47,18 +47,31 @@ Eventually, since this master thesis is for me a representative of a year studyi
 \input{Chapter/Abstract.tex}
 \addcontentsline{toc}{chapter}{Abstract}
 
+This document is a report of a master thesis made at HSE computer science faculty (Moscow). It has been conducted in the context of a double-diploma program with the ISIMA (France). The topic was implication theories minimization. More precisely the aim was to provide a review of existing algorithms for performing minimization and implement them to see how do
+they behave under practical test cases.
+
+\vspace{1.2em}
+
+By the end of the period, we found several algorithms and reviewed them within the context of closure systems. On top of providing explanations on their operation and complexity analysis, we implemented those algorithms using C++.
+Using randomly generated systems as real data, we determined which closure operator matches the best each algorithm and which algorithm or steps are likely to be used in practice. Those results being valid within the context
+of our experiments, suggests further experiences and implementation to lead in future work.
+
+\vspace{1.2em}
+
+\textbf{Keywords}: implications, closure systems, minimization, canonical basis, algorithmic.
+
 \tableofcontents
 
 % Introduction
 \input{Chapter/Intro.tex}
 \addcontentsline{toc}{chapter}{Introduction}
 
-This document reports a master thesis conducted at the faculty of Computer Science of the Higher School of Economics in Moscow, department of Data Analysis and Artificial Intelligence. It took place within the context of Data Science master programme, second year.
+This document reports a master thesis conducted at the faculty of Computer Science of the Higher School of Economics in Moscow, department of Data Analysis and Artificial Intelligence. It took place within the context of double-diploma ISIMA (France)/HSE in the Data Science master programme, second year.
 
 \vspace{1.2em}
 
 The topic during this master thesis was to review and implement several algorithms for implication theories minimization. Such systems model knowledge deduction through correlation relations known as implications. The aim of algorithms we studied is to minimize the size of those implicational basis while
-keeping al the information they provide. Such relations arise in various application such as formal concept analysis, relational databases, conceptual exploration linguistics or learning spaces for instance. The present
+keeping all the information they provide. Such relations arise in various applications such as formal concept analysis, relational databases, conceptual exploration linguistics or learning spaces for instance. The present
 document is relative to a theoretical study, hence applications will not be extensively discussed.
 
 \vspace{1.2em}
