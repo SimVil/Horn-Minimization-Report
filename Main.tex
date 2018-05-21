@@ -54,11 +54,11 @@ they behave under practical test cases.
 
 By the end of the period, we found several algorithms and reviewed them within the context of closure systems. On top of providing explanations on their operation and complexity analysis, we implemented those algorithms using C++.
 Using randomly generated systems as real data, we determined which closure operator matches the best each algorithm and which algorithm or steps are likely to be used in practice. Those results being valid within the context
-of our experiments, suggests further experiences and implementation to lead in future work.
+of our experiments, suggest further research and experiments to lead in future work.
 
 \vspace{1.2em}
 
-\textbf{Keywords}: implications, closure systems, minimization, canonical basis, algorithmic.
+\textbf{Keywords}: theoretical computer science, implications, closure systems, minimization, canonical basis, algorithmic.
 
 \tableofcontents
 
@@ -95,6 +95,25 @@ the last chapter, we will focus on implementation of procedures (in C++) and the
 % Conclusion
 \input{Chapter/Conclusion.tex}
 \addcontentsline{toc}{chapter}{Conclusion}
+
+In this master thesis, we were interested in the problem of implication theories minimization which is: having a system of implications, trying to remove as much elements as possible without altering the knowledge described by
+the system. More precisely, we had to review existing algorithms and implement them to see how do they perform under practical computations.
+
+\vspace{1.2em}
+
+To answer this problematic, we first tried to find in literature existing algorithms matching our minimization task. Then we brought to the field of closure spaces and implications some algorithms to study them. In this review, we gave elements of proof and complexity analysis. Because of some difficulties, errors or similarities in algorithms we found, we can still improve our insight on some of them as a perspective of our study.
+
+\vspace{1.2em}
+
+Consequently to this review, and using a code previously developed for FCA and closure computing purposes, we implemented the algorithms we worked on in C++. Next, after setting up a testing framework, we ran tests on implemented procedure. Experiments gave results on the behaviour of algorithms
+and their efficiency in practice. We exhibited  possible improvements in the implementation of each procedure and accordingly, difference of speed
+for closure operators. We also depicted some practical conclusions on which algorithm to use depending on the case or at least, some step to consider when trying to think of another way to minimize systems with a closure-based approach.
+
+\vspace{1.2em}
+
+Finally, our work opens some possibilities for future research and experiments. One could for instance be interested in studying a better way to handle the structure (notably in terms of redundancy) of randomly generated data as compared to real life datasets. More generally, we could be interested in extending our tests to larger datasets and a broader range of improvements for closure operators to strengthen our hypothesis.
+
+
 
 
 \newpage

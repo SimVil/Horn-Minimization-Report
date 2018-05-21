@@ -1,7 +1,7 @@
 \chapter{Introduction to implications through closure systems}
 
 In this first chapter, we will be involved in presenting our topic of 
-minimization. For this ground to be understandable by as much readers as 
+minimization. For this ground to be understandable by as many readers as 
 possible, we will heavily rely on toy examples to illustrate and provide 
 intuition on the various notions we will introduce. To be more precise on the
 path we are about to follow here, we are first to expose an informal
@@ -83,9 +83,9 @@ not to make this synthesis too long, we will stay within the context of
 minimization and will not trace the field of implication theories in general. 
 For a survey of this domain anyway, the reader should refer to 
 \cite{wild_joy_2017}. Also, note that minimality in general terms is not 
-unique. Indeed, one can define several type of minimality among implication 
+unique. Indeed, one can define several types of minimality among implication 
 systems. For instance, not only we can define minimality with respect to the 
-number of implication within a system (which is our interest) but also with 
+number of implications within a system (which is our interest) but also with 
 respect to the number of attributes in each implications. The former one is 
 called \midemp{canonical} in relational database field, and \midemp{hyperarc 
 	minimum} within the graph context. Especially in the graph-theoretic and 
@@ -97,7 +97,7 @@ we are going to consider is the only one being polynomial time solvable. Other
 problems are proved to be NP-Complete or NP-Hard. For more discussion on other 
 minimality definitions and their computational complexity, the reader should 
 refer to \cite{boros_strong_2017, ausiello_directed_2017, 
-	b._ganter_conceptual_2016, ausiello_minimal_1986, wild_joy_2017, 
+	ganter_conceptual_2016, ausiello_minimal_1986, wild_joy_2017, 
 	boros_horn_1998}. In particular for NP-Completeness in the canonical case, 
 	one 
 can see \cite{hammer_optimal_1993}. In subsequent explanations, we will refer 
@@ -111,9 +111,9 @@ properties of minimality arose are Formal Concept Analysis (FCA) (see
 	ganter_two_2010} for an introduction) and Database Theory (DB) (see 
 \cite{maier_theory_1983}). Both sides were developed independently in the early 
 80's. For the first domain, characterization of minimality goes to Duquenne and 
-Guigues \cite{guigues_j.l_familles_1986}, in which they describe the so-called 
+Guigues \cite{guigues_familles_1986}, in which they describe the so-called 
 \belemp{canonical basis} (also called \belemp{Duquenne-Guigues basis} after its 
-authors, abbreviated DG all along this report) relying on the notion of \belemp{pseudo-closed sets}. For the database part, study of implications is made by Maier through functional dependencies (\cite{maier_theory_1983, david_minimum_1980}). The polynomial time algorithm he gives for minimization heavily relies on a fast subroutine discovered by Beeri and Bernstein in \cite{beeri_computational_1979}, 1979.
+authors, abbreviated DG all along this report) relying on the notion of \belemp{pseudo-closed sets}. For the database part, study of implications is made by Maier through functional dependencies (\cite{maier_theory_1983, maier_minimum_1980}). The polynomial time algorithm he gives for minimization heavily relies on a fast subroutine discovered by Beeri and Bernstein in \cite{beeri_computational_1979}, 1979.
 
 \vspace{1.2em}
 
@@ -122,7 +122,7 @@ Another algorithm based on a minimality theorem is given by Shock in 1986
 (\cite{shock_computing_1986}). Unfortunately, as we shall see and as already 
 discussed by Wild in \cite{wild_computations_1995} the algorithm may not be
 correct in general, even though the underlying theorem is. During the same 
-period, Ausiello and al. brought the problem to graph-theoretic ground, and 
+period, Ausiello et al. brought the problem to graph-theoretic ground, and 
 provided new structure known as \belemp{FD-Graph} and algorithm to represent 
 and work on implication systems in \cite{ausiello_directed_2017, 
 	ausiello_graph_1983, ausiello_minimal_1986}. This approach has been seen in 
@@ -142,23 +142,23 @@ fields, he describes an algorithm for minimizing a basis, similar to algorithms
 of Day and, somehow, Shock (resp. \cite{day_lattice_1992},  
 \cite{shock_computing_1986}). This framework is the one we will use for our 
 study, and can be found in more recent work by Ganter \& Obiedkov in 
-\cite{b._ganter_conceptual_2016}. Later, Duquenne proposed some 
+\cite{ganter_conceptual_2016}. Later, Duquenne proposed some 
 variations of Day's work with another algorithm in 
-\cite{duquenne_variations_2007}. More recently, Bor\`os and al. by 
+\cite{duquenne_variations_2007}. More recently, Bor\`os et al. by 
 working in a boolean logic framework, exhibited a theorem on the size of
 canonical basis \cite{boros_exclusive_2010, boros_strong_2017}. They also gave
 a general theoretic approach that algorithm should do one way or another on
 reduction purpose. Out of these papers, Berczi \& al. derived a new 
 minimization procedure based on hypergraphs in \cite{berczi_directed_2017}. 
 Furthermore, an algorithm for computing the canonical basis starting from any 
-system is given in \cite{b._ganter_conceptual_2016}. This last algorithm was our starting point for this study.
+system is given in \cite{ganter_conceptual_2016}. This last algorithm was our starting point for this study.
 
 \vspace{1.2em}
 
 Even though the work we are going to cite is not designed to answer this 
 question of minimization, it must also be exposed as the algorithm is 
 intimately related to DG basis and can be used for base reduction. The paper
-of Angluin and al. in query learning, see \cite{angluin_learning_1992}, provides
+of Angluin et al. in query learning, see \cite{angluin_learning_1992}, provides
 an algorithm for learning a Horn representation of an unknown initial formula. 
 It has been shown later by Ariàs and Alcazar (\cite{arias_canonical_2009}) that
 the output of Angluin algorithm was always the Duquennes-Guigues basis.
@@ -171,7 +171,7 @@ shall act as both theoretical and experimental statement of algorithm
 efficiency. As we already mentioned we will focus on closure theory framework.
 The reason for this choice is our starting point. Because we start from the
 algorithms provided by Wild and because the closure framework is the one we 
-are the most familiar with, we focus on clearly explain this terminology with
+are the most familiar with, we focus on clearly explaining this terminology with
 examples. However, once we will be comfortable with those definitions, we will 
 relate other frameworks to our main approach in the next chapter, to explain and
 draw parallels with other algorithms. In the next section we will focus on 
@@ -188,9 +188,9 @@ implemented.
 Here we will dive into mathematical representation of the task we gave
 in the first section of this chapter. For the recall, our aim here is to
 get familiar with the representation being closest from closure systems.  Most 
-of the notions initially come from \cite{guigues_j.l_familles_1986, 
+of the notions initially come from \cite{guigues_familles_1986, 
 ganter_two_2010, wild_theory_1994,	ganter_formal_1999} but the reader can 
-also find more than sufficient explanations in \cite{b._ganter_conceptual_2016, 
+also find more than sufficient explanations in \cite{ganter_conceptual_2016, 
 wild_joy_2017}. Readers with knowledge in relational databases will recognize 
 most of functional dependency notations. The reason is close vicinity between 
 implications and functional dependencies. Talking about our needs, we can 
@@ -206,7 +206,7 @@ The easiest object to project onto mathematical definitions is our attribute
 set. For all the report, we fix $\Sg$ to be a set of \belemp{attributes}. 
 Usually, we will denote attributes by small letters: \textit{a, b, c, \dots} 
 and subsets of $\Sg$ (groups of attributes) will be denoted by capital letters: 
-\textit{A, B, C, \dots} We assume the reader to have few background in 
+\textit{A, B, C, \dots} We assume the reader to have some background in 
 elementary set-theoretic and logical notations. 
 
 \begin{definition}[\midemp{Implication, implication system}] An 
@@ -250,7 +250,7 @@ fate, semantic entailment is our next step:
 
 \begin{definition}[\midemp{Semantic entailment}] We say that an implication 
 $A \imp B$ \belemp{semantically follows} from $\I$, denoted $\I \models A 
-\imp B$, if all models $M$ of $\I$ are models of $A \imp B$. Given two basis $\I_1$, $\I_2$, $\I_1 \models \I_2$ if $\I_1 \models A \imp B$ for all
+\imp B$, if all models $M$ of $\I$ are models of $A \imp B$. Given two bases $\I_1$, $\I_2$, $\I_1 \models \I_2$ if $\I_1 \models A \imp B$ for all
 implications $A \imp B$ of $\I_2$. Furthermore, $\I_1$ and $\I_2$ are \belemp{equivalent} if $\I_1 \models \I_2$ and $\I_2 \models \I_1$.  
 	
 \end{definition} 
@@ -370,19 +370,21 @@ notion of closure in our context. It turns out that given a basis
 $\I$ over some set $\Sg$, the set of models of $\I$, $\Sg^{\I}$, is a closure 
 system. Moreover, the operator $\I : 2^{\Sg} \imp 2^{\Sg}$ associating to a 
 subset $X$ of $\Sg$ the smallest model (inclusion wise) containing $X$ is 
-a closure operator. Furthermore, the closure system it defines is 
+a closure operator. Formally, this can be written as 
+
+\[ \I(X) = \bigcap \{A \in \Sg^{\I},\  X \subseteq A \} \]
+
+\noindent Furthermore, the closure system it defines is 
 $\Sg^{\I}$. An interesting point is the mathematical computation of 
 $\I(X)$ given $\I$ as a set of implications. We rely on 
-\cite{wild_implicational_1989, b._ganter_conceptual_2016} to this end. Let 
+\cite{wild_implicational_1989, ganter_conceptual_2016} to this end. Let 
 us define a temporary operation $\circ : 2^{\Sg} \imp 2^{\Sg}$ as follows:
 
 \[ X^{\circ} = 
 X \cup \bigcup \{ B \; | \; A \imp B \in \I, \; A \subseteq X \} \]
 
 \noindent Applying this operator up to stability provides $\I(X)$. In other 
-words $\I(X) 
-= X^{\circ \circ \dots}$. It is clear that we have a finite amount of 
-iterations since $X$ cannot grow more than $\Sg$. Readers with background in
+words $\I(X) = X^{\circ \circ \dots}$. It is clear that we have a finite amount of iterations since $X$ cannot grow more than $\Sg$. Readers with background in
 logic (see \cite{boros_strong_2017}) or graph theory 
 (\cite{berczi_directed_2017}) might see this operation as the marking or 
 forward chaining procedure.
@@ -412,7 +414,7 @@ practical computation of closures and more elaborated structures like the
 Before giving the definition of canonical basis, we should consider special 
 kind of sets given $\I$ over $\Sg$. Also, we will need to expose particular
 implications. First of all, let us introduce a property through a proposition
-on the link between an implication and the closure of its premise (we redirect the reader to \cite{b._ganter_conceptual_2016} for another proof). When not introduced, we consider a system $\I$ of implications, over some attribute set $\Sg$.
+on the link between an implication and the closure of its premise (we redirect the reader to \cite{ganter_conceptual_2016} for another proof). When not introduced, we consider a system $\I$ of implications, over some attribute set $\Sg$.
 
 \begin{proposition} Let $\I$ be a theory of $\Sg$. Let $A \imp B$ be an implication. $\I \models A \imp B$ if and only if $B \subseteq \I(A)$.	
 \end{proposition}
@@ -455,9 +457,8 @@ says that all true implications in the data context are true in $\I$. Because
 we work directly on implications, $\I$ is by definition sound and complete with 
 respect to the models it defines. Next, we set up minimality.
 
-\begin{definition}[Minimality] $\I$ is \belemp{minimal} if removing one of its 
-	implication alters $\Sg^{\I}$.
-	
+\begin{definition}[Minimality] $\I$ is \belemp{minimum} if there is no 
+equivalent system $\I'$ with fewer implications.
 \end{definition}
 
 \paragraph{Example} We consider our canonical plant example. Take 
@@ -468,9 +469,9 @@ respect to the models it defines. Next, we set up minimality.
 \end{center}
 
 \noindent as we explained in first section, the first implication can be 
-removed. In particular, it is redundant. Hence $\I$ is not minimal. If 
+removed. In particular, it is redundant. Hence $\I$ is not minimum. If 
 we get rid of \textit{(colourful, bloom) $\imp$ seasonal)}, $\I$ 
-will be minimal.
+will be minimum.
 
 \vspace{1.2em}
 
@@ -478,17 +479,17 @@ Interestingly, depending on the implications we get, non-redundancy is not a
 sufficient criterion for minimality as we shall see in Maier algorithm. As an 
 example for now, consider $\Sg = $\{\textit{a, b, c, d, e, f}\} and $\I = $ 
 \{\textit{ab $\imp$ cde, c $\imp$ a, d $\imp$ b, cd $\imp$ f}\}. $\I$ is not 
-redundant, but is not minimal either. In fact, $\I_m = $ \{\textit{ab $\imp$ 
+redundant, but is not minimum either. In fact, $\I_m = $ \{\textit{ab $\imp$ 
 cdef, c $\imp$ a, d $\imp$ b}\} is equivalent to $\I$ but with one implication 
 less. 
 
 \vspace{1.2em}
 
 For now, we defined what are implication theories, redundancy and minimality. 
-One could expect our next step to be the exposition of some minimal basis. 
+One could expect our next step to be the exposition of some minimum basis. 
 Unfortunately, we need to make a detour to visit some set and order definitions
 before getting back to our main purpose. Those notions not only deserve to
-explain minimal basis but also to settle some landmarks for further discussions 
+explain minimum basis but also to settle some landmarks for further discussions 
 in the next chapter.
 
 \vspace{1.2em}
@@ -562,7 +563,7 @@ abbreviation):
 	(\midemp{transitivity})
 \end{itemize}
 \noindent There is a convenient way to represent posets. At least when they are
-not to heavy. It is sometimes called \belemp{Hasse diagram} (see 
+not too heavy. It is sometimes called \belemp{Hasse diagram} (see 
 \cite{davey_introduction_2002}) and relies on the \belemp{cover} relation of
 a partially ordered set. Take any poset $(P, \leq)$ and define the cover 
 relation as $x \prec y$ if $x < y$ and $x \leq z < y \imp x = z$. In other 
@@ -592,7 +593,7 @@ Now equipped with orders and equivalence relation, we can go a bit further in
 the study of implications and sets. For instance, as exposed in the previous 
 example, we can consider our attribute set $\Sg$ (more precisely its power set)
 equipped with $\subseteq$ as an ordering. Furthermore, recall that $\I$ is
-a set of implications and hence provide a closure operators. Because every 
+a set of implications and hence provide a closure operator. Because every 
 subset of $\Sg$ has only one closure in $\I$, we can define an equivalence 
 relation $\equl$ on $2^{\Sg}$ as follows:
 
@@ -634,7 +635,7 @@ using orders in figure \ref{fig:I-def-CS}.
 
 On the left side of the picture, we drew $(2^{\Sg}, \subseteq)$. On the
 right-hand side: $(\Sg^{\I}, \subseteq)$. Clusters on the left diagram are
-the equivalence classes, associated (dotted arrows) to their
+ equivalence classes, associated (dotted arrows) to their
 closed representative. If a cluster contains only one element, this element is 
 closed. This drawing shows the relation between a closure operator and its 
 associated system, in particular in implication basis context, where the 
@@ -662,30 +663,27 @@ relies on some particular sets in the closure systems.
 \end{definition}
 
 \noindent The idea of pseudo-closed sets goes back to Guigues and Duquenne in
-\cite{guigues_j.l_familles_1986}, but the name comes from Ganter in 
+\cite{guigues_familles_1986}, but the name comes from Ganter in 
 \cite{ganter_two_2010}. We can also find explanations in following 
 research \cite{ganter_two_2010, day_lattice_1992} and
-in \cite{b._ganter_conceptual_2016}. It turns out that we can explain 
+in \cite{ganter_conceptual_2016}. It turns out that we can explain 
 pseudo-closure by using so called \textit{quasi-closed sets} (see 
-\cite{wild_implicational_1989, ganter_two_2010, guigues_j.l_familles_1986}). 
+\cite{wild_implicational_1989, ganter_two_2010, guigues_familles_1986}). 
 
 \begin{definition}[\midemp{Quasi-closed set}] a set $Q \subseteq \Sg$ is 
 	\belemp{quasi-closed} with respect to $\I$ if:
-	\begin{itemize}
-		\item[(i)] $Q \neq \I(Q)$,
-		\item[(ii)] $\forall A \subseteq Q$, $\I(A) \subseteq Q$ or $\I(A) = 
-		\I(Q)$.
-		
-	\end{itemize}
+	
+	\[ \forall A \subseteq Q, \I(A) \subseteq Q \textit{ or } \I(A) = 
+	\I(Q) \]
 	
 \end{definition}
 
 \noindent The recursive definition of pseudo-closed sets may seem complicated,
 and it is somehow since the problem of determining whether a set is 
 pseudo-closed or not has been proven to be NP-Hard (see 
-\cite{b._ganter_conceptual_2016}). Fortunately, quasi-closed sets and 
-equivalence classes give another definition to pseudo-closeness: a set is 
-pseudo-closed if it is quasi-closed and minimal (inclusion-wise) among quasi-closed sets in its equivalence class. Let us illustrate those notions with some diagrams.
+\cite{ganter_conceptual_2016}). Fortunately, quasi-closed sets and 
+equivalence classes give another definition to pseudo-closedness: a set is 
+pseudo-closed if it is non-closed, quasi-closed, and minimal (inclusion-wise) among quasi-closed sets in its equivalence class. Noticing that a closed set is quasi-closed, a minimal quasi-closed set of a class being closed is not pseudo-closed. Let us illustrate those notions with some diagrams.
 
 
 \paragraph{Example} Let us consider the following case:
@@ -727,12 +725,11 @@ closed. $c$ itself is also not closed. Hence $c$ is indeed quasi-closed.
 
 On the right-hand side we consider the subset $bc$. As shown in the picture 
 (under the dashed line), there are 3 elements to consider: $\emptyset$, $c$, 
-$b$. For the same reason as for $c$, $\emptyset$ is not a problem. the closure
+$b$. For the same reason as for $c$, $\emptyset$ is not a problem. The closure
 of $c$ is not included in $bc$, but equals the closure of $bc$. Hence $c$ is
 not an issue either. However, $b$ is included in $bc$, but its closure is $ab$,
 neither subset of $bc$ nor equal to $abc$. Therefore, $bc$ is not quasi-closed.
-Actually, one could informally say that a set $Q$ is quasi-closed if the 
-following is true:
+Actually, one could say that a set $Q$ is quasi-closed if the following is true:
 
 \[ (\forall P \in 2^{\Sg})\left[( P \in \; \downarrow Q) \imp (\I(P) \in \; 
 \downarrow Q \cup \{\I(Q)\})\right] \]
@@ -747,9 +744,7 @@ in figure \ref{fig:I-def-QCS}).
 \end{itemize}
 Again, we will use equivalence classes and Hasse diagram to represent the 
 closure system of $\I$, see figure \ref{fig:I-def-PCS}. In this representation
-we coloured all quasi-closed sets at least in grey. Red (or lighter) nodes are
-precisely pseudo-closed sets: they are the minimal quasi-closed sets among the
-equivalence class defined by $abc$. 
+we coloured all non-closed quasi-closed sets at least in grey. Red (or lighter) nodes are precisely pseudo-closed sets: they are the minimal quasi-closed sets among the equivalence class defined by $abc$. 
 
 \newpage
 
@@ -759,7 +754,7 @@ equivalence class defined by $abc$.
 
 Note that in particular, minimal premises of $\I$ inclusion wise are 
 pseudo-closed. Furthermore, we should be aware that an equivalence class may
-not contain pseudo-closed set, or more generally, quasi-closed sets. As such,
+not contain pseudo-closed sets, or more generally, quasi-closed sets. As such,
 we cannot consider that minimal elements of equivalence classes are 
 quasi-closed. Take for example $\I =$ \{\textit{$\emptyset \imp $ a, b $\imp$ a 
 }\}. $b$ and $ab$ define a class, but $b$ is not even quasi-closed. With these
@@ -771,19 +766,18 @@ notions, we can move on and define the canonical basis.
 	
 	\noindent is called the \belemp{Duquenne-Guigues} or \belemp{canonical} 
 	basis. 
-	It is \belemp{minimal}.
+	It is \belemp{minimum}.
 	
 \end{definition}
 
 \noindent This definition does not say that the canonical basis is the only one
-being minimal. Actually, it says that every minimal basis should have the same
-number of implications than this one. We can find a deeper argument in 
-\cite{b._ganter_conceptual_2016} (chapter III, proposition 17) on links between any minimal basis and the canonical one.
+being minimum. For a links between other possible minimum systems and Duquenne-Guigues basis, see \cite{ganter_conceptual_2016} (chapter III, proposition 17).
 
 \vspace{1.2em}
 
+
 So far we discussed several notions: implications, pseudo-closed set, 
-quasi-closed set, canonical basis and so forth. Most of them relies heavily on
+quasi-closed set, canonical basis and so forth. Most of them rely heavily on
 computing the closure of sets with respect to $\I$. Hence, to have practical 
 efficiency, we must be able to compute closures as fast as possible. 
 Fortunately, several algorithms can be found. Among them, there is a naïve
@@ -791,7 +785,7 @@ procedure based on the operation $\circ$ we described earlier. Furthermore the
 algorithm by Beeri and Bernstein in \cite{beeri_computational_1979} called 
 \textsc{LinClosure} addresses this question. \textsc{LinClosure} as previously 
 mentioned has been widely used, notably in \cite{maier_theory_1983, 
-david_minimum_1980, b._ganter_conceptual_2016, shock_computing_1986, 
+maier_minimum_1980, ganter_conceptual_2016, shock_computing_1986, 
 day_lattice_1992}. Before describing those procedures, let us introduce our 
 complexity notations:
 \begin{itemize}
@@ -898,15 +892,12 @@ counters. Starting from $X$, if we reach for a given $A \imp B$ as many elements
 as $|A|$, then $A \subseteq \I(X)$ and we must also add $B$. Because the closure
 in itself is not the main point of our topic, we will not study 
 \textsc{LinClosure} in depth. Furthermore, there exists other linear time 
-algorithm for computing closure. For more complete theoretical and practical 
-comparisons of closure algorithms, we redirect the reader to 
+algorithm for computing closure given by Wild in \cite{wild_computations_1995}. It is derived from \textsc{LinClosure}, but we did not consider it because it brings no improvement in complexity. For more complete theoretical and practical comparisons of closure algorithms, we redirect the reader to 
 \cite{bazhanov_optimizations_2014}. In this paper, \textsc{LinClosure} is 
 shown maybe not to be the most efficient algorithm in practice when used in 
 other algorithms, especially when compared with \textsc{Closure}. Anyway, 
 because of its theoretical complexity and use in all algorithms we will review, 
-we will still consider \textsc{LinClosure}, notably because we can separate the 
-initialization step from the computation one in some cases on optimization 
-purpose.
+we will still consider \textsc{LinClosure}.
 
 \vspace{1.2em}
 
@@ -914,10 +905,10 @@ purpose.
 In this last section, we got a step further in building ground for understanding
 the implication theory structure. We gave definitions of minimality and visual
 examples of particular sets called pseudo-closed. With the support of those
-sets, we defined the canonical basis known to be minimal. Finally, algorithms
+sets, we defined the canonical basis known to be minimum. Finally, algorithms
 for efficiently computing closures have been presented. 
 
 
 \paragraph{Conclusion} In this chapter we first gave a soft introduction to our 
-task with a somehow \textit{"physical"} example. Then we described briefly advances starting from the first properties found independently in Concept Analysis and Relational Databases fields. We have seen that the question of Horn minimization has been studied in various fields such as graphs, closure spaces, logic (where the name Horn comes from), functional dependencies, lattices. Then, we placed our study within this context. The aim of this study has been exposed as providing a review of some algorithms we talked about, and comparing them under implementation. The last part of the chapter was dedicated to a more formal and theoretical ground necessary for a good understanding of subsequent parts. In the next chapter, we will theoretically discuss in details several algorithms.
+task with a somehow \textit{"physical"} example. Then we described briefly advances starting from the first properties found independently in Concept Analysis and Relational Databases fields. We have seen that the question of implication systems minimization has been studied in various fields such as graphs, closure spaces, logic (where the name Horn comes from), functional dependencies, lattices. Then, we placed our study within this context. The aim of this study has been exposed as providing a review of some algorithms we talked about, and comparing them under implementation. The last part of the chapter was dedicated to a more formal and theoretical ground necessary for a good understanding of subsequent parts. In the next chapter, we will theoretically discuss in details several algorithms.
 
