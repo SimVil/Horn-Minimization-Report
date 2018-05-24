@@ -212,7 +212,7 @@ any true knowledge about biology, this stands only for appealing examples.
 
 \vspace{1.2em}
 
-Eventually, we shall discuss various possible basis one can build out of a context. We will use 5 of them: the canonical basis, the minimal basis resulting from Maier's algorithm (twice), the basis of minimal generators and the proper basis. We already discussed the two first ones. We derive them from the non minimal:
+Eventually, we shall discuss various possible basis one can build out of a context. We will use 5 of them: the canonical basis, the minimum basis resulting from Maier's algorithm (twice), the basis of minimal generators and the proper basis. We already discussed the two first ones. We derive them from the non minimum:
 \begin{itemize}
 	\item[(i)] minimal generators: a set $X$ is a minimal generator of its closure $\I(X)$ if it is minimal in $[ X]_{\I}$. The basis will contain
 	right-closed implications $X \imp \I(X)$ where $X$ is a minimal generator,
@@ -354,31 +354,31 @@ $|\B|$ the number of implications for each possible dataset.
 	\begin{tabular}{| c | c | c | c |}
 		\hline \rowcolor{clouds}
 		\multicolumn{2}{|c|}{$\I$} & $|\Sg|$ & $|\B|$ \\ \hline
-		\multirow{3}{*}{Zoo} & minimal & \multirow{3}{*}{28} & 141 \\
+		\multirow{3}{*}{Zoo} & minimum & \multirow{3}{*}{28} & 141 \\
 		& generators & & 874 \\
 		& proper & & 554 \\ \hline
 		
-		\multirow{3}{*}{Flare} & minimal & \multirow{3}{*}{49} & 3382 \\
+		\multirow{3}{*}{Flare} & minimum & \multirow{3}{*}{49} & 3382 \\
 		& generators & & 39787 \\
 		& proper & & 10692 \\ \hline
 		
-		\multirow{3}{*}{Breast cancer} & minimal & \multirow{3}{*}{43} & 3352 \\
+		\multirow{3}{*}{Breast cancer} & minimum & \multirow{3}{*}{43} & 3352 \\
 		& generators & & 16137 \\
 		& proper & & 11506 \\ \hline
 		
-		\multirow{3}{*}{Breast Wisconsin} & minimal & \multirow{3}{*}{91} & 10640 \\
+		\multirow{3}{*}{Breast Wisconsin} & minimum & \multirow{3}{*}{91} & 10640 \\
 		& generators & & 51118 \\
 		& proper & & 45748 \\ \hline
 		
-		\multirow{3}{*}{Post operative} & minimal & \multirow{3}{*}{26} & 625 \\
+		\multirow{3}{*}{Post operative} & minimum & \multirow{3}{*}{26} & 625 \\
 		& generators & & 3044 \\
 		& proper & & 1721 \\ \hline
 		
-		\multirow{3}{*}{SPECT} & minimal & \multirow{3}{*}{23} & 2169 \\
+		\multirow{3}{*}{SPECT} & minimum & \multirow{3}{*}{23} & 2169 \\
 		& generators & & 44341 \\
 		& proper & & 8358 \\ \hline
 		
-		\multirow{3}{*}{Vote} & minimal & \multirow{3}{*}{18} & 849 \\
+		\multirow{3}{*}{Vote} & minimum & \multirow{3}{*}{18} & 849 \\
 		& generators & & 8367 \\
 		& proper & & 2410 \\ \hline
 	\end{tabular}
@@ -769,7 +769,7 @@ only some closures of $\I_c$ are updated at each step, instead of re-computing a
 \begin{algorithm}[H]
 	\TitleOfAlgo{\textsc{BercziImpLin}}
 	\KwIn{$\I$: an implication theory}
-	\KwOut{$\I_c$: the DQ-basis of $\I$}
+	\KwOut{$\I_c$: the DG basis of $\I$}
 	
 	\BlankLine
 	\BlankLine
@@ -819,7 +819,7 @@ this subroutine, \textit{list} and \textit{count} for $\I_c$ are empty, hence
 
 \vspace{1.2em}
 
-We may observe tests of \textsc{BercziMinimization} (or more precisely, \textsc{BercziImp}) in graphs and tables of figure \ref{fig:Berczi-Prune}. As in previous cases we represent two range-based test on one parameter, when the other is fixed. On the left part we have a graph and a table of tests with fixed $|\Sg| = 100$. On the other side, we fixed $|\B|$ to $100$ also (and not 500 as in previous cases!). We lowered the boundary $|\B|$ because of the complexity of the algorithm. As one can observe if we recall previous tests, even if $|\B| = 100$, times are still higher than previous tests where $|\B| = 500$. Or course we should consider this quick comparison as no more but a quick glance to previous results since tests are not ran on the same basis (because of randomness). In any event, in spite of the noisy behaviour when $|\Sg|$ tends to $100000$, we can observe a linear growth of the execution time in accordance with the theoretical complexity of \textsc{BercziMinimization}.
+We may observe tests of \textsc{BercziMinimization} (or more precisely, \textsc{BercziImp}) in graphs and tables of figure \ref{fig:Berczi-Prune}. As in previous cases we represent two range-based test on one parameter, when the other is fixed. On the left part we have a graph and a table of tests with fixed $|\Sg| = 100$. On the other side, we fixed $|\B|$ to $100$ also (and not 500 as in previous cases!). We lowered the boundary $|\B|$ because of the complexity of the algorithm. As one can observe if we recall previous tests, even if $|\B| = 100$, times are still higher than previous tests where $|\B| = 500$. Or course we should consider this quick comparison as no more but a quick glance to previous results since tests are not ran on the same bases (because of randomness). In any event, in spite of the noisy behaviour when $|\Sg|$ tends to $100000$, we can observe a linear growth of the execution time in accordance with the theoretical complexity of \textsc{BercziMinimization}.
 
 \begin{figure}[ht!]
 	\input{Pictures/III/Berczi/ClosureOperators.tex}
@@ -875,7 +875,7 @@ other operator. Potentially, it becomes faster when we deal with a very large am
 
 In this section we consider the algorithms pruned previously and we compare them
 with the real datasets we exposed in the first section of this chapter (see table \ref{tab:real-DS}). For the recall they are datasets taken from the UCI 
-repository. For all of those 35 basis, we ran the 5 minimization procedure
+repository. For all of those 35 bases, we ran the 5 minimization procedure
 we reviewed and implemented. The value recorded is the execution time in seconds
 for minimizing the given basis. See the results in table \ref{tab:real-exe}. For clarity, recall that all of the algorithms use only \textsc{Closure}.
 
@@ -947,13 +947,13 @@ First, one can observe the wide range of performances. On the one hand,
 
 \vspace{1.2em}
 
-Regarding the difference between \textsc{MinCover} and \textsc{DuquenneMinimization}, observe that in general, the algorithm by Duquenne is faster on non-minimal basis and slightly slower on already minimal ones (but the minimal (proper) case we will consider after). In both cases, one hypothesis to explain those gaps could be both redundancy elimination and limitation of closure computations in the second loop of \textsc{DuquenneMinimization}. The number of closure computations in \textsc{MinCover} is likely to be constant whatever the case is, even though
+Regarding the difference between \textsc{MinCover} and \textsc{DuquenneMinimization}, observe that in general, the algorithm by Duquenne is faster on non-minimum bases and slightly slower on already minimum ones (but the minimum (proper) case we will consider after). In both cases, one hypothesis to explain those gaps could be both redundancy elimination and limitation of closure computations in the second loop of \textsc{DuquenneMinimization}. The number of closure computations in \textsc{MinCover} is likely to be constant whatever the case is, even though
 those operations become lighter with the reduction of the input basis. In \textsc{DuquenneMinimization} however, apart from first left-saturation and
 redundancy elimination allowing for several savings in closure computations, we stop an iteration of the second loop whenever some quasi-closed premise is not
-pseudo-closed. This break point permits to omit closure computations and in practice, thanks to lectic ordering, we may not need to go over all implications of the output basis to check whether an implication is redundant or not. The only case when the second loop should require more computations is when the base is already minimal, because for each step of the second loop, we have to go over all implications of the growing output basis. As remarked in most of execution times, when the basis is already minimal \textsc{DuquenneMinimization} performs somehow slightly worse than 
+pseudo-closed. This break point permits to omit closure computations and in practice, thanks to lectic ordering, we may not need to go over all implications of the output base to check whether an implication is redundant or not. The only case when the second loop should require more computations is when the base is already minimum, because for each step of the second loop, we have to go over all implications of the growing output system. As remarked in most of execution times, when the basis is already minimum \textsc{DuquenneMinimization} performs somehow slightly worse than 
 \textsc{MinCover}, which could be explained by the previous hypothesis. However,
 as we mentioned at the beginning of this paragraph, when it comes at minimizing
-the minimal base we obtained from the proper one, \textsc{DuquenneMinimization}
+the minimum base we obtained from the proper one, \textsc{DuquenneMinimization}
 tends to be a bit better. In fact, implications of the proper basis are not
 right-closed, therefore there is a possibility in the first loop of \textsc{MinCover} (because we use \textsc{Closure}) to run over all implications
 twice: one loop is sufficient to get the closure, but a second is required by the algorithm to exhibit no updates. And again, because of non-redundancy elimination at this step, \textsc{DuquenneMinimization} may get the point by first removing numerous redundant implications reducing the time spent in closures.
@@ -962,19 +962,19 @@ twice: one loop is sufficient to get the closure, but a second is required by th
 
 
 
-One can also denote that \textsc{MaierMinimization} seems to be as efficient as \textsc{DuquenneMinimization} except in the minimal cases where it performs worse (compared to \textsc{DuquenneMinimization} and \textsc{MinCover}). Our hypothesis is the same as for the difference between \textsc{DuquenneMinimization} and \textsc{MinCover}: in fact, the first loop of Maier's algorithm is to get rid of redundant implications, therefore when a 
+One can also denote that \textsc{MaierMinimization} seems to be as efficient as \textsc{DuquenneMinimization} except in the minimum cases where it performs worse (compared to \textsc{DuquenneMinimization} and \textsc{MinCover}). Our hypothesis is the same as for the difference between \textsc{DuquenneMinimization} and \textsc{MinCover}: in fact, the first loop of Maier's algorithm is to get rid of redundant implications, therefore when a 
 basis is highly redundant, first removing them allow to spare numerous closure
 computations and reduces closure cost. This is not the case in \textsc{MinCover}
 where we compute right closure of all implications. Once the first step is done
 in both \textsc{DuquenneMinimization} and \textsc{MaierMinimization} they may perform a similar amount of operations explaining the small gap between them for
-non-minimal basis:
+non-minimum bases:
 \begin{itemize}
 	\item[-] \textsc{DuquenneMinimization} performs ordering and then, for 
 	all implications, either we need less than $|\B||\Sg|$ time (because we break the for loop whenever we observe a set is not pseudo-closed) or we
 	will require $|\B||\Sg|$ + the time for closing since we need to run across $\I_c$ and computing a closure, 
 	\item[-] For \textsc{MaierMinimization}, we are sure to perform at least
 	one closure for all implications, to determine equivalence classes. Nevertheless, notice that when removing direct determination, we perform 
-	another full closure only if the implication must be kept in the basis,
+	another full closure only if the implication must be kept in the base,
 	otherwise we stop once we found direct determination.
 \end{itemize}
 \noindent In both case we are likely to perform the same number of set operations if an implication has not to be removed. Still, the difference
@@ -984,7 +984,7 @@ the computer, or by the structure of the basis we are minimizing.
 
 \vspace{1.2em}
 
-However, our discussion yields another idea on the worst case of minimization. In fact, the case where we would require more time given fixed parameters $|\Sg|$ and $|\B|$, is when there is no implication to remove. From our point of view, having no implication to remove maximizes the computations, because all operations of removing redundant implications, figuring out closures and so forth do not reduce the basis. To see whether our idea is interesting or not, we ran few more tests: we took the first three algorithms (because they are faster) and characteristics of the minimal bases. Then, we took the average
+However, our discussion yields another idea on the worst case of minimization. In fact, the case where we would require more time given fixed parameters $|\Sg|$ and $|\B|$, is when there is no implication to remove. From our point of view, having no implication to remove maximizes the computations, because all operations of removing redundant implications, figuring out closures and so forth do not reduce the basis. To see whether our idea is interesting or not, we ran few more tests: we took the first three algorithms (because they are faster) and characteristics of the minimum bases. Then, we took the average
 minimization time over 2000 randomly generated theories of corresponding size.
 We omit \textit{"zoo"} and \textit{"Breast cancer"} datasets since the first one has very low results and the characteristics of the second one are almost
 the same as \textit{"Flare"}. Results are presented in figure \ref{fig:barplot}.
@@ -992,12 +992,12 @@ the same as \textit{"Flare"}. Results are presented in figure \ref{fig:barplot}.
 \vspace{1.2em}
 
 Each graph corresponds to a dataset. Inside all of them, we have a series
-of bar plot per algorithm. In order, one may find the time (in seconds) required for the Duquenne-Guigues basis, the minimal basis we had with the
-with minimal generators, with proper implications and eventually the average
-time we obtained for minimization over 2000 randomly generated basis. For \textsc{DuquenneMinimization} and \textsc{MaierMinimization}, it seems like
-our hypothesis holds: on average, minimizing a redundant basis is less time consuming than a basis being minimal, for fixed $|\Sg|$ and $|\B|$. However,
+of bar plots per algorithm. In order, one may find the time (in seconds) required for the Duquenne-Guigues basis, the minimum basis we had with the
+minimal generators, with proper implications and eventually the average
+time we obtained for minimization over 2000 randomly generated bases. For \textsc{DuquenneMinimization} and \textsc{MaierMinimization}, it seems like
+our hypothesis holds: on average, minimizing a redundant system is less time consuming than a base being minimum, for fixed $|\Sg|$ and $|\B|$. However,
 this does not hold for \textsc{MinCover} for which the worst case is often
-the minimal basis with non right-closed implications. Moreover reducing a redundant basis is more expensive on average than minimizing right-closed
+the minimum bases with non right-closed implications. Moreover reducing a redundant theory is more expensive on average than minimizing right-closed
 bases. Our idea is that right-closed results in fast closure computations, because for each implication the information we may get is maximal. In the
 case of non-closed implications, we are likely to need several runs over
 $\I$ for this task. Then, depending on the order in which we consider implications in the second loop, the execution time may vary. If all redundant
@@ -1018,7 +1018,7 @@ Regarding the algorithms, we have shown that \textsc{BercziMinimization} and
 \textsc{AFPMinimization} were not efficient, especially the second one for
 which we still lack the proof. Among \textsc{MinCover}, \textsc{DuquenneMinimization} and \textsc{MaierMinimization} we observed that
 the two last ones were more efficient than \textsc{MinCover} when dealing
-with redundant bases. This case is very likely to occur in real life applications and if one is to use or design an algorithm for minimization, we should either use one of \textsc{DuquenneMinimization}, \textsc{MaierMinimization} or consider removing redundant implications first to lighten subsequent computations. Noting that \textsc{MinCover} was fast in minimal right-close case rise another idea: trying to use right-close implications to maximize the information we get. Of course, this presumes a closure-based approach and in fact closure operations lead the complexity of the algorithms. Another idea (as mentioned in \cite{duquenne_variations_2007}) would be to find a way to avoid closures if possible.We would like to remind that those results are valid within the scope of our tests and can be somehow related to our way of generating random data for instance. We cannot assume it in general and it should be tested in further work on other datasets. Plus, one could enquiry about more statistical measures to sharpen the understanding of those procedures. This relativity allows for perspective in testing, trying to
+with redundant bases. This case is very likely to occur in real life applications and if one is to use or design an algorithm for minimization, we should either use one of \textsc{DuquenneMinimization}, \textsc{MaierMinimization} or consider removing redundant implications first to lighten subsequent computations. Noting that \textsc{MinCover} was fast in minimal right-closed case rises another idea: trying to use right-close implications to maximize the information we get. Of course, this presumes a closure-based approach and in fact closure operations lead the complexity of the algorithms. Another idea (as mentioned in \cite{duquenne_variations_2007}) would be to find a way to avoid closures if possible.We would like to remind that those results are valid within the scope of our tests and can be somehow related to our way of generating random data for instance. We cannot assume it in general and it should be tested in further work on other datasets. Plus, one could enquiry about more statistical measures to sharpen the understanding of those procedures. This relativity allows for perspective in testing, trying to
 increase the number of real datasets, testing more combinations of closure
 operators or even extending range-based tests provided some more power or
 more time.
@@ -1051,5 +1051,5 @@ After a theoretical study of some minimization algorithms, we finally got to imp
 randomization, short introduction to FCA and real datasets, we were first interested in finding which closure operator has better behaviour. Within the scope of our tests, \textsc{Closure} has been better even though we denoted a possibility for \textsc{LinClosure} to overcome its cousin when increasing 
 implication basis size. Then we moved to joint comparison of the procedure on
 real data. Out of this comparison we observed that in practice, the algorithm
-from Berczi and AFP procedure were inefficient. \textsc{MinCover} however has good results with minimal basis, especially when they are right-closed. Furthermore we saw that Maier's and Duquenne's functions where the most efficient with non-minimal systems probably thanks to their redundancy elimination step. Hence, we concluded that in practice one should
+from Berczi and AFP procedure were inefficient. \textsc{MinCover} however has good results with minimum bases, especially when they are right-closed. Furthermore we saw that Maier's and Duquenne's functions where the most efficient with non-minimum systems probably thanks to their redundancy elimination step. Hence, we concluded that in practice one should
 be interested in this elimination to decrease execution time.

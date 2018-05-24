@@ -120,7 +120,7 @@ Indeed, at the end of the first loop, we replaced $B$ in every implications $A
 only if $B \subseteq \I(A)$. This is in particular the case for $B = \I(A)$.
 In the second loop we remove an implication only if it is redundant, thus
 the resulting $\I_c$ is indeed equivalent to $\I$. The main question is 
-minimality of $\I_c$. Recall that the DQ-basis, being minimal is based on 
+minimality of $\I_c$. Recall that the DG basis, being minimum is based on 
 pseudo-closed sets. Hence, if we can show that we keep an implication in the 
 second loop only if the premise $\I^{-}(A)$ is pseudo-closed, we are done. This
 is the purpose of next \textit{"hand-made"} proposition:
@@ -249,7 +249,7 @@ This routine, co-issued with the theorem we discussed previously is
 quite different from \textsc{MinCover}. Even though the conditional statement 
 $B \nsubseteq \I(A)$ is equivalent to $\I(A) \neq \I^{-}(A)$ and 
 replacing $A \imp B$ by $A \imp \I^{-}(B)$ is about right-closing $A \imp B$, 
-the resulting basis of this algorithm may not be minimal in
+the resulting basis of this algorithm may not be minimum in
 general:
 \begin{itemize}
 	\item[-] if $\I = \{ \emptyset \imp a, \ a \imp b \}$ (in this order), 
@@ -258,7 +258,7 @@ general:
 	be $\{ a \imp ab, \ \emptyset \imp ab \}$ being redundant.
 \end{itemize} 
 In fact, this error has already been pointed out in 1995 by Wild in 
-\cite{wild_computations_1995}. However, the implications given by Shock may have quasi-closed premises and present similarities with the algorithm for generating quasi-closed sets \textsc{FindCrucialGenerators} of Day (\cite{day_lattice_1992}). In Wild work, we can also find another proof for the theorem of Shock, jointly with minimality of DG-basis (theorem 5 of \cite{wild_theory_1994, wild_computations_1995}). Let us discuss now the algorithm proposed by A. Day in 1992 (see pseudo-code \ref{alg:Day}: \textsc{DayMinimization}). We express it through our framework of closure systems and implications. Since it would only complicate our explanations, we do not integrate definitions of lattice theory. However, for the reader with few background in lattice theory, we can mention Day's overhaul framework in some sentences. At the best of our understanding, the main idea is to focus on the partial order $(2^{\Sg}, \subseteq)$ being a complete join-semilattice (or just complete lattice when we consider finite $\Sg$) where the closure operator $\I(\cdot)$ is in fact a $\bigvee$-morphism from $(2^{\Sg}, \subseteq)$ to $(\Sg^{\I}, \subseteq)$. In $(2^{\Sg}, \subseteq)$, the join operation ($\lor$) is set union. Consequently, the equivalence classes of $\I$ define a congruence on the powerset of $\Sg$ being the kernel of $\I(\cdot)$. The approach developed by A. Day is then to build congruences (hence closure operators) through ordered pairs (or quotients) of the same equivalence class, representing implications.
+\cite{wild_computations_1995}. However, the implications given by Shock may have quasi-closed premises and present similarities with the algorithm for generating quasi-closed sets \textsc{FindCrucialGenerators} of Day (\cite{day_lattice_1992}). In Wild work, we can also find another proof for the theorem of Shock, jointly with minimality of DG basis (theorem 5 of \cite{wild_theory_1994, wild_computations_1995}). Let us discuss now the algorithm proposed by A. Day in 1992 (see pseudo-code \ref{alg:Day}: \textsc{DayMinimization}). We express it through our framework of closure systems and implications. Since it would only complicate our explanations, we do not integrate definitions of lattice theory. However, for the reader with few background in lattice theory, we can mention Day's overhaul framework in some sentences. At the best of our understanding, the main idea is to focus on the partial order $(2^{\Sg}, \subseteq)$ being a complete join-semilattice (or just complete lattice when we consider finite $\Sg$) where the closure operator $\I(\cdot)$ is in fact a $\bigvee$-morphism from $(2^{\Sg}, \subseteq)$ to $(\Sg^{\I}, \subseteq)$. In $(2^{\Sg}, \subseteq)$, the join operation ($\lor$) is set union. Consequently, the equivalence classes of $\I$ define a congruence on the powerset of $\Sg$ being the kernel of $\I(\cdot)$. The approach developed by A. Day is then to build congruences (hence closure operators) through ordered pairs (or quotients) of the same equivalence class, representing implications.
 
 \begin{algorithm}
 	\KwIn{$\I$: a theory to minimize}
@@ -419,7 +419,7 @@ it is then the smallest quasi-closed set containing $A$. Furthermore, both $A$
 and $\I^{-}(A)$ belong to $\left[ A \right]_{\I}$. With lemma 1 where $\mathcal{H} = \I$, one has that every pseudo-closed sets of $\I$ must be a premise of $\I$ after the first loop.
 
 \begin{proposition} At the end of \textsc{DuquenneMinimization} $\I_c$ is the
-DG-basis of $\I$.
+DG basis of $\I$.
 \end{proposition}
 
 \begin{proof} We proved that after the first step, all pseudo-closed sets
@@ -641,7 +641,7 @@ by adding $B$ to the closure of $C$ even though $\I \not\models C \imp B$.
 
 \vspace{1.2em}
 
-This is worth noting we gave a \textit{"light"} definition of direct determination more relying on a property proved by Maier than the strict original definition. Also, Wild in \cite{wild_implicational_1989, wild_theory_1994} drawn a parallel between quasi-closeness property and equivalence classes $E_{\I}(\cdot)$. Indeed, a set $A$ will be quasi-closed if and only if $\I(A) = \I^{-}_{E_{\I}(A)}(A)$. Finally, the last proposition gives us an algorithmic test for minimization: given an equivalence class $E_{\I}(X)$, one can run across all its implications and successively remove useless ones. Actually it says that if an non-redundant basis contains direct determinations, it is not minimal. Hence contrapositive yields a condition for minimality ensuring correctness and end of the operation.
+This is worth noting we gave a \textit{"light"} definition of direct determination more relying on a property proved by Maier than the strict original definition. Also, Wild in \cite{wild_implicational_1989, wild_theory_1994} drawn a parallel between quasi-closeness property and equivalence classes $E_{\I}(\cdot)$. Indeed, a set $A$ will be quasi-closed if and only if $\I(A) = \I^{-}_{E_{\I}(A)}(A)$. Finally, the last proposition gives us an algorithmic test for minimization: given an equivalence class $E_{\I}(X)$, one can run across all its implications and successively remove useless ones. Actually it says that if a non-redundant basis contains direct determinations, it is not minimum. Hence contrapositive yields a condition for minimality ensuring correctness and end of the operation.
 
 \vspace{1.2em}
 
@@ -712,7 +712,7 @@ we will have to compute at most $|\B|$ closures to get rid off direct
 determinations. So, the last step of the algorithm requires $O(|\B||\I|)$,
 which is consequently the complexity of \textsc{MaierMinimization} by 
 previous explanations. It is important to mention that even though the base
-we obtain is minimal, it is not the canonical basis, as we shall see in the
+we obtain is minimum, it is not the canonical basis, as we shall see in the
 next example, acting as a trace.
 
 \vspace{1.2em}
@@ -787,7 +787,7 @@ next example, acting as a trace.
 	\imp ab$ holds. Consequently, we can apply our modifications: we remove 
 	$cd \imp f$ from $\I$, and $ab \imp cde$ becomes $ab \imp cdef$.
 \end{enumerate}
-After applying this algorithm, we end up with a minimal $\I$ being:
+After applying this algorithm, we end up with a minimum $\I$ being:
 
 \[ \I = \{ c \imp a, \ d \imp b, \ ab \imp cdef \} \]
 
@@ -795,7 +795,7 @@ After applying this algorithm, we end up with a minimal $\I$ being:
 
 In this section we provided a theoretical study of the algorithm 
 proposed by Maier in \cite{maier_theory_1983, maier_minimum_1980} for finding a 
-minimal cover of a basis $\I$. Based on his results, we stated that the  
+minimum cover of a basis $\I$. Based on his results, we stated that the  
 asymptotic complexity of this algorithm was $O(|\B||\I|)$. In the next section, 
 we will develop another procedure coming from the graph theory community.
 
@@ -952,13 +952,13 @@ There are either \belemp{dotted} or \belemp{full} paths. A path $\langle i, j
 
 Having explained FD-Graphs, we will now move to explanations of the algorithm
 developed by Ausiello and al. The procedure finds from a given basis 
-its minimal representation in our terms (see alorithm \ref{alg:Ausiello}).
+its minimum representation in our terms (see alorithm \ref{alg:Ausiello}).
 
 \vspace{1.2em}
 
 \begin{algorithm}[H]
 	\KwIn{$\I$ an implication basis}
-	\KwOut{$\I_c$ a minimal cover for $\I$}
+	\KwOut{$\I_c$ a minimum cover for $\I$}
 	
 	\BlankLine
 	\BlankLine
@@ -1321,7 +1321,7 @@ same closure in $\I$. From a theoretical point of view, the minimization algorit
 \ref{fig:FD-Graph-5}. In this example $\I = {ab \imp e \, ; \, a \imp c
 	\, ; \, b \imp d \, ; \, cd \imp ab}$. The node $ab$ is superfluous. Since 
 our
-basis are reduced, note that removing a superfluous node is removing exactly 
+bases are reduced, note that removing a superfluous node is removing exactly 
 one implication in $\I$. In this case, the resulting $\I$ will be
 
 \[ \I = {a \imp c, b \imp d, cd \imp abe} \] 
@@ -1399,7 +1399,7 @@ and $\I - E_{\I}(A) \models A \imp B$ (from Maier's terminology), showing that t
 
 With propositions 3, 6 and above remarks on operations done in FD-graphs, we
 can conclude that \textsc{AusielloMinimization} performs from a graph-theoretic point of view the operations made by \textsc{MaierMinimization} in implications
-framework. Hence both are correct and the resulting FD-graph represents a minimal basis in our terms. 
+framework. Hence both are correct and the resulting FD-graph represents a minimum basis in our terms. 
 
 \vspace{1.2em}
 
@@ -1507,15 +1507,15 @@ equivalent to ours to express logical process, but as we previously said, in ord
 
 The main idea of the algorithm we should keep in mind, is to build iteratively
 the DG basis. To describe briefly the procedure in words, having an initial 
-basis $\I$: we initialize $\I_c = \emptyset$ and then at each step of the 
+system $\I$: we initialize $\I_c = \emptyset$ and then at each step of the 
 algorithm we add a new implication $A \imp \I(A)$ in $\I_c$ such that $A$ is 
 pseudo-closed in $\I$. By construction then, we will terminate and end up with 
-the DQ basis. Now that the process is defined, let us expose the procedure
+the DG basis. Now that the process is defined, let us expose the procedure
 and discuss it (see algorithm \ref{alg:Berczi-min})
 
 \begin{algorithm}
 	\KwIn{$\I$: an implication theory}
-	\KwOut{$\I_c$: the DG-basis of $\I$}
+	\KwOut{$\I_c$: the DG basis of $\I$}
 	
 	\BlankLine
 	\BlankLine
@@ -1639,7 +1639,7 @@ $(\I(\B(\I)), \subseteq)$. In details (a point refers to a step in the figure):
 	\item[(d)] $\I_c = \{ c \imp ac, d \imp bd, ab \imp abcdef 
 	\}$, for all $B \in \B(\I)$, $\I_c(B) = \I(B)$, the two orderings
 	are identical (or \belemp{isomorphic}), $\I_c$ is equivalent to $\I$ and
-	canonical whence minimal.
+	canonical whence minimum.
 \end{itemize}
 
 
@@ -1652,12 +1652,12 @@ efficient in theory than \textsc{MinCover} or even than \textsc{MaierMinimizatio
 
 \subsection{Angluin algorithm and AFP: Query Learning based approach}
 
-Here, the method for building a minimal base is slightly different. We use 
+Here, the method for building a minimum base is slightly different. We use 
 so-called \belemp{query learning}. The idea is we formulate \belemp{queries}
 to an \belemp{oracle} knowing the basis we are trying to learn. The oracle 
 is assumed to provide an answer to our query in constant time. Depending on 
 the query, it might also provide informations on the object we are looking for.
-For the Angluin algorithm, we need 2 types of queries. Say we want to learn
+For Angluin algorithm, we need 2 types of queries. Say we want to learn
 a basis $\I$ over $\Sg$:
 \begin{enumerate}
 	\item \belemp{membership} query: is $M \subseteq \Sg$ a model of $\I$? The
@@ -1673,13 +1673,13 @@ a basis $\I$ over $\Sg$:
 \end{enumerate}
 \noindent To clarify, the terms negative/positive are related to the base $\I$
 we want to learn. \textsc{AngluinAlgorithm} (\ref{alg:Angluin}) is the algorithm presented by Angluin, Frazer and Pitts in \cite{angluin_learning_1992} as \textsc{Horn1}. 
-Initially, it is based on learning logical representation of implication theories: Horn clauses. This learning algorithm has been shown first to terminate on a minimal representation of the basis we want to learn (\cite{angluin_learning_1992}) and more than that, to end up on the canonical
-basis by Arias and al. \cite{arias_canonical_2009}. It uses two operations allowing to reduce implications:
+Initially, it is based on learning logical representation of implication theories: Horn clauses. This learning algorithm has been shown first to terminate on a minimum representation of the basis we want to learn (\cite{angluin_learning_1992}) and more than that, to end up on the canonical
+one by Arias and al. \cite{arias_canonical_2009}. It uses two operations allowing to reduce implications:
 \begin{itemize}
 	\item[-] $\textit{refine}(A \imp B, M)$: produces $M \imp \Sg$ if $B = \Sg$, $M \imp B \cup A - M$ otherwise,
 	\item[-] $\textit{reduce}(A \imp B, M)$: produces $A \imp M - A$ if $B = \Sg$, $A \imp B \cap M$ otherwise.
 \end{itemize}
-\noindent The main idea is to ask the oracle whether the basis we are building ($\I_c$) is equivalent to $\I$ until it answers \textit{"yes"}. If it says \textit{"no"} then it provides an example on which $\I_c$ and $\I$ differ. If
+\noindent The main idea is to ask the oracle whether the theory we are building ($\I_c$) is equivalent to $\I$ until it answers \textit{"yes"}. If it says \textit{"no"} then it provides an example on which $\I_c$ and $\I$ differ. If
 the example is a model of $\I$, then we track implications in $\I_c$ falsified
 by this example and correct them. If the example however is not a model of $\I$
 we look for the first possible smaller example out of the one we got. The main
@@ -1873,7 +1873,7 @@ research some ideas helping in approaching the correctness of \textsc{AFP}. Neve
 	\item $abcd \imp ef$, $\I_c = \{ ab \imp abcdef, c \imp ca, d \imp bd \}$.
 	$\I_c(abcd) = abcdef = \I(abcd)$. It is not a counter example.
 \end{enumerate}
-\noindent The resulting basis $\I_c =  \{ ab \imp abcdef, c \imp ca, d \imp bd \}$ is indeed the DG basis of $\I$.
+\noindent The resulting base $\I_c =  \{ ab \imp abcdef, c \imp ca, d \imp bd \}$ is indeed the DG basis of $\I$.
 
 \vspace{1.2em}
 
@@ -1886,7 +1886,7 @@ the randomness of an oracle.
 
 \vspace{1.2em}
 
-We discussed here algorithms coming from logical and query learning. Interestingly those two procedures have another approach to minimization: they try to build a minimal basis against an input theory. Unfortunately, it seems
+We discussed here algorithms coming from logical and query learning. Interestingly those two procedures have another approach to minimization: they try to build a minimum base against an input theory. Unfortunately, it seems
 like this approach may not be more efficient than minimizing
 the input base itself, at least from a theoretical point of view. Before concluding this chapter, we will quickly discuss some expectations we can 
 derive from our study.
@@ -1909,7 +1909,7 @@ in the next chapter. As one can observe, at least 3 of the algorithms have
 the same complexity even though being quite different. It turns out anyway that
 among the first three algorithms, \textsc{MinCover, DuquenneMinimization} are
 quite similar. Indeed they both rely on using quasi-closure and right-closure. Those steps first issued in works by Day in \cite{day_lattice_1992}, Duquenne-Guigues in \cite{duquenne_variations_2007, guigues_familles_1986}, Wild in \cite{wild_theory_1994, wild_computations_1995, wild_implicational_1989} have been recently discussed
-by Boros and al in \cite{boros_strong_2017}. On the other hand \textsc{MaierMinimization} and \textsc{DuquenneMinimization} share redundancy elimination as a first step, being the last part of \textsc{MinCover}. The most striking difference of \textsc{MaierMinimization} with the two previous algorithms (or in fact all other algorithms but \textsc{AusielloMinimization} being based on \textsc{MaierMinimization}) is that the resulting implication base may not be the Duquenne-Guigues basis. Furthermore, where the two first functions need at most two closure computations per implication, we may need three for Maier's algorithm. This could suppose that \textsc{MaierMinimization} is worst in practice than \textsc{DuquenneMinimization} and \textsc{MinCover}. However, this argument is opposed to redundancy elimination of Duquenne's and Maier's functions. Removing several implications lighten subsequent loops and closure computations. Because \textsc{MinCover} does not perform redundancy elimination beforehand, there is also a chance that it is more expensive than the two others procedures, at least with non-minimal basis. Still, it uses redundancy elimination even though an implication being redundant in \textsc{MinCover} may not be considered as redundant in Maier's terms (because of right-closure in the latter one). Nevertheless, we still have a common point within those three first procedures: we are minimizing a given basis. Quite the opposite, \textsc{BercziMinimization} and \textsc{AFPMinimization} are building a canonical representation of an input basis. For \textsc{DuquenneMinimization} however, even if we are indeed minimizing $\I$ by removing its redundant implications, we are also building our result. Speaking of theoretical complexity, it seems like this building approach is not the most efficient. Still, we may keep in mind that we based our study of complexity on \textsc{LinClosure} which may not be the fastest closure algorithm in practice (see \cite{bazhanov_optimizations_2014}). 
+by Boros and al in \cite{boros_strong_2017}. On the other hand \textsc{MaierMinimization} and \textsc{DuquenneMinimization} share redundancy elimination as a first step, being the last part of \textsc{MinCover}. The most striking difference of \textsc{MaierMinimization} with the two previous algorithms (or in fact all other algorithms but \textsc{AusielloMinimization} being based on \textsc{MaierMinimization}) is that the resulting implication base may not be the Duquenne-Guigues basis. Furthermore, where the two first functions need at most two closure computations per implication, we may need three for Maier's algorithm. This could suppose that \textsc{MaierMinimization} is worst in practice than \textsc{DuquenneMinimization} and \textsc{MinCover}. However, this argument is opposed to redundancy elimination of Duquenne's and Maier's functions. Removing several implications lighten subsequent loops and closure computations. Because \textsc{MinCover} does not perform redundancy elimination beforehand, there is also a chance that it is more expensive than the two others procedures, at least with non-minimum base. Still, it uses redundancy elimination even though an implication being redundant in \textsc{MinCover} may not be considered as redundant in Maier's terms (because of right-closure in the latter one). Nevertheless, we still have a common point within those three first procedures: we are minimizing a given theory. Quite the opposite, \textsc{BercziMinimization} and \textsc{AFPMinimization} are building a canonical representation of an input basis. For \textsc{DuquenneMinimization} however, even if we are indeed minimizing $\I$ by removing its redundant implications, we are also building our result. Speaking of theoretical complexity, it seems like this building approach is not the most efficient. Still, we may keep in mind that we based our study of complexity on \textsc{LinClosure} which may not be the fastest closure algorithm in practice (see \cite{bazhanov_optimizations_2014}). 
 
 
 \paragraph{Conclusion} In this chapter, we studied several algorithms for 
