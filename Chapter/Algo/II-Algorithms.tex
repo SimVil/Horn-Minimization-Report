@@ -20,8 +20,7 @@ coming from the FCA (Formal Concept Analysis) community. This includes
 algorithms \textsc{MinCover} from \cite{bazhanov_optimizations_2014, day_lattice_1992, wild_implicational_1989} and \textsc{DuquenneMinimization}
 being a variation of \textsc{MinCover} (more precisely, of the algorithm
 provided by Day in a lattice-theoretic framework). This second procedure can
-be found in \cite{duquenne_variations_2007}. Even though \textsc{ShockMinimization} is an algorithm from FCA community, we may include
-discussion about it in this part because of the theorem it is based on. Secondly, we will dive into DB (Database) and graphs domains by working on
+be found in \cite{duquenne_variations_2007}. Even though \textsc{ShockMinimization} is not an algorithm from FCA community, we may include discussion about it in this part because of the theorem it is based on. Secondly, we will dive into DB (Database) and graphs domains by working on
 \textsc{MaierMinimization} (see \cite{maier_theory_1983, maier_minimum_1980}) and FD-Graphs, an extension of minimization to graphs provided by Ausiello and al; in \cite{ausiello_graph_1983, ausiello_minimal_1986, ausiello_directed_2017}. Eventually we get into algorithms coming out of 
 boolean logic and query learning communities with \textsc{BercziMinimization}
 and \textsc{AFPMinimization} (see \cite{berczi_directed_2017} and \cite{angluin_learning_1992, arias_canonical_2009} resp.).
@@ -112,7 +111,7 @@ algorithm \ref{alg:MinCover}).
 \end{algorithm}
 
 \textsc{MinCover} ends up on the canonical basis. Assuming that 
-closure are computed with \textsc{LinClosure}, the overhaul complexity of
+closures are computed with \textsc{LinClosure}, the overall complexity of
 the algorithm is $O(|\B||\I|)$. To see correctness of the algorithm, observe
 that the resulting $\I_c$ is equivalent to $\I$ at the end of the algorithm.
 Indeed, at the end of the first loop, we replaced $B$ in every implications $A 
@@ -161,9 +160,8 @@ $\I^{-}$, which concludes the proof.
 
 \vspace{1.2em}
 
-In fact, the second loop of \textsc{MinCover} is performing somehow the following operation: $\I^{-}(A) := A \cup \bigcup \{\I(B) \ | \ B \subset A\}$
-related to \midemp{proper implications} we shall encounter in the third chapter.
-Still, This proposition is sufficient for the algorithm to correctly end up on the canonical basis. Interestingly, the main idea of \textsc{MinCover} is similar to the theorem 2.1 of Shock in \cite{shock_computing_1986}, but the algorithm in practice is much closer from the procedure given by Day in section 6 of \cite{day_lattice_1992}. Before moving to their work, let us settle down an example of trace for \textsc{MinCover}.
+In fact, the second loop of \textsc{MinCover} is iterating somehow the following operation: $A \cup \bigcup \{\I(B) \ | \ B \subset A\}$ up to $\I^{-}(A) := $, related to \midemp{proper implications} we shall encounter in the third chapter.
+Still, this proposition is sufficient for the algorithm to correctly end up on the canonical basis. Interestingly, the main idea of \textsc{MinCover} is similar to the theorem 2.1 of Shock in \cite{shock_computing_1986}, but the algorithm in practice is much closer from the procedure given by Day in section 6 of \cite{day_lattice_1992}. Before moving to their work, let us settle down an example of trace for \textsc{MinCover}.
 
 \vspace{1.2em}
 
@@ -254,11 +252,11 @@ general:
 \begin{itemize}
 	\item[-] if $\I = \{ \emptyset \imp a, \ a \imp b \}$ (in this order), 
 	\textsc{ShockMinimization} will produce $\emptyset \imp ab$ which is right,
-	\item[-] if $\I = \{ a \imp b, \ \emptyset \imp b \}$, the result will
+	\item[-] if $\I = \{ a \imp b, \ \emptyset \imp a \}$, the result will
 	be $\{ a \imp ab, \ \emptyset \imp ab \}$ being redundant.
 \end{itemize} 
 In fact, this error has already been pointed out in 1995 by Wild in 
-\cite{wild_computations_1995}. However, the implications given by Shock may have quasi-closed premises and present similarities with the algorithm for generating quasi-closed sets \textsc{FindCrucialGenerators} of Day (\cite{day_lattice_1992}). In Wild work, we can also find another proof for the theorem of Shock, jointly with minimality of DG basis (theorem 5 of \cite{wild_theory_1994, wild_computations_1995}). Let us discuss now the algorithm proposed by A. Day in 1992 (see pseudo-code \ref{alg:Day}: \textsc{DayMinimization}). We express it through our framework of closure systems and implications. Since it would only complicate our explanations, we do not integrate definitions of lattice theory. However, for the reader with few background in lattice theory, we can mention Day's overhaul framework in some sentences. At the best of our understanding, the main idea is to focus on the partial order $(2^{\Sg}, \subseteq)$ being a complete join-semilattice (or just complete lattice when we consider finite $\Sg$) where the closure operator $\I(\cdot)$ is in fact a $\bigvee$-morphism from $(2^{\Sg}, \subseteq)$ to $(\Sg^{\I}, \subseteq)$. In $(2^{\Sg}, \subseteq)$, the join operation ($\lor$) is set union. Consequently, the equivalence classes of $\I$ define a congruence on the powerset of $\Sg$ being the kernel of $\I(\cdot)$. The approach developed by A. Day is then to build congruences (hence closure operators) through ordered pairs (or quotients) of the same equivalence class, representing implications.
+\cite{wild_computations_1995}. However, the implications given by Shock may have quasi-closed premises and present similarities with the algorithm for generating quasi-closed sets \textsc{FindCrucialGenerators} of Day (\cite{day_lattice_1992}). In Wild work, we can also find another proof for the theorem of Shock, jointly with minimality of DG basis (theorem 5 of \cite{wild_theory_1994, wild_computations_1995}). Let us discuss now the algorithm proposed by A. Day in 1992 (see pseudo-code \ref{alg:Day}: \textsc{DayMinimization}). We express it through our framework of closure systems and implications. Since it would only complicate our explanations, we do not integrate definitions of lattice theory. However, for the reader with few background in lattice theory, we can mention Day's framework in some sentences. At the best of our understanding, the main idea is to focus on the partial order $(2^{\Sg}, \subseteq)$ being a complete join-semilattice (or just complete lattice when we consider finite $\Sg$) where the closure operator $\I(\cdot)$ is in fact a $\bigvee$-morphism from $(2^{\Sg}, \subseteq)$ to $(\Sg^{\I}, \subseteq)$. In $(2^{\Sg}, \subseteq)$, the join operation ($\lor$) is set union. Consequently, the equivalence classes of $\I$ define a congruence on the powerset of $\Sg$ being the kernel of $\I(\cdot)$. The approach developed by A. Day is then to build congruences (hence closure operators) through ordered pairs (or quotients) of the same equivalence class, representing implications.
 
 \begin{algorithm}
 	\KwIn{$\I$: a theory to minimize}
@@ -290,8 +288,8 @@ algorithm by Day may fail. Consider a system not being reduced, e.g:
 
 \noindent we have:
 \begin{itemize}
-	\item[-] \textsc{MinCover} output: $\{ b \imp ac, \ c \imp abc \}$,
-	\item[-] \textsc{DayMinimization} output: $ \{ b \imp ac, \ ac \imp abc, \  c \imp abc \}$
+	\item[-] \textsc{MinCover} output: $\{ b \imp abc, \ c \imp abc \}$,
+	\item[-] \textsc{DayMinimization} output: $ \{ b \imp abc, \ ac \imp abc, \  c \imp abc \}$
 \end{itemize}
 In general, performing right-closure before redundancy elimination, as in 
 \textsc{MinCover} avoids this problem. 
@@ -312,10 +310,11 @@ proposed a variation of \textsc{MinCover} based on first computing quasi-closed
 sets and then using the recursive characterization of pseudo-closed sets to iteratively build the Duquenne-Guigues basis. Recall that pseudo-closed sets
 are particular open sets that can be defined by two means:
 \begin{itemize}
-	\item[-] a set $P$ is pseudo-closed if it is larger than all the closure of any	sub pseudo-closed set,
+	\item[-] a set $P$ is pseudo-closed if it contains the closure of every its
+	pseudo-closed proper subset,
 	\item[-] $P$ is pseudo-closed if it is quasi-closed and minimal among quasi-closed sets of $\left[ P \right]_{\I}$.
 \end{itemize}
-We will call this procedure \textsc{DuquenneMinimization} (see algorithm \ref{alg:Duquenne-min}). In fact, It uses the algorithm 2 from \cite{day_lattice_1992} to compute quasi-closed sets from premises of $\I$,
+We will call this procedure \textsc{DuquenneMinimization} (see algorithm \ref{alg:Duquenne-min}). In fact, it uses the algorithm 2 from \cite{day_lattice_1992} to compute quasi-closed sets from premises of $\I$,
 this is the first loop. All pseudo-closed sets are included in the resulting $\I$ after this first step. Then, we use \belemp{lectic ordering} to have a $\subseteq$-compatible way to process implications before building $\I_c$.
 
 
@@ -381,10 +380,10 @@ this setting, $b \leq_{\Sg} a$, $b \leq_{\Sg} ab$ and $b \leq_{\Sg} bc$ for inst
 
 \vspace{1.2em}
 
-The advantage of lectic ordering is to allow for easier checking of pseudo-closeness recursive property: if we test sets in lectic order,
+The advantage of lectic ordering is to allow for easier checking of pseudo-closedness recursive property: if we test sets in lectic order,
 we are sure not to avoid any pseudo-closed subset of a given set when
 looking at previously considered ones. Furthermore, because this is 
-a total order, we can use fast logarithmic sorting procedure to order 
+a total order, we can use fast sorting procedure to order 
 efficiently sets. Next, let us give some elements of proof for this 
 algorithm.
 
@@ -515,7 +514,7 @@ Regarding the complexity of the algorithm, one may note that the first loop has
 the same complexity as the second step of \textsc{MinCover}, that is $O(|\B||\I|)$ provided we use \textsc{LinClosure} for lowering theoretical complexity of closure computations. Observe then that the lectic order is a total order, hence we can use a logarithmic sorting function as quick-sort for
 \textsc{LecticOrder}, resulting in $O(|\Sg||\B|\log_2(|\B|))$ due to $O(|\Sg|)$
 comparison of two sets. Eventually, for each $A \imp B$, the nested for each loop may require $O(|\I|)$ since we are performing set operations on at most as much implications as $|\B|$. Then we may perform a closure under $\I$, being
-$O(|\I|)$ also. Therefore, the overhaul loop should require $O(|\B||\I|)$ time.
+$O(|\I|)$ also. Therefore, the overall loop should require $O(|\B||\I|)$ time.
 From the three steps we have, we can conclude that the whole algorithm has complexity $O(|\B||\I|)$ as \textsc{MinCover}. However, the first loop of 
 \textsc{DuquenneMinimization} act as a redundancy elimination which helps to
 reduce the cost of closure computations in the whole algorithm. This could be
@@ -536,10 +535,10 @@ and later, Ausiello.
 \section{Algorithms based on Maier's database approach}
 
 Here, we deal with algorithms based on Functional Dependencies (FD's). In database theory, functional dependencies are also implications between sets
-of attributes. The difference lies in the value of those attributes. Up to know we have been considering \textit{"binary"} attributes and implications: either
+of attributes. The difference lies in the value of those attributes. up to now we have been considering \textit{"binary"} attributes and implications: either
 we have $x$ or we do not have it. In DB, an attribute can be multi-valued (imagine an attribute \textit{"age"} for our plant example). Therefore, the 
 notion of implication is stricter: if we are given two attributes $x$ and $y$,
-$x \imp y$ will be a valid functional dependency if the \belemp{value} (not the presence) of $x$ determines the value of $y$. For more precision, see \cite{maier_theory_1983}. Actually, when it comes at minimization this semantic difference does not matter. Therefore, the algorithms we are about to study suits also our framework. For this reason we will explain algorithms within our
+$x \imp y$ will be a valid functional dependency if the \belemp{value} (not the presence) of $x$ determines the value of $y$. For more precision, see \cite{maier_theory_1983}. Actually, when it comes at minimization this semantic difference does not matter. Therefore, the algorithms we are about to study suit also our framework. For this reason we will explain algorithms within our
 usual context.
 
 \subsection{First algorithm: Maier's algorithm on FDs}
@@ -559,7 +558,7 @@ in previous section):
 Nevertheless, we can still remove an implication. Indeed, not only we can reach 
 $ab$ from $cd$, but also $cd$ from $ab$. Consequently, we could remove $cd \imp 
 f$ from $\I^{-}$ while adding to the head of $ab \imp cde$ the element
-$f$ (the head of $cd \imp f$) to avoid loss of informations. Hence, we 
+$f$ (the head of $cd \imp f$) to avoid loss of information. Hence, we 
 would end up with 
 \begin{center}
 	$\I =$ \{ \textit{c $\imp$ a, d $\imp$ b, ab $\imp$ cdef} \}
@@ -641,7 +640,7 @@ by adding $B$ to the closure of $C$ even though $\I \not\models C \imp B$.
 
 \vspace{1.2em}
 
-This is worth noting we gave a \textit{"light"} definition of direct determination more relying on a property proved by Maier than the strict original definition. Also, Wild in \cite{wild_implicational_1989, wild_theory_1994} drawn a parallel between quasi-closeness property and equivalence classes $E_{\I}(\cdot)$. Indeed, a set $A$ will be quasi-closed if and only if $\I(A) = \I^{-}_{E_{\I}(A)}(A)$. Finally, the last proposition gives us an algorithmic test for minimization: given an equivalence class $E_{\I}(X)$, one can run across all its implications and successively remove useless ones. Actually it says that if a non-redundant basis contains direct determinations, it is not minimum. Hence contrapositive yields a condition for minimality ensuring correctness and end of the operation.
+This is worth noting we gave a \textit{"light"} definition of direct determination more relying on a property proved by Maier than the strict original definition. Also, Wild in \cite{wild_implicational_1989, wild_theory_1994} drawn a parallel between quasi-closedness property and equivalence classes $E_{\I}(\cdot)$. Indeed, a set $A$ will be quasi-closed if and only if $\I(A) = \I^{-}_{E_{\I}(A)}(A)$. Finally, the last proposition gives us an algorithmic test for minimization: given an equivalence class $E_{\I}(X)$, one can run across all its implications and successively remove useless ones. Actually it says that if a non-redundant basis contains direct determinations, it is not minimum. Hence contrapositive yields a condition for minimality ensuring correctness and end of the operation.
 
 \vspace{1.2em}
 
@@ -703,11 +702,11 @@ algorithm. Finally, the whole Maier minimization process is given in algorithm
 
 A question we could have is about complexity of removing direct determinations.
 In fact, we can use again a modified version of \textsc{LinClosure} to find
-direct determination. For each implications $A \imp B$, we would have to 
+direct determination. For each implication $A \imp B$, we would have to 
 provide \textsc{LinClosure} with a vector of implications with premises 
 equivalent to $A$. The first one we reach (i.e the first one for which the 
 counter goes to 0) is necessarily an example of direct determination. Moreover,
-note that equivalence classes in $E_{\I}$ defines a partition of $\I$. That is,
+note that equivalence classes in $E_{\I}$ define a partition of $\I$. That is,
 we will have to compute at most $|\B|$ closures to get rid off direct 
 determinations. So, the last step of the algorithm requires $O(|\B||\I|)$,
 which is consequently the complexity of \textsc{MaierMinimization} by 
@@ -802,7 +801,7 @@ we will develop another procedure coming from the graph theory community.
 \subsection{Graph-theoretic approach to Maier's algorithm}
 
 This section is dedicated to a minimization algorithm relying on graphs. 
-It has been set up by Ausiello and al. in \cite{ausiello_directed_2017, 
+It has been set up by Ausiello et al. in \cite{ausiello_directed_2017, 
 ausiello_graph_1983, ausiello_minimal_1986}. Starting from a directed 
 hypergraph representation of functional dependencies, it builds a special kind 
 of directed graph, called \belemp{FD-Graph} with which it reduces the initial 
@@ -813,7 +812,7 @@ as exposed in \cite{ausiello_graph_1983}.
 
 \subsubsection{FD-Graphs and minimum covers}
 
-As we already mentioned, the graph framework developed by Ausiello and al. in
+As we already mentioned, the graph framework developed by Ausiello et al. in
 \cite{ausiello_graph_1983, ausiello_minimal_1986} comes from the work of Maier
 in database theory over functional dependencies (see \cite{maier_theory_1983}).
 Moreover we already discussed the closeness of FD and implications in our 
@@ -951,7 +950,7 @@ There are either \belemp{dotted} or \belemp{full} paths. A path $\langle i, j
 \vspace{1.2em}
 
 Having explained FD-Graphs, we will now move to explanations of the algorithm
-developed by Ausiello and al. The procedure finds from a given basis 
+developed by Ausiello et al. The procedure finds from a given basis 
 its minimum representation in our terms (see alorithm \ref{alg:Ausiello}).
 
 \vspace{1.2em}
@@ -979,7 +978,7 @@ As we will see in detailed explanations, those steps are equivalent to Maier's
 procedure. In fact, the last part, removing redundant arcs, goes beyond the 
 scope of our needs since it deserves to reduce sizes of premises and 
 conclusion, not the number of implications. This has also been studied in 
-Maier's work, but for out of scope reason we did not reviewed it. For the same
+Maier's work, but for out of scope reason we did not review it. For the same
 argument here, we will not focus on it either. To help the reader see where we 
 are heading, one should keep in mind that the two other steps of removing 
 redundant nodes and superfluous nodes will be equivalent to removing redundant 
@@ -1240,7 +1239,7 @@ replaced by $A \imp \emptyset$ equivalent to $\I - \{ A \imp B \}$.
 
 \end{proof}
 
-To remove redundant nodes, Ausiello and al. observed that a redundant node will
+To remove redundant nodes, Ausiello et al. observed that a redundant node will
 only have dotted arcs in the closure of a FD-Graph. Hence its minimization procedure for some $\I$ and associated $G_{\I}$ suggests to determine the closure of $G_{\I}$ and then to remove all redundant nodes by checking it. However, let us consider the following case:
 
 \[ \I = \{ ab \imp d, \ bc \imp d, a \imp c, c \imp a \} \]
@@ -1434,7 +1433,7 @@ To be more precise, the papers \cite{ausiello_graph_1983, ausiello_minimal_1986}
 \end{algorithm}
 
 For all compound nodes $i$, we check in its dotted closure $L_{i}^{1+}$ whether 
-we can find an equivalent node $j$. This can be done in $O(|\B| + |\Sg|)$. If we found such $j$, then $i$ is superfluous and we move to the full closure of $j$ all nodes $k$ such that $(i, k)$ is full and $(j, k)$ dotted. This corresponds to the union operation we depicted earlier. When we remove an implication with a superfluous premise, we append to the consequence of the \textit{"target"} implication, the consequence of the superfluous one. This is also $O(|\B| + |\Sg|)$. Then, removing $i$ from the closure does also require a run over all nodes of the closure: $O((|\B| + |\Sg|))$. Therefore, the first part of this algorithm is $O(|\B|(|\B| + |\Sg|))$. The second part is about removing nodes and moving arcs. If run over $L$ from the end, we may be able to find the final destination of full arcs with only one run. Then, we can run over the graph, and for each arc, whether it points out to a superfluous node and we remove it, the node itself is redundant and the arc is full and we move it to its destination, or we do nothing. All these operations are $O(1)$ and the overhaul operation requires to visit all the edges, resulting in $O(|\I|)$ complexity. Therefore, the cost of removing superfluous node provided we have the closure of the FD-Graph we work on seems to be $O(|\B|(|\B| + |\Sg|))$, in
+we can find an equivalent node $j$. This can be done in $O(|\B| + |\Sg|)$. If we found such $j$, then $i$ is superfluous and we move to the full closure of $j$ all nodes $k$ such that $(i, k)$ is full and $(j, k)$ dotted. This corresponds to the union operation we depicted earlier. When we remove an implication with a superfluous premise, we append to the consequence of the \textit{"target"} implication, the consequence of the superfluous one. This is also $O(|\B| + |\Sg|)$. Then, removing $i$ from the closure does also require a run over all nodes of the closure: $O((|\B| + |\Sg|))$. Therefore, the first part of this algorithm is $O(|\B|(|\B| + |\Sg|))$. The second part is about removing nodes and moving arcs. If run over $L$ from the end, we may be able to find the final destination of full arcs with only one run. Then, we can run over the graph, and for each arc, whether it points out to a superfluous node and we remove it, the node itself is redundant and the arc is full and we move it to its destination, or we do nothing. All these operations are $O(1)$ and the overall operation requires to visit all the edges, resulting in $O(|\I|)$ complexity. Therefore, the cost of removing superfluous node provided we have the closure of the FD-Graph we work on seems to be $O(|\B|(|\B| + |\Sg|))$, in
 accordance with \cite{ausiello_graph_1983, ausiello_minimal_1986} being better than the removal of direct determination in Maier's algorithm.
 
 \vspace{1.2em}
@@ -1492,12 +1491,12 @@ transformed into logical one:
 	\land (x_a \land x_b \imp x_e) \]
 
 \noindent We use conjunction because $ab$ contains $a$ \textit{and} $b$. This
-very short paragraph concludes our quick parallel with logical background, we will now go back to our usual framework to study algorithms. With this procedure explained, it remains know to focus on query learning and Angluin algorithm.
+very short paragraph concludes our quick parallel with logical background, we will now go back to our usual framework to study algorithms. With this procedure explained, it remains now to focus on query learning and Angluin algorithm.
 
 \subsection{Iterative building of the canonical basis}
 
-Here, we will study an algorithm proposed by Berczi and al. in 
-\cite{berczi_directed_2017} following a paper by Boros and al. 
+Here, we will study an algorithm proposed by Berczi et al. in 
+\cite{berczi_directed_2017} following a paper by Boros et al. 
 (\cite{boros_strong_2017}). Readers having a glance at the paper previously 
 cited will see different notations and framework between our study and the one 
 performed by the authors. This is because they use a graph-theoretic ground 
@@ -1656,7 +1655,7 @@ Here, the method for building a minimum base is slightly different. We use
 so-called \belemp{query learning}. The idea is we formulate \belemp{queries}
 to an \belemp{oracle} knowing the basis we are trying to learn. The oracle 
 is assumed to provide an answer to our query in constant time. Depending on 
-the query, it might also provide informations on the object we are looking for.
+the query, it might also provide information on the object we are looking for.
 For Angluin algorithm, we need 2 types of queries. Say we want to learn
 a basis $\I$ over $\Sg$:
 \begin{enumerate}
@@ -1674,7 +1673,7 @@ a basis $\I$ over $\Sg$:
 \noindent To clarify, the terms negative/positive are related to the base $\I$
 we want to learn. \textsc{AngluinAlgorithm} (\ref{alg:Angluin}) is the algorithm presented by Angluin, Frazer and Pitts in \cite{angluin_learning_1992} as \textsc{Horn1}. 
 Initially, it is based on learning logical representation of implication theories: Horn clauses. This learning algorithm has been shown first to terminate on a minimum representation of the basis we want to learn (\cite{angluin_learning_1992}) and more than that, to end up on the canonical
-one by Arias and al. \cite{arias_canonical_2009}. It uses two operations allowing to reduce implications:
+one by Arias et al. \cite{arias_canonical_2009}. It uses two operations allowing to reduce implications:
 \begin{itemize}
 	\item[-] $\textit{refine}(A \imp B, M)$: produces $M \imp \Sg$ if $B = \Sg$, $M \imp B \cup A - M$ otherwise,
 	\item[-] $\textit{reduce}(A \imp B, M)$: produces $A \imp M - A$ if $B = \Sg$, $A \imp B \cap M$ otherwise.
@@ -1797,12 +1796,12 @@ is no premise left being negative counter-example, $I \equiv \I_c$. Note that th
 
 \vspace{1.2em}
 
-Up to know, we are not sure of the correctness of the algorithm, since we do
+up to now, we are not sure of the running time of the algorithm, since we do
 not know whether an implication can be refined twice, hence if the stack can
-grow more than twice the number of implications in $\I$ (asymptotically). Still, if an implication is refined more than one time, the elements stacked shrink in size. Hence we are likely to have a loop requiring in the worst case $O(|\I|)$ to terminate. Because we are doubtful about this assumption, we do not integrate it in complexity estimation. This leads to an approximation of the overhaul time complexity. Indeed, even though we do not know the number of time one could iterate over the repeat loop, we still have nested
+grow more than twice the number of implications in $\I$. Still, if an implication is refined more than one time, the elements stacked shrink in size. Hence we are likely to have a loop requiring in the worst case $O(|\I|)$ to terminate. Because we are doubtful about this assumption, we do not integrate it in complexity estimation. This leads to an approximation of the overall time complexity. Indeed, even though we do not know the number of times one could iterate over the repeat loop, we still have nested
 iterations over implications of $\I$ and $\I_c$. Furthermore, because the run
 over implications of $\I_c$ contains computations of elements in $\I$, the 
-overhaul algorithm may be cubic in the number of premises in $\I$ (that is $O(|\B|^2|\I|)$). Therefore, this would be the worst time complexity.
+overall algorithm may be cubic in the number of premises in $\I$ (that is $O(|\B|^2|\I|)$). Therefore, this would be the worst time complexity.
 
 \vspace{1.2em}
 
@@ -1818,7 +1817,7 @@ research some ideas helping in approaching the correctness of \textsc{AFP}. Neve
 	procedure. For instance, we may observe that at each step the remaining
 	set of premises of $\I$ are a sufficient set of counter-examples for $\I_c$ with respect to $\I$. More than this, this may also be the case for $\mathcal{S} \cup \B_i$ where $B_i$ denotes the remaining set of premises of $\I$ at step $i$. If a premise is a counter example, it is likely to
 	be pushed in $\mathcal{S}$ so that $mathcal{S} \cup \B_i$ does not change
-	overhaul. Knowing that an element of the stack cannot be larger than its closure, and that if an implication can be refine more than one time, then 
+	overall. Knowing that an element of the stack cannot be larger than its closure, and that if an implication can be refine more than one time, then 
 	in the worst case all elements of the stack may shrink in size because $|\Sg|$ is finite. Therefore, termination of the repeat-until loop should be guaranteed, allowing for reducing the size of sufficient set of premises by 1 at each step of the main loop.
 \end{itemize}
 \noindent In spite of the lack of proof or counter-example, we can still provide a trace to see how does \textsc{AFP} work for real.
@@ -1903,13 +1902,13 @@ algorithms. To summarize, we studied:
 	\item[-] \textsc{BercziMinimization}, $O(|\B|^2|\I|)$,
 	\item[-] \textsc{AFPMinimization}, with a complexity supposed to be greater than $|\B|^2|\I|$.
 \end{itemize}
-\noindent Note that we did not truly listed all the algorithm we have been
+\noindent Note that we did not truly listed all the algorithms we have been
 talking about more than the algorithms we will indeed study in practical terms
 in the next chapter. As one can observe, at least 3 of the algorithms have 
 the same complexity even though being quite different. It turns out anyway that
 among the first three algorithms, \textsc{MinCover, DuquenneMinimization} are
 quite similar. Indeed they both rely on using quasi-closure and right-closure. Those steps first issued in works by Day in \cite{day_lattice_1992}, Duquenne-Guigues in \cite{duquenne_variations_2007, guigues_familles_1986}, Wild in \cite{wild_theory_1994, wild_computations_1995, wild_implicational_1989} have been recently discussed
-by Boros and al in \cite{boros_strong_2017}. On the other hand \textsc{MaierMinimization} and \textsc{DuquenneMinimization} share redundancy elimination as a first step, being the last part of \textsc{MinCover}. The most striking difference of \textsc{MaierMinimization} with the two previous algorithms (or in fact all other algorithms but \textsc{AusielloMinimization} being based on \textsc{MaierMinimization}) is that the resulting implication base may not be the Duquenne-Guigues basis. Furthermore, where the two first functions need at most two closure computations per implication, we may need three for Maier's algorithm. This could suppose that \textsc{MaierMinimization} is worst in practice than \textsc{DuquenneMinimization} and \textsc{MinCover}. However, this argument is opposed to redundancy elimination of Duquenne's and Maier's functions. Removing several implications lighten subsequent loops and closure computations. Because \textsc{MinCover} does not perform redundancy elimination beforehand, there is also a chance that it is more expensive than the two others procedures, at least with non-minimum base. Still, it uses redundancy elimination even though an implication being redundant in \textsc{MinCover} may not be considered as redundant in Maier's terms (because of right-closure in the latter one). Nevertheless, we still have a common point within those three first procedures: we are minimizing a given theory. Quite the opposite, \textsc{BercziMinimization} and \textsc{AFPMinimization} are building a canonical representation of an input basis. For \textsc{DuquenneMinimization} however, even if we are indeed minimizing $\I$ by removing its redundant implications, we are also building our result. Speaking of theoretical complexity, it seems like this building approach is not the most efficient. Still, we may keep in mind that we based our study of complexity on \textsc{LinClosure} which may not be the fastest closure algorithm in practice (see \cite{bazhanov_optimizations_2014}). 
+by Boros and al in \cite{boros_strong_2017}. On the other hand \textsc{MaierMinimization} and \textsc{DuquenneMinimization} share redundancy elimination as a first step, being the last part of \textsc{MinCover}. The most striking difference of \textsc{MaierMinimization} with the two previous algorithms (or in fact all other algorithms but \textsc{AusielloMinimization} being based on \textsc{MaierMinimization}) is that the resulting implication base may not be the Duquenne-Guigues basis. Furthermore, where the two first functions need at most two closure computations per implication, we may need three for Maier's algorithm. This could suggest that \textsc{MaierMinimization} is worse in practice than \textsc{DuquenneMinimization} and \textsc{MinCover}. However, this argument is opposed to redundancy elimination of Duquenne's and Maier's functions. Removing several implications lighten subsequent loops and closure computations. Because \textsc{MinCover} does not perform redundancy elimination beforehand, there is also a chance that it is more expensive than the two others procedures, at least with non-minimum base. Still, it uses redundancy elimination even though an implication being redundant in \textsc{MinCover} may not be considered as redundant in Maier's terms (because of right-closure in the latter one). Nevertheless, we still have a common point within those three first procedures: we are minimizing a given theory. Quite the opposite, \textsc{BercziMinimization} and \textsc{AFPMinimization} are building a canonical representation of an input basis. For \textsc{DuquenneMinimization} however, even if we are indeed minimizing $\I$ by removing its redundant implications, we are also building our result. Speaking of theoretical complexity, it seems like this building approach is not the most efficient. Still, we may keep in mind that we based our study of complexity on \textsc{LinClosure} which may not be the fastest closure algorithm in practice (see \cite{bazhanov_optimizations_2014}). 
 
 
 \paragraph{Conclusion} In this chapter, we studied several algorithms for 
