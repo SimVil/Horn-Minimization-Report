@@ -280,19 +280,7 @@ In fact, this error has already been pointed out in 1995 by Wild in
 \end{algorithm}
 
 \noindent Here, equivalence with \textsc{MinCover} is clear. The only difference
-is the order in which operations are performed. Even though the 2 algorithms 
-rely on the same computation, it is worth noting a particular case where the
-algorithm by Day may fail. Consider a system not being reduced, e.g:
-
-\[ \I =  \{ b \imp ac, \ c \imp a, \  c \imp b \} \]
-
-\noindent we have:
-\begin{itemize}
-	\item[-] \textsc{MinCover} output: $\{ b \imp abc, \ c \imp abc \}$,
-	\item[-] \textsc{DayMinimization} output: $ \{ b \imp abc, \ ac \imp abc, \  c \imp abc \}$
-\end{itemize}
-In general, performing right-closure before redundancy elimination, as in 
-\textsc{MinCover} avoids this problem. 
+is the order in which operations are performed. 
 
 \vspace{1.2em}
 
