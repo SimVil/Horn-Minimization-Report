@@ -36,7 +36,7 @@ files, structured as follows:
 	\item[-] the first line contains the number of attributes and the number of
 	implications, separated by a space,
 	\item[-] because of the \lil{Bitset} representation, an implication is 
-	written as lists of indices, premise and conclusion, separated by ">". Indices are also space separated.
+	written as lists of indices, premise and conclusion, separated by \textit{">"}. Indices are also space separated.
 \end{itemize}
 For instance, consider our running example from the previous chapter:
 $\Sg = \{ a, \ b, \  c, \  d, \  e, \ f \}$ and $\I = \{ ab \imp cde, \ cd \imp f, \ c \imp a, \ d \imp b, \  abcd \imp  ef \}$. Considering $a$ indexed as 0 and $f$ indexed as 5, the corresponding \lil{.imp} file will be:
@@ -55,7 +55,7 @@ $\Sg = \{ a, \ b, \  c, \  d, \  e, \ f \}$ and $\I = \{ ab \imp cde, \ cd \imp 
 
 \subsection{Randomly generated data}
 
-This paragraph is important for all following experiences.
+This paragraph is important for all following experiment.
 We would like to put the emphasis on the way we randomly generate sets and 
 implications. First, let us focus on set generation. We use \lil{boost::random} 
 and \lil{time} libraries for generating pseudo-random numbers. In particular 
@@ -89,11 +89,7 @@ another randomisation based on Armstrong rules \cite{armstrong_dependency_1974, 
 	\item[-] $\I \models A \imp B$ and $ \I \models B \cup C \imp D$, then 
 	$\I \models A \cup C \imp D$ (\midemp{pseudo-transitivity})
 \end{itemize}
-\noindent Therefore, when we generate theories with an increasing attribute sets, given a number of implications $|\B|$, we only generate randomly a part of (by tenth for simplicity) and we use randomly Armstrong rules to generate
-the remainder. This creates then a certain amount of redundancy even if $|\Sg| \gg |\B|$. Nevertheless, for the other case around, redundancy is very likely to
-be built in, since there is much more implications than attributes. In this case
-we just generates the required number of implications. Ideally, we would like to
-generate a certain amount of non-redundancy for which we did not do enough research to find a solution. 
+\noindent Therefore, when we generate theories with an increasing attribute sets, given a number of implications $|\B|$, we only generate randomly a part of (by tenth for simplicity) those implications and we use randomly Armstrong rules to generate the remainder. This creates then a certain amount of redundancy even if $|\Sg| \gg |\B|$. Nevertheless, for the other case around, redundancy is very likely to be built in, since there is much more implications than attributes. In this case we just generate the required number of implications. Ideally, we would like to supply a certain amount of non-redundancy for which we did not do enough research to find a solution. 
 
 \vspace{1.2em}
 
