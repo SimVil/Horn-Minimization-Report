@@ -98,7 +98,7 @@ it seems like this is sufficient for supplying us with theories having informati
 
 \subsection{Real data}
 
-In this part we will be interested in application to real datasets. The application we used is FCA (Formal Concept Analysis) since the framework we use is dedicated for this field. We will first present it briefly and its correlation with our minimization issue, before describing some real datasets we have been using and their characteristics.
+In this part we will be interested in application to real datasets. The real application we used is FCA (Formal Concept Analysis) since the framework we use is dedicated to this field. We will first present it briefly and its correlation with our minimization issue, before describing some real datasets we have been using and their characteristics.
 
 \subsubsection{Introduction to FCA}
 
@@ -162,7 +162,7 @@ contains multi-valued attributes, we will need \belemp{FCA-scaling}. We will not
 go into technical details. The idea however is the following:
 \begin{itemize}
 	\item[-] for continuous attributes (e.g: size of a plant) we can create
-	disjoint classes based on intervals allowing for new binary attributes
+	disjoint classes based on intervals allowing for new binary attributes,
 	\item[-] for discrete attributes (e.g: zone of living) we can create an
 	attribute per existing value.
 \end{itemize}
@@ -208,7 +208,7 @@ any true knowledge about biology, this stands only for appealing examples.
 
 \vspace{1.2em}
 
-Eventually, we shall discuss various possible basis one can build out of a context. We will use 5 of them: the canonical basis, the minimum basis resulting from Maier's algorithm (twice), the basis of minimal generators and the proper basis. We already discussed the two first ones. We derive them from the non minimum:
+Eventually, we shall discuss various possible bases one can build out of a context. We will use 5 of them: the canonical basis, the minimum basis resulting from Maier's algorithm (twice), the basis of minimal generators and the proper basis. We already discussed the two first ones. We derive them from the non minimum:
 \begin{itemize}
 	\item[(i)] minimal generators: a set $X$ is a minimal generator of its closure $\I(X)$ if it is minimal in $[ X]_{\I}$. The basis will contain
 	right-closed implications $X \imp \I(X)$ where $X$ is a minimal generator,
@@ -219,16 +219,13 @@ Eventually, we shall discuss various possible basis one can build out of a conte
 		
 	in words, $X^{\bullet}$ is the set of attributes in the closure of $X$ to
 	which no proper subset of $X$ can lead. $X$ is the \textit{"minimal"} set required to get those attributes in $\I(X)$. We redirect the reader to 
-	\cite{ganter_conceptual_2016} for more details. If $X^{\bullet} = \I(X) - X$, $X^{\bullet}$ is pseudo-closed. In fact, this union operation is somehow the operation we use in the second loop of \textsc{MinCover} when
-	computing when computing quasi-closure on the left side of implications.
-	It is also used in \cite{duquenne_variations_2007} to prove \textsc{DuquenneMinimization}.
+	\cite{ganter_conceptual_2016} for more details. If $X^{\bullet} = \I(X) - X$, $X^{\bullet}$ is pseudo-closed. In fact, we already presented this operation when discussing left-saturation in \textsc{MinCover}.	It is also used in \cite{duquenne_variations_2007} to prove \textsc{DuquenneMinimization}.
 \end{itemize}
-\noindent We use the theory produced by \textsc{MaierMinimization} on both proper and minimal generator basis since the results may differ. algorithms to compute those basis from a context are included in the code we got from \url{https://github.com/yazevnul/fcai}. We give pseudo-code algorithm here, but we will not review them in details. \textsc{MininalGeneratorBasis} (algorithm \ref{alg:MinGen}) generates minimal 
+\noindent We use the theory produced by \textsc{MaierMinimization} on both proper and minimal generator basis since the results may differ. algorithms to compute those basis from a context are included in the code we got from \url{https://github.com/yazevnul/fcai}. We give pseudo-code of the algorithms here, but we will not review them in details. \textsc{MininalGeneratorBasis} (algorithm \ref{alg:MinGen}) generates minimal 
 generators. recall that $>_{M}$ is lectic ordering in $M$. Given a set we popped
 from $\mathcal{Q}$, we test all sets with only 1 more elements and lectically
 greater. Because we begin by the empty set, we are sure to go over all possible
-subsets whenever they are to be investigated. Using lectic ordering avoids to
-test a subset twice. Note that implication of $\I$ are indeed right-close.
+subsets whenever they are to be investigated. Using lectic ordering avoids testing a subset twice. Note that implications of $\I$ are indeed right-close.
 Moreover, the conditional statement for adding an implication in $\I$ is useful
 since an equivalence class can contain only one set. This (closed) set will
 be by definition minimal, even though the corresponding implication is useless,
@@ -315,7 +312,7 @@ whence the test.
 
 Algorithm \textsc{ProperBasis} (\ref{alg:proper}) computes proper implications of a given context. Again, starting from $\emptyset \imp \emptyset''$ we cover all possibilities. For all implications of $\I$ we try to build new sets out of
 its premises and a given attribute. Observe that $D := C'' - C$ is the \textit{"first part"} of saturating $C$. If $C$ is not closed, then we may refine $D$ by removing elements so that $D = C^{\bullet}$ after the $D \neq \emptyset$ conditional statement. Especially the second for loop, which removes
-from $D$ all element of $C''$ we would get with another implication than $C \imp D$.
+from $D$ all elements of $C''$ we would get with another implication than $C \imp D$.
 
 \vspace{1.2em}
 
@@ -328,7 +325,7 @@ Having reviewed the application to FCA as much as the main definitions we shall 
 
 For our tests, we took the datasets used in \cite{bazhanov_optimizations_2014} from the UCI Machine Learning repository \url{https://archive.ics.uci.edu/ml/datasets.html}. Therefore, all scaling credits go to the authors of \cite{bazhanov_optimizations_2014}: Sergei Obiedkov and Konstantin Bazhanov. They are the following ones:
 \begin{itemize}
-	\item[-] \midemp{"Zoo"}: it contains animals described by attributes such as "mammals", their number of legs and so forth. Because all attributes are discrete valued, the dataset is scaled as explained previously. For 101 animals, we go from 17 attributes to 28 by scaling.
+	\item[-] \midemp{"Zoo"}: it contains animals described by attributes such as \textit{"mammals"}, their number of legs and so forth. Because all attributes are discrete valued, the dataset is scaled as explained previously. For 101 animals, we go from 17 attributes to 28 by scaling.
 	\item[-] \midemp{"Flare"}: describes various solar flares by their position, size, flare classification, activity... With 1389 objects, we ended up on 49 attributes by flattening all multi-valued ones.
 	\item[-] \midemp{"Breast cancer"}: diagnostic of breast cancer. For 286 patients, we have 9 multi-valued attributes (nominal or ranged). Getting rid of the first attribute, and removing values never assigned, we end up
 	on 43 attributes by scaling.
@@ -401,8 +398,8 @@ for this closure method. We will keep as the \textit{"best version"} the most ef
 \vspace{1.2em}
 
 Usually we will compare two versions of each algorithm. Moreover, improving
-the procedures will rely on generating random basis with fixing either the
-number of attributes ($|\Sg|$) or the number of implications ($|\B|$). Recall from the paragraph dedicated to random generation that to avoid constant non-redundancy when the number of attributes grows, we generate only a random part of a given number of implications and then, use randomly Armstrong rules to increase the size of the basis up to our need. When $|\B|$ evolves however,
+the procedures will rely on generating random bases with fixing either the
+number of attributes ($|\Sg|$) or the number of implications ($|\B|$). Recall from the paragraph dedicated to random generation that to avoid constant non-redundancy when the number of attributes grows, we generate only a random part of a given number of implications and then, use Armstrong rules randomly to increase the size of the basis up to our need. When $|\B|$ evolves however,
 we just generate implications since redundancy may occur often.
 
 \subsection{\textsc{MinCover}}
@@ -415,7 +412,7 @@ $A \imp B$ in counters may be as complex as \textsc{LinClosure} itself:
 \begin{itemize}
 	\item[-] if the data structure used for \textit{list} in \textsc{LinClosure}
 	is a chained list, then removing $A \imp B$ from some \textit{list}[$a$], $a \in A$ is $O(|\B|)$. Because this has to be done for all $a \in A$, the 
-	overhaul operation should be $O(|\I|)$, like \textsc{LinClosure} and in particular, the initialization step
+	overall operation should be $O(|\I|)$, like \textsc{LinClosure} and in particular, the initialization step
 	\item[-] if the data structure is an array, there are again two possibilities. Either we store in \textit{list}[$a$] directly implications or indices of implications in $\I$, but then finding and removing an implication will be $O(|\I|)$. Or we can use marking procedure to store a boolean value at some index $i$ representing the $i-th$ implication to know
 	whether or not the $i$-th implication should belong to \textit{list}[$a$]. Removing an implication then may be $O(|\Sg|)$. However, we should take care
 	of updating all the boolean values  if we remove an implication from $\I$, because the $i$-th index may not correspond to the implication $i$ anymore. To avoid this update, we can in fact do not remove implications in $\I$ at
@@ -483,7 +480,7 @@ Still, because benchmarking \textsc{Closure} and \textsc{LinClosure} on their ow
 
 \vspace{1.2em}
 
-One could argue that the algorithms we tested both used \textsc{Closure} in the second loop, altering the overhaul complexity. Indeed, but as we said, \textsc{LinClosure} performs much worse than \textsc{Closure} so that the practical complexity is driven by \textsc{LinClosure}. For \textsc{MinCover}
+One could argue that the algorithms we tested both used \textsc{Closure} in the second loop, altering the overall complexity. Indeed, but as we said, \textsc{LinClosure} performs much worse than \textsc{Closure} so that the practical complexity is driven by \textsc{LinClosure}. For \textsc{MinCover}
 we can conclude that \textsc{Closure} is a better choice.
 
 \subsection{\textsc{DuquenneMinimization}}
@@ -598,7 +595,7 @@ removing them at first sight provides a speed up in following closure computatio
 
 \noindent Since the behaviour of \textsc{MaierMinimization} is somehow similar to \textsc{DuquenneMinimization} we also ran tests on our real data to see which
 closure operators suits well real life (see figure \ref{fig:Maier-barplot}). In
-this figure we omitted \textit{SPECT} because of lack of visibility. However, cases where \textsc{LinClosure} is better are more frequent than for \textsc{DuquenneMinimization}. This is in particular the case for the whole \textit{Vote} dataset. Still, \textsc{Closure} is overhaul more efficient and 
+this figure we omitted \textit{SPECT} because of lack of visibility. However, cases where \textsc{LinClosure} is better are more frequent than for \textsc{DuquenneMinimization}. This is in particular the case for the whole \textit{Vote} dataset. Still, \textsc{Closure} is overall more efficient and 
 we will keep the associated version as the fastest one.
 
 
@@ -842,7 +839,7 @@ Hence we test here two versions: 1 - only using \textsc{Closure}, 2 - using
 it may be too heavy (regarding the structure of \textsc{AFPMinimization}) for operations we already developed. Results of our tests are represented in 
 figure \ref{fig:AFP-Prune}. As in previous cases we tested both $|\Sg|$ and
 $|\B|$. While it appears as in most of the algorithm we studied that even
-under evolution of $|\B|$, \textsc{Closure} is a clear winner, the overhaul
+under evolution of $|\B|$, \textsc{Closure} is a clear winner, the overall
 behaviour informs us on the complexity of \textsc{AFPMinimization}. In particular it appears that $|\Sg|$ has only a linear cost while $|\B|$ is
 polynomial. This tells us that the repeat-until loop dealing with the stack
 in \textsc{AFP} does not require a time proportional to $|\Sg|$. However it
@@ -859,7 +856,7 @@ this experiment as a general proof of complexity.
 
 During all this section we have been testing our minimization procedures with two closure algorithms: \textsc{Closure} and \textsc{LinCLosure}. From all of
 our tests it seemed like \textsc{LinClosure} performs worse than the 
-other operator. Potentially, it becomes faster when we deal with a very large amount of implications as shown with \textsc{DuquenneMinimization} and \textsc{MaierMinimization}. However when tested under real data, it seems like \textsc{Closure} remains, within our set of parameters the best operator This is in accordance with conclusions and hypothesis drawn in
+other operator. Potentially, it becomes faster when we deal with a very large amount of implications as shown with \textsc{DuquenneMinimization} and \textsc{MaierMinimization}. However when tested under real data, it seems like \textsc{Closure} remains, within our set of parameters the best operator. This is in accordance with conclusions and hypothesis drawn in
 \cite{bazhanov_optimizations_2014} about efficiency of \textsc{LinClosure} as compared to the effective structure of real data and randomly generated systems. Furthermore, those tests allowed us to have a glimpse of the correspondence between theoretical and practical complexity. Also they began to draw argument of practical interest with redundancy elimination. Still, we may be able to find various more combinations of closure operations to test to see which one is the best. For us, in the meantime of the master thesis and regarding the performance of \textsc{LinClosure} it seemed that our tests were sufficient. Now that we found out which version of each algorithm was the fastest, we can move forward to further tests and joint comparison.
 
 \begin{figure}[H]
@@ -946,7 +943,7 @@ First, one can observe the wide range of performances. On the one hand,
 Regarding the difference between \textsc{MinCover} and \textsc{DuquenneMinimization}, observe that in general, the algorithm by Duquenne is faster on non-minimum bases and slightly slower on already minimum ones (but the minimum (proper) case we will consider after). In both cases, one hypothesis to explain those gaps could be both redundancy elimination and limitation of closure computations in the second loop of \textsc{DuquenneMinimization}. The number of closure computations in \textsc{MinCover} is likely to be constant whatever the case is, even though
 those operations become lighter with the reduction of the input basis. In \textsc{DuquenneMinimization} however, apart from first left-saturation and
 redundancy elimination allowing for several savings in closure computations, we stop an iteration of the second loop whenever some quasi-closed premise is not
-pseudo-closed. This break point permits to omit closure computations and in practice, thanks to lectic ordering, we may not need to go over all implications of the output base to check whether an implication is redundant or not. The only case when the second loop should require more computations is when the base is already minimum, because for each step of the second loop, we have to go over all implications of the growing output system. As remarked in most of execution times, when the basis is already minimum \textsc{DuquenneMinimization} performs somehow slightly worse than 
+pseudo-closed. This break point permits to omit closure computations and in practice, thanks to lectic ordering, we may not need to go over all implications of the output base to check whether an implication is redundant or not. The only case where the second loop should require more computations is when the base is already minimum, because for each step of the second loop, we have to go over all implications of the growing output system. As remarked in most of execution times, when the basis is already minimum \textsc{DuquenneMinimization} performs somehow slightly worse than 
 \textsc{MinCover}, which could be explained by the previous hypothesis. However,
 as we mentioned at the beginning of this paragraph, when it comes at minimizing
 the minimum base we obtained from the proper one, \textsc{DuquenneMinimization}
