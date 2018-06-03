@@ -1,16 +1,16 @@
 % ============================================================================ %
-% Section: Math notions
+% Section: Definition, Examples
 % ============================================================================ %
 
-% subsection: Sets, implications, closure system, functional dependency
 
-\subsection{Elements of set theory}
+% ==== Closure operations ====
+\subsection{Closure and implications}
 
 \begin{frame}
 \frametitle{Closure operator and systems}
 
 Set $\Sg$ of attributes. A map $\varphi: 2^{\Sg} \imp 2^{\Sg}$ is a 
-\turemp{closure operator} if, $\forall X, Y, Z \subseteq \Sg$:
+\turemp{closure operator} if, $\forall X, Y \subseteq \Sg$:
 \begin{itemize}
 	\item $X \subseteq \varphi(X)$ \quad \asbemp{(increasing)}
 	\item $X \subseteq Y \imp \varphi(X) \subseteq \varphi(Y)$ 
@@ -22,7 +22,6 @@ Set $\Sg$ of attributes. A map $\varphi: 2^{\Sg} \imp 2^{\Sg}$ is a
 
 Some details:
 \begin{itemize}
-	% \item ($\Sg$, $\varphi$) is a closure space,
 	\item X is \turemp{closed} if $X = \varphi(X)$,
 	\item $\Sg^\varphi$ set of closed sets: \turemp{closure system}.
 	\item $\Sg^\varphi$ is closed under \turemp{intersection}, contains $\Sg$.
@@ -73,10 +72,10 @@ Some details:
 	\draw[amethyst, fill=magenta, fill opacity=0.1, thick] (f1) circle (0.3);
 	
 	\draw[alizarine, 
-		thick,
-		rounded corners,
-		fill=alizarine, 
-		fill opacity=0.21]
+	thick,
+	rounded corners,
+	fill=alizarine, 
+	fill opacity=0.21]
 	(2, 0.8) -- (2.3, 0.8) -- (2.3, -0.4) -- (3, -1.1) --
 	(3.7, -0.4) -- (4, -0.1) -- (4.4, -0.5) -- (3, -1.9) --
 	(1.7, -0.6) -- (1.7, 0.8) -- (2, 0.8);
@@ -88,6 +87,7 @@ Some details:
 
 \end{frame}
 
+
 \begin{frame}
 \frametitle{Implications}
 
@@ -97,7 +97,7 @@ $A, B \subseteq \Sg$. An \turemp{implication} is:
 	\item relation: \midemp{"If we have A, we have B"}. (different from 
 	\turemp{causality})
 	\item $M \subseteq \Sg$ \turemp{model} of $A \imp B$ if
-		 \[B \subseteq M \lor A \nsubseteq M \]
+	\[B \subseteq M \lor A \nsubseteq M \]
 	denoted $M \models A \imp B$, $A \imp B$ \turemp{follows} from $M$.
 \end{itemize}
 
@@ -117,10 +117,10 @@ Set of implications $\I$: \turemp{implication system}.
 
 Given $\I$ an implication system:
 \begin{itemize}
-	\item closure operator $\I(X)$: \turemp{smallest model} (inclusion wise) of 
-	$\I$ containing $X$, $X \subseteq \Sg$. 
-	\item Models of $\I$ form a \turemp{closure system}:
-		\[ \Sg^{\I} = \{ M \subseteq \Sg \ | \ M = \I(M) \} \]
+\item closure operator $\I(X)$: \turemp{smallest model} (inclusion wise) of 
+$\I$ containing $X$, $X \subseteq \Sg$. 
+\item Models of $\I$ form a \turemp{closure system}:
+\[ \Sg^{\I} = \{ M \subseteq \Sg \ | \ M = \I(M) \} \]
 \end{itemize}
 
 \vspace{1.2em}
@@ -139,18 +139,18 @@ Important property:
 
 Let $\I$ be an implication system:
 \begin{itemize}
-	\item $\Sg = \{ a, \ b, \ c, \ d, \ e \}$,
-	\item $\I = \{ ab \imp c, \ bd \imp a, ce \imp abd \}$
+\item $\Sg = \{ a, \ b, \ c, \ d, \ e \}$,
+\item $\I = \{ ab \imp c, \ bd \imp a, ce \imp abd \}$
 \end{itemize}
 
 \vspace{1.2em}
 
 We have:
 \begin{itemize}
-	\item $\I(b) = b$, $b$ is \turemp{closed}, hence a \turemp{model} of $\I$,
-	\item $\I(bd) = abcd$, $bd$ is \turemp{not} a model \quad 
-		\asbemp{($abcd$ is)}.
-	\item $\emptyset$ is also a model.
+\item $\I(b) = b$, $b$ is \turemp{closed}, hence a \turemp{model} of $\I$,
+\item $\I(bd) = abcd$, $bd$ is \turemp{not} a model \quad 
+\asbemp{($abcd$ is)}.
+\item $\emptyset$ is also a model.
 \end{itemize}
 
 \end{frame}
@@ -159,15 +159,29 @@ We have:
 \frametitle{Applications}
 
 \begin{itemize}
-	\item Relational Databases,
-	\item Formal Concept analysis,
-	\item Conceptual exploration,
-	\item Linguistics ?
+\item Relational Databases,
+\item Formal Concept analysis,
+\item Conceptual exploration,
+\item Linguistics ?
 \end{itemize}
 \end{frame}
 
-% subsection: hypergraphs
 
-% subsection: logic
 
-% subsection: open to lattice theory and congruences
+% ==== Implication theories and minimization ====
+
+\subsection{Minimization task}
+
+\begin{frame}
+\frametitle{Redundancy, equivalence}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Minimum basis}
+
+
+
+
+\end{frame}
