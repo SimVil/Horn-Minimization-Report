@@ -37,24 +37,36 @@
 
 \end{frame}
 
+{\setbeamertemplate{frametitle}{
+		\vspace{-0.3em}
+	\begin{beamercolorbox}[ht=3.5em, wd=0.5\paperwidth]{frametitle}
+		\insertframetitle
+		\usebeamerfont{framesubtitle}%
+		\usebeamercolor[fg]{framesubtitle}%
+		
+	\end{beamercolorbox}
 
+}
 \begin{frame}
 \frametitle{Introduction}
 
 \begin{itemize}
 	\item correlation relations (\turemp{implications})
 	\begin{itemize}
-		\item[\color{midnight} Ex:] {\color{midnight} film genres, 
-			\textit{cyber-punk $\imp$ science fiction}}
+		\item[] {\color{midnight} e.g: movies and genres, 
+			\textit{cyber-punk $\imp$ sci-fi}}
 	\end{itemize}
 	
 	\vspace{1.2em}
 	
 	\item minimization without loss of knowledge
+	\begin{itemize}
+		\item[] {\color{midnight} e.g: \textit{sci-fi $\imp$ sci-fi} is useless}
+	\end{itemize}
 	
 	\vspace{1.2em}
 	
-	\item 
+	\item \turemp{study} of existing algorithms
 \end{itemize}
 
 \end{frame}
@@ -66,17 +78,18 @@
 \tableofcontents
 
 \end{frame}
-}
+}}
 
 
 
 \section{I - Horn theories}
 \input{Slides/Defs.tex}
 
-\section{II - Algorithms for minimization}
+\section{II - Some Algorithms}
 \input{Slides/Algos.tex}
 
 \section{III - Experiments}
+\input{Slides/Exp.tex}
 
 
 \end{document}

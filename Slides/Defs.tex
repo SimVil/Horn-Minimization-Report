@@ -20,70 +20,12 @@ Set $\Sg$ of attributes. A map $\varphi: 2^{\Sg} \imp 2^{\Sg}$ is a
 
 \vspace{1.2em}
 
-Some details:
+Associated terminology:
 \begin{itemize}
 	\item X is \turemp{closed} if $X = \varphi(X)$,
 	\item $\Sg^\varphi$ set of closed sets: \turemp{closure system}.
 	\item $\Sg^\varphi$ is closed under \turemp{intersection}, contains $\Sg$.
 \end{itemize}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{Closure Example}
-
-\begin{columns}
-
-\column{0.5\textwidth}
-
-
-
-\begin{itemize}
-	\item Directed graph $G = (V, E)$.
-	\item \turemp{Closure} $\varphi(X)$ of $X \subseteq V$: every 
-	vertices reachable from $X$.
-	\item[{\color{alizarine}$\blacktriangleright$}] $\varphi(\{A, B \}) = \{A, 
-	B, C, D \}$.
-	\item[{\color{amethyst}$\blacktriangleright$}] $\varphi(\{F \}) = \{F \}$, 
-	$\{F \}$ is \turemp{closed}.
-\end{itemize}
-
-
-\column{0.5\textwidth}
-\begin{figure}[h]
-	\centering
-	
-	\begin{tikzpicture}
-	
-	\node[Vertex, label=above:{E}] (e1) at (3, 1.5) {};
-	\node[Vertex, fill=alizarine, label=left:{A}] (a1) at (2, 0.5) {};
-	\node[Vertex, label=right:{D}] (d1) at (4, -0.5) {};
-	\node[Vertex, fill=alizarine, label=left:{B}] (b1) at (2, -0.5) {};
-	\node[Vertex, label=below:{C}] (c1) at (3, -1.5) {};
-	\node[Vertex, fill=amethyst, label=below:{F}] (f1) at (4, 0.5) {};
-	
-	\draw[->] (e1) -- (a1);
-	\draw[->] (e1) -- (f1);
-	\draw[->] (a1) -- (b1);
-	\draw[->] (a1) -- (c1);
-	\draw[->] (c1) -- (d1);
-	\draw[->] (c1) -- (b1);
-	
-	\draw[amethyst, fill=magenta, fill opacity=0.1, thick] (f1) circle (0.3);
-	
-	\draw[alizarine, 
-	thick,
-	rounded corners,
-	fill=alizarine, 
-	fill opacity=0.21]
-	(2, 0.8) -- (2.3, 0.8) -- (2.3, -0.4) -- (3, -1.1) --
-	(3.7, -0.4) -- (4, -0.1) -- (4.4, -0.5) -- (3, -1.9) --
-	(1.7, -0.6) -- (1.7, 0.8) -- (2, 0.8);
-	
-	\end{tikzpicture}
-	\caption{Closure of a vertex in a directed graph}
-\end{figure}
-\end{columns}
 
 \end{frame}
 
@@ -94,19 +36,20 @@ Some details:
 $A, B \subseteq \Sg$. An \turemp{implication} is:
 \begin{itemize}
 	\item $A \imp B$, $A$ \turemp{premise}, $B$ \turemp{conclusion}.
-	\item relation: \midemp{"If we have A, we have B"}. (different from 
-	\turemp{causality})
-	\item $M \subseteq \Sg$ \turemp{model} of $A \imp B$ if
-	\[B \subseteq M \lor A \nsubseteq M \]
-	denoted $M \models A \imp B$, $A \imp B$ \turemp{follows} from $M$.
+	\item $M \subseteq \Sg$ \turemp{model} of $A \imp B$
+		\begin{itemize}
+			\item[\belemp{$\triangleright$}] $B \subseteq M \lor A \nsubseteq M$ \quad \midemp{$(\simeq B \lor \lnot A)$}
+			\item[\belemp{$\triangleright$}] $M \models A \imp B$, $A \imp B$ follows from $M$.
+		\end{itemize}
+
 \end{itemize}
 
-\vspace{0.5em}
+\vspace{1.2em}
 
 Set of implications $\I$: \turemp{implication system}.
 \begin{itemize}
-	\item $M \models \I$ if each element of $\I$ follows from $M$,
-	\item $\I \models A \imp B$: all models of $\I$ are models of $A \imp B$.
+	\item $\I \models A \imp B$: all models of $\I$ are models of $A \imp B$,
+	\item $\I \models A \imp B$ iff $B \subseteq \I(A)$.
 \end{itemize}
 
 \end{frame}
@@ -115,22 +58,17 @@ Set of implications $\I$: \turemp{implication system}.
 \begin{frame}
 \frametitle{Implications and closure}
 
-Given $\I$ an implication system:
+$\I$ an implication system:
 \begin{itemize}
-\item closure operator $\I(X)$: \turemp{smallest model} (inclusion wise) of 
-$\I$ containing $X$, $X \subseteq \Sg$. 
-\item Models of $\I$ form a \turemp{closure system}:
+\item models of $\I$ form a \turemp{closure system}:
 \[ \Sg^{\I} = \{ M \subseteq \Sg \ | \ M = \I(M) \} \]
-\end{itemize}
 
 \vspace{1.2em}
 
-\begin{lightreminder}
-Important property:
-\begin{itemize}
-	\item $\I \models A \imp B$ iff $B \subseteq \I(A)$
+\item \turemp{closure operator} $\I(X)$: \turemp{smallest model} (inclusion wise) of $\I$ containing $X$, $X \subseteq \Sg$. 
+
+\[ \I(X) = \bigcap \{ M \in \Sg^{\I} \ | \ X \subseteq M \} \]
 \end{itemize}
-\end{lightreminder}
 
 \end{frame}
 
@@ -156,14 +94,61 @@ We have:
 \end{frame}
 
 \begin{frame}
-\frametitle{Applications}
+\frametitle{Closure Example}
 
-\begin{itemize}
-\item Relational Databases,
-\item Formal Concept analysis,
-\item Conceptual exploration,
-\item Linguistics ?
-\end{itemize}
+\begin{columns}
+	
+	\column{0.5\textwidth}
+	
+	
+	
+	\begin{itemize}
+		\item Directed graph $G = (V, E)$.
+		\item \turemp{Closure} $\varphi(X)$ of $X \subseteq V$: every 
+		vertices reachable from $X$.
+		\item[{\color{alizarine}$\blacktriangleright$}] $\varphi(\{A, B \}) = \{A, 
+		B, C, D \}$.
+		\item[{\color{amethyst}$\blacktriangleright$}] $\varphi(\{F \}) = \{F \}$, 
+		$\{F \}$ is \turemp{closed}.
+	\end{itemize}
+	
+	
+	\column{0.5\textwidth}
+	\begin{figure}[h]
+		\centering
+		
+		\begin{tikzpicture}
+		
+		\node[Vertex, label=above:{E}] (e1) at (3, 1.5) {};
+		\node[Vertex, fill=alizarine, label=left:{A}] (a1) at (2, 0.5) {};
+		\node[Vertex, label=right:{D}] (d1) at (4, -0.5) {};
+		\node[Vertex, fill=alizarine, label=left:{B}] (b1) at (2, -0.5) {};
+		\node[Vertex, label=below:{C}] (c1) at (3, -1.5) {};
+		\node[Vertex, fill=amethyst, label=below:{F}] (f1) at (4, 0.5) {};
+		
+		\draw[->] (e1) -- (a1);
+		\draw[->] (e1) -- (f1);
+		\draw[->] (a1) -- (b1);
+		\draw[->] (a1) -- (c1);
+		\draw[->] (c1) -- (d1);
+		\draw[->] (c1) -- (b1);
+		
+		\draw[amethyst, fill=magenta, fill opacity=0.1, thick] (f1) circle (0.3);
+		
+		\draw[alizarine, 
+		thick,
+		rounded corners,
+		fill=alizarine, 
+		fill opacity=0.21]
+		(2, 0.8) -- (2.3, 0.8) -- (2.3, -0.4) -- (3, -1.1) --
+		(3.7, -0.4) -- (4, -0.1) -- (4.4, -0.5) -- (3, -1.9) --
+		(1.7, -0.6) -- (1.7, 0.8) -- (2, 0.8);
+		
+		\end{tikzpicture}
+		\caption{Closure of a vertex in a directed graph}
+	\end{figure}
+\end{columns}
+
 \end{frame}
 
 
@@ -175,12 +160,45 @@ We have:
 \begin{frame}
 \frametitle{Redundancy, equivalence}
 
-\end{frame}
+$\I$ and $\I'$ implication systems:
+\begin{itemize}
+	\item $A \imp B \in \I$ \turemp{redundant} if $\I - \{A \imp B\} \models A \imp B$,
+	\item $\I' \models \I$: all implications of $\I$ follow from $\I'$,
+	\item $\I' \models \I$ and $\I \models \I'$: \turemp{equivalent} bases.
+\end{itemize}
 
+\vspace{1.2em}
+
+\begin{lightreminder}
+	Remind property: \quad {\color{midnight} ($\I^{-} := \I - \{ A \imp B\}$)}
+	\begin{itemize}
+		\item $\I^{-} \models A \imp B$ iff $B \subseteq \I^{-}(A)$
+	\end{itemize}
+\end{lightreminder}
+
+\end{frame}
 
 \begin{frame}
 \frametitle{Minimum basis}
 
+$\I$ \turemp{minimum} if no possible $\I'$ such that:
+\begin{itemize}
+	\item $\I'$ equivalent to $\I$,
+	\item $\I'$ has fewer implications than $\I$.
+\end{itemize}
+
+\vspace{1.2em}
+
+Particular minimum basis:
+\begin{itemize}
+	\item $P \subseteq \Sg$ \turemp{pseudo-closed} in $\I$ if:
+		\begin{itemize}
+			\item[\color{belize} $\triangleright$] $P \neq \I(P)$,
+			\item[\color{belize} $\triangleright$] if $Q \subset P$ and $Q$ pseudo-closed, then $\I(Q) \subseteq P$.
+		\end{itemize}
+	\item \turemp{Duquenne-Guigues} (\turemp{canonical}) base:
+		\[ \{ P \imp \I(P) \ | \ P \; \textit{pseudo-closed } \} \]
+\end{itemize} 
 
 
 
