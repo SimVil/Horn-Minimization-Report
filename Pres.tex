@@ -91,5 +91,61 @@
 \section{III - Experiments}
 \input{Slides/Exp.tex}
 
+{\setbeamertemplate{footline}{
+		\begin{beamercolorbox}[ht=3em, wd=\paperwidth]{footline}
+			\begin{columns}
+				\column{.8\textwidth} % wide left empty space (80%)
+				\column{.2\textwidth} % right space (20%)
+				
+				\begin{flushleft}
+					\vspace{-5em}
+					\hspace{-1em}
+					{\insertauthor \; - \; \insertframenumber / 
+						\inserttotalframenumber} \\
+					\hspace{-1em}
+					{\insertdate}
+				\end{flushleft}
+				
+			\end{columns}
+		\end{beamercolorbox}
+}
+
+\setbeamertemplate{frametitle}{
+	\vspace{-0.3em}
+	\begin{beamercolorbox}[ht=3.5em, wd=0.5\paperwidth]{frametitle}
+		\insertframetitle
+		\usebeamerfont{framesubtitle}%
+		\usebeamercolor[fg]{framesubtitle}%
+		
+	\end{beamercolorbox}
+}
+
+	\begin{frame}
+	\frametitle{Conclusion}
+	
+	Purpose:
+	\begin{itemize}
+		\item \turemp{study} of minimization algorithms.
+	\end{itemize}
+	
+	\vspace{1.2em}
+	
+	Results:
+	\begin{itemize}
+		\item algorithms from various communities,
+		\item in practice: \turemp{redundancy elimination}
+	\end{itemize}
+	
+	\vspace{1.2em}
+	
+	Perspectives:
+	\begin{itemize}
+		\item \turemp{theoretical} study of systems structure, AFP proof and complexity,
+		\item \turemp{experimental} aspect, extend tests.
+	\end{itemize}
+	
+\end{frame}
+}
+
 
 \end{document}

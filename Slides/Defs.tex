@@ -77,80 +77,21 @@ $\I$ an implication system:
 
 Let $\I$ be an implication system:
 \begin{itemize}
-\item $\Sg = \{ a, \ b, \ c, \ d, \ e \}$,
-\item $\I = \{ ab \imp c, \ bd \imp a, ce \imp abd \}$
+	\item $\Sg = \{ a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item $\I = \{ ab \imp cde, cd \imp f, c \imp a, d \imp b, abcd \imp ef \}$.
 \end{itemize}
 
 \vspace{1.2em}
 
 We have:
 \begin{itemize}
-\item $\I(b) = b$, $b$ is \turemp{closed}, hence a \turemp{model} of $\I$,
-\item $\I(bd) = abcd$, $bd$ is \turemp{not} a model \quad 
-\asbemp{($abcd$ is)}.
-\item $\emptyset$ is also a model.
+	\item $\I(b) = b$, $b$ is \turemp{closed}, hence a \turemp{model} of $\I$,
+	\item $\I(ab) = abcdef$, $ab$ is \turemp{not} a model \quad 
+	\asbemp{($abcdef$ is)},
+	\item $\emptyset$ is also a model.
 \end{itemize}
 
 \end{frame}
-
-\begin{frame}
-\frametitle{Closure Example}
-
-\begin{columns}
-	
-	\column{0.5\textwidth}
-	
-	
-	
-	\begin{itemize}
-		\item Directed graph $G = (V, E)$.
-		\item \turemp{Closure} $\varphi(X)$ of $X \subseteq V$: every 
-		vertices reachable from $X$.
-		\item[{\color{alizarine}$\blacktriangleright$}] $\varphi(\{A, B \}) = \{A, 
-		B, C, D \}$.
-		\item[{\color{amethyst}$\blacktriangleright$}] $\varphi(\{F \}) = \{F \}$, 
-		$\{F \}$ is \turemp{closed}.
-	\end{itemize}
-	
-	
-	\column{0.5\textwidth}
-	\begin{figure}[h]
-		\centering
-		
-		\begin{tikzpicture}
-		
-		\node[Vertex, label=above:{E}] (e1) at (3, 1.5) {};
-		\node[Vertex, fill=alizarine, label=left:{A}] (a1) at (2, 0.5) {};
-		\node[Vertex, label=right:{D}] (d1) at (4, -0.5) {};
-		\node[Vertex, fill=alizarine, label=left:{B}] (b1) at (2, -0.5) {};
-		\node[Vertex, label=below:{C}] (c1) at (3, -1.5) {};
-		\node[Vertex, fill=amethyst, label=below:{F}] (f1) at (4, 0.5) {};
-		
-		\draw[->] (e1) -- (a1);
-		\draw[->] (e1) -- (f1);
-		\draw[->] (a1) -- (b1);
-		\draw[->] (a1) -- (c1);
-		\draw[->] (c1) -- (d1);
-		\draw[->] (c1) -- (b1);
-		
-		\draw[amethyst, fill=magenta, fill opacity=0.1, thick] (f1) circle (0.3);
-		
-		\draw[alizarine, 
-		thick,
-		rounded corners,
-		fill=alizarine, 
-		fill opacity=0.21]
-		(2, 0.8) -- (2.3, 0.8) -- (2.3, -0.4) -- (3, -1.1) --
-		(3.7, -0.4) -- (4, -0.1) -- (4.4, -0.5) -- (3, -1.9) --
-		(1.7, -0.6) -- (1.7, 0.8) -- (2, 0.8);
-		
-		\end{tikzpicture}
-		\caption{Closure of a vertex in a directed graph}
-	\end{figure}
-\end{columns}
-
-\end{frame}
-
 
 
 % ==== Implication theories and minimization ====
@@ -200,6 +141,25 @@ Particular minimum basis:
 		\[ \{ P \imp \I(P) \ | \ P \; \textit{pseudo-closed } \} \]
 \end{itemize} 
 
+\end{frame}
 
+
+\begin{frame}
+\frametitle{Small Example}
+
+Let $\I$ be an implication system:
+\begin{itemize}
+	\item $\Sg = \{ a, \ b, \ c, \ d, \ e, \ f \}$,
+	\item $\I = \{ ab \imp cde, cd \imp f, c \imp a, d \imp b, abcd \imp ef \}$.
+\end{itemize}
+
+\vspace{1.2em}
+
+We have:
+\begin{itemize}
+	\item $abcd \imp ef$ is \turemp{redundant}
+	\item $cd \imp f$ can be deleted, if $ab \imp cde$ replaced by $ab \imp cdef$
+	\item canonical basis: $ab \imp abcdef, c \imp ac, d \imp bd$
+\end{itemize}
 
 \end{frame}

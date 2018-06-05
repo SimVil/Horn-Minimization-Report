@@ -1,6 +1,134 @@
 
-\subsection{Real datasets}
+\subsection{Experiments}
 
 \begin{frame}
-\frametitle{UCI Datasets}
+\frametitle{Context}
+
+Practical aspect:
+\begin{itemize}
+	\item context of FCA, previous study of closure operators,	
+	\item use datasets from UCI repository,	
+	\item C++, boost.
+	
+\end{itemize}
+
+\vspace{1.2em}
+
+Theoretical considerations
+\begin{itemize}
+	\item using \textsc{Closure},
+	\item 
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Overhaul results}
+
+{\small
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| c | c || c | c | c | c | c |}
+		\hline \rowcolor{clouds}
+		\multicolumn{2}{c}{$\I$} & \textsc{MinCov} & \textsc{Duq} & \textsc{Maier} & \textsc{Berczi} & \textsc{AFP} \\ \hline
+		
+		\multirow{5}{*}{Flare}
+		& DG           & 0.097 & 0.117 & 0.211 & 27.922 & 115.656 \\
+		& min 1 & 0.134 & 0.194 & 0.288 & 27.750 & 116.594 \\
+		& min 2 & 0.200 & 0.190 & 0.308 & 30.063 & 108.812 \\
+		& proper       & 1.684 & 0.933 & 0.917 & 88.375 & 524.031 \\
+		& mingen       & 16.047 & 7.981 & 7.576 & 160.328 & 2810.620 \\ \hline
+		
+		\multirow{5}{*}{Breast Cancer}
+		& DG           & 0.089 & 0.109 & 0.203 & 33.047 & 90.031 \\
+		& min 1 & 0.108 & 0.126 & 0.243 & 26.578 & 89.516 \\
+		& min 2 & 0.153 & 0.132 & 0.258 & 29.438 & 105.141 \\
+		& proper       & 1.920 & 0.864 & 1.014 & 93.266 & 429.844 \\
+		& mingen       & 2.006 & 1.277 & 1.444 & 102.562 & 598.172 \\ \hline
+		
+	\end{tabular} 
+	\caption{Comparison of the algorithms on real datasets (execution in $s$)}
+	\label{tab:real-exe}
+\end{table}
+}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Observation}
+
+Observations \aliemp{on these data}:
+\begin{itemize}
+	\item cost of \textsc{AFP} and \textsc{BercziMin},
+	\item \textsc{DuquenneMin}, \textsc{MaierMin} efficient and similar on \turemp{non-minimum cases},
+	\item \textsc{MinCover} better on right-closed minimum cases.
+\end{itemize}
+
+\vspace{1.2em}
+
+Test observations:
+\begin{itemize}
+	\item random generation
+	\item 
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Some more results}
+
+\vspace{-1.5em}
+
+\begin{figure}
+	\centering
+\scalebox{0.5}{\input{Pictures/III/Comp/Flare.pgf}}
+
+\caption{Flare - Random against and minimum basis: 49 attr, 3382 imp}
+\label{fig:barplot-flare}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Some more results}
+
+\vspace{-1.5em}
+
+\begin{figure}
+	\centering
+	\scalebox{0.5}{\input{Pictures/III/Comp/SPECT.pgf}}
+	
+	\caption{SPECT - Random against minimum basis: 23 attr, 2169 imp}
+	\label{fig:barplot-spect}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Ideas}
+
+Observations:
+\begin{itemize}
+	\item results of \textsc{MinCover}: proper basis is worse,
+	\item redundant cases: \textsc{Duquenne}, \textsc{Maier} more efficient.
+\end{itemize}
+
+\vspace{0.5em}
+
+Explanations:
+\begin{itemize}
+	\item \turemp{redundancy elimination} as first step,
+	\item \turemp{right-closeness} of basis,
+	\item suggests a study of underlying \turemp{structure}.
+\end{itemize}
+
+\vspace{0.5em}
+
+Boundaries:
+\begin{itemize}
+	\item valid in \aliemp{our context},
+	\item random generation,
+	\item suggests \turemp{extension} of tests.
+\end{itemize}
+
 \end{frame}

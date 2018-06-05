@@ -2,15 +2,185 @@
 % Section: Math notions
 % ============================================================================ %
 
-% subsection: Sets, implications, closure system, functional dependency
+% ==== minimizing algorithms ====
+
+\subsection{Minimizing the input}
 
 \begin{frame}
-\frametitle{Pouet}
+\frametitle{Tools}
+
+Principle:
+\begin{itemize}
+	\item reducing an input base $\I$,
+	
+	\vspace{1.2em}
+	
+	\item algorithms from FCA and databases,
+	
+	\vspace{1.2em}
+	
+	\item
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}
-\frametitle{Pouf}
+\frametitle{First algorithm}
+
+\textsc{MinCover}:
+\begin{itemize}
+	\item from Day, Wild, Duquenne, Guigues (80's)
+	
+	\vspace{0.8em}
+	
+	\item two steps:
+		\begin{itemize}
+			\item[\color{belize} 1.] \turemp{maximize} the knowledge
+			\item[ ] \quad {\color{midnight}  $A \imp B$ becomes $A \imp \I(A)$}
+			
+			\vspace{0.5em}
+			
+			\item[\color{belize} 2.] \turemp{remove} redundant information
+			\item[ ] \quad {\color{midnight}  if $\I(A) = \I^{-}(A)$, $A \imp \I(A)$ is \turemp{redundant}}
+		\end{itemize}
+	
+	\vspace{0.8em}
+	
+	\item output: \turemp{canonical base}.
+\end{itemize}
+
+\vspace{1em}
+
+\begin{lightreminder}
+	Recall: $\I^{-} = \I - \{ A \imp \I(A) \}$	
+\end{lightreminder}
+
 \end{frame}
+
+\begin{frame}
+\frametitle{A variation}
+
+\textsc{DuquenneMin}:
+\begin{itemize}
+	\item variation of \textsc{MinCover} by Duquenne, 2007,
+	\item two steps:
+		\begin{itemize}
+			\item[\color{belize} 1.] \turemp{left-saturation} and \turemp{redundancy} elimination
+			\item[ ] \quad {\color{midnight}  if $B \subseteq \I^{-}(A)$, $A \imp B$ is useless}
+			\item[ ] \quad {\color{midnight}  else $A \imp B$ becomes $ \I^{-}(A) \imp (\I^{-}(A) \cup B)$}
+			
+			\vspace{0.5em}
+			
+			\item[\color{belize} 2.] \turemp{iteratively build} pseudo-closed implications base
+			\item[ ] \quad {\color{midnight} if $\I^{-}(A)$ \turemp{pseudo-closed}, add $\I^{-}(A) \imp \I(A)$ to the result}
+		\end{itemize}
+	
+	\item output: \turemp{canonical base}.
+	
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Database approach}
+
+\textsc{MaierMin}:
+\begin{itemize}
+	\item functional dependency based algorithm, Maier, 80's
+	
+	\item steps:
+		\begin{itemize}
+			\item[\color{belize} 1.] \turemp{redundancy} elimination
+			\item[ ] \quad {\color{midnight}  if $B \subseteq \I^{-}(A)$, remove $A \imp B$}
+			
+			\vspace{0.5em}
+			
+			\item[\color{belize} 2.] \turemp{equivalence classes} reduction
+			\item[ ] \quad {\color{midnight} group implications by premises \turemp{closure}}
+			\item[ ] \quad {\color{midnight} reduce those classes}
+		\end{itemize}
+
+	\item output: minimum basis
+\end{itemize}
+
+\end{frame}
+
+% ==== building algorithm ====
+\subsection{Building the result}
+
+\begin{frame}
+\frametitle{General principle}
+
+Query learning and Angluin algorithm:
+\begin{itemize}
+	\item aim: learn a theory by constructing an \turemp{hypothesis}
+	\item \turemp{oracle} answering \turemp{queries} (questions)
+	\item queries:
+		\begin{itemize}
+			\item[\color{belize} $\triangleright$]
+			 {\color{midnight} \turemp{equivalence}: is our hypothesis equivalent to the target?}
+			\item[\color{belize} $\triangleright$]
+			{\color{midnight} \turemp{membership}: is a set a model of the target?}
+		\end{itemize}
+	\item improve by \turemp{counterexample}
+		\begin{itemize}
+			\item[\color{belize} $\triangleright$]
+			{\color{midnight} \turemp{positive}: model of the target, not of the hypothesis}
+			\item[\color{belize} $\triangleright$]
+			{\color{midnight} \turemp{negative}: model of the hypothesis, not
+			of the target}
+		\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{In our case}
+
+\begin{itemize}
+	\item no oracle to avoid \turemp{randomness},
+	
+	\vspace{1.2em}
+	
+	\item no positive counter-example,
+	
+	\vspace{1.2em}
+	
+	\item premises are sufficient to have negative counter-example.
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{AFP Algorithm}
+\end{frame}
+
+\begin{frame}
+\frametitle{Using minimality constraint}
+
+\textsc{BercziMin}:
+\begin{itemize}
+	\item logic based, Berczi, 2017
+	\item principle:
+		\begin{itemize}
+			\item[\color{belize} 1.] \turemp{build} a basis $\I_c$ against the input $\I$
+			
+			\item[\color{belize} 2.] repeat minimality selection up to \turemp{equivalence}
+			
+			\item[\color{belize} 3.] \turemp{minimality selection}:
+			
+			\item[ ] \quad { \color{midnight} select the next minimal negative counter-example $A$},
+			
+			\item[ ] \quad { \color{midnight} add $A \imp \I(A)$ to $\I_c$}
+			 
+		\end{itemize}
+	\item output: \turemp{canonical} base.
+\end{itemize}
+
+\end{frame}
+
 
 % subsection: hypergraphs
 
