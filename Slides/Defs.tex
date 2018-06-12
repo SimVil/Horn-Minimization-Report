@@ -12,9 +12,9 @@
 Set $\Sg$ of attributes. A map $\varphi: 2^{\Sg} \imp 2^{\Sg}$ is a 
 \turemp{closure operator} if, $\forall X, Y \subseteq \Sg$:
 \begin{itemize}
-	\item $X \subseteq \varphi(X)$ \quad \asbemp{(increasing)}
+	\item $X \subseteq \varphi(X)$ \quad \asbemp{(extensive)}
 	\item $X \subseteq Y \imp \varphi(X) \subseteq \varphi(Y)$ 
-	\quad \asbemp{(isotone)}
+	\quad \asbemp{(monotone)}
 	\item $\varphi(\varphi(X)) = \varphi(X)$ \quad \asbemp{(idempotent)}
 \end{itemize}
 
@@ -22,8 +22,8 @@ Set $\Sg$ of attributes. A map $\varphi: 2^{\Sg} \imp 2^{\Sg}$ is a
 
 Associated terminology:
 \begin{itemize}
-	\item X is \turemp{closed} if $X = \varphi(X)$,
-	\item $\Sg^\varphi$ set of closed sets: \turemp{closure system}.
+	\item $X$ is \turemp{closed} if $X = \varphi(X)$,
+	\item $\Sg^\varphi$ set of closed sets: \turemp{closure system},
 	\item $\Sg^\varphi$ is closed under \turemp{intersection}, contains $\Sg$.
 \end{itemize}
 
@@ -35,11 +35,11 @@ Associated terminology:
 
 $A, B \subseteq \Sg$. An \turemp{implication} is:
 \begin{itemize}
-	\item $A \imp B$, $A$ \turemp{premise}, $B$ \turemp{conclusion}.
-	\item $M \subseteq \Sg$ \turemp{model} of $A \imp B$
+	\item $A \imp B$, $A$ \turemp{premise}, $B$ \turemp{conclusion},
+	\item $M \subseteq \Sg$ \turemp{model} of $A \imp B$:
 		\begin{itemize}
-			\item[\belemp{$\triangleright$}] $B \subseteq M \lor A \nsubseteq M$ \quad \midemp{$(\simeq B \lor \lnot A)$}
-			\item[\belemp{$\triangleright$}] $M \models A \imp B$, $A \imp B$ follows from $M$.
+			\item[\belemp{$\triangleright$}] $B \subseteq M \lor A \nsubseteq M$, \quad \midemp{$(\simeq B \lor \lnot A)$}
+			\item[\belemp{$\triangleright$}] $M \models A \imp B$.
 		\end{itemize}
 
 \end{itemize}
@@ -49,7 +49,6 @@ $A, B \subseteq \Sg$. An \turemp{implication} is:
 Set of implications $\I$: \turemp{implication system}.
 \begin{itemize}
 	\item $\I \models A \imp B$: all models of $\I$ are models of $A \imp B$,
-	\item $\I \models A \imp B$ iff $B \subseteq \I(A)$.
 \end{itemize}
 
 \end{frame}
@@ -65,30 +64,11 @@ $\I$ an implication system:
 
 \vspace{1.2em}
 
-\item \turemp{closure operator} $\I(X)$: \turemp{smallest model} (inclusion wise) of $\I$ containing $X$, $X \subseteq \Sg$. 
+\item \turemp{closure operator} $\I(X)$: \turemp{smallest model} (inclusion wise) of $\I$ containing $X$, $X \subseteq \Sg$: 
 
 \[ \I(X) = \bigcap \{ M \in \Sg^{\I} \ | \ X \subseteq M \} \]
-\end{itemize}
 
-\end{frame}
-
-\begin{frame}
-\frametitle{Small Example}
-
-Let $\I$ be an implication system:
-\begin{itemize}
-	\item $\Sg = \{ a, \ b, \ c, \ d, \ e, \ f \}$,
-	\item $\I = \{ ab \imp cde, cd \imp f, c \imp a, d \imp b, abcd \imp ef \}$.
-\end{itemize}
-
-\vspace{1.2em}
-
-We have:
-\begin{itemize}
-	\item $\I(b) = b$, $b$ is \turemp{closed}, hence a \turemp{model} of $\I$,
-	\item $\I(ab) = abcdef$, $ab$ is \turemp{not} a model \quad 
-	\asbemp{($abcdef$ is)},
-	\item $\emptyset$ is also a model.
+\item $\I \models A \imp B$ iff $B \subseteq \I(A)$.
 \end{itemize}
 
 \end{frame}
@@ -105,15 +85,15 @@ $\I$ and $\I'$ implication systems:
 \begin{itemize}
 	\item $A \imp B \in \I$ \turemp{redundant} if $\I - \{A \imp B\} \models A \imp B$,
 	\item $\I' \models \I$: all implications of $\I$ follow from $\I'$,
-	\item $\I' \models \I$ and $\I \models \I'$: \turemp{equivalent} bases.
+	\item $\I' \models \I$ and $\I \models \I'$: \turemp{equivalent} systems.
 \end{itemize}
 
 \vspace{1.2em}
 
 \begin{lightreminder}
-	Remind property: \quad {\color{midnight} ($\I^{-} := \I - \{ A \imp B\}$)}
+	Recall property: \quad {\color{midnight} ($\I^{-} := \I - \{ A \imp B\}$)}
 	\begin{itemize}
-		\item $\I^{-} \models A \imp B$ iff $B \subseteq \I^{-}(A)$
+		\item $\I^{-} \models A \imp B$ iff $B \subseteq \I^{-}(A)$.
 	\end{itemize}
 \end{lightreminder}
 
@@ -157,9 +137,10 @@ Let $\I$ be an implication system:
 
 We have:
 \begin{itemize}
-	\item $abcd \imp ef$ is \turemp{redundant}
-	\item $cd \imp f$ can be deleted, if $ab \imp cde$ replaced by $ab \imp cdef$
-	\item canonical basis: $ab \imp abcdef, c \imp ac, d \imp bd$
+	\item $\I(b) = b$, $b$ is \turemp{closed}, hence a \turemp{model} of $\I$,
+	\item $\I(ab) = abcdef$, $ab$ is \turemp{not} a model, \quad 
+	\asbemp{($abcdef$ is)}
+	\item $abcd \imp ef$ is \turemp{redundant},
 \end{itemize}
 
 \end{frame}

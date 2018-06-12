@@ -2,24 +2,37 @@
 % Section: Math notions
 % ============================================================================ %
 
+\begin{comment}
+1 slide for both approach
+define L' base as minimum, equivalent and nonredundant wrt L
+\end{comment}
+
 % ==== minimizing algorithms ====
 
 \subsection{Minimizing the input}
 
 \begin{frame}
-\frametitle{Tools}
+\frametitle{Algorithms Core}
 
-Principle:
+Two main ideas:
 \begin{itemize}
-	\item reducing an input base $\I$,
+	\item \turemp{minimizing} input system
+	\begin{itemize}
+		\item[\color{belize} $\triangleright$] algorithms from FCA and databases,
+	\end{itemize}
 	
-	\vspace{1.2em}
-	
-	\item algorithms from FCA and databases,
-	
-	\vspace{1.2em}
-	
-	\item
+	\item \turemp{building} a minimum system against the input
+	\begin{itemize}
+		\item[\color{belize} $\triangleright$] query learning interpretation, 
+	\end{itemize}
+\end{itemize}
+
+\vspace{1.2em}
+
+Some notations, given $\I$:
+\begin{itemize}
+	\item $|\B|$ number of implications, $|\Sg|$ number of attributes,
+	\item $|\I| = O(|\B||\Sg|)$, size of $\I$. 
 \end{itemize}
 
 \end{frame}
@@ -29,13 +42,13 @@ Principle:
 
 \textsc{MinCover}:
 \begin{itemize}
-	\item from Day, Wild, Duquenne, Guigues (80's)
+	\item from Day, Wild, (80's),
 	
 	\vspace{0.8em}
 	
 	\item two steps:
 		\begin{itemize}
-			\item[\color{belize} 1.] \turemp{maximize} the knowledge
+			\item[\color{belize} 1.] \turemp{maximize} the conclusion
 			\item[ ] \quad {\color{midnight}  $A \imp B$ becomes $A \imp \I(A)$}
 			
 			\vspace{0.5em}
@@ -46,7 +59,7 @@ Principle:
 	
 	\vspace{0.8em}
 	
-	\item output: \turemp{canonical base}.
+	\item output: \turemp{canonical} base, complexity: $O(|\B||\I|)$.
 \end{itemize}
 
 \vspace{1em}
@@ -62,8 +75,8 @@ Principle:
 
 \textsc{DuquenneMin}:
 \begin{itemize}
-	\item variation of \textsc{MinCover} by Duquenne, 2007,
-	\item two steps:
+	\item variation of \textsc{MinCover} by Duquenne (2007),
+	\item three steps:
 		\begin{itemize}
 			\item[\color{belize} 1.] \turemp{left-saturation} and \turemp{redundancy} elimination
 			\item[ ] \quad {\color{midnight}  if $B \subseteq \I^{-}(A)$, $A \imp B$ is useless}
@@ -71,11 +84,15 @@ Principle:
 			
 			\vspace{0.5em}
 			
-			\item[\color{belize} 2.] \turemp{iteratively build} pseudo-closed implications base
+			\item[\color{belize} 2.] sort implications in $\subseteq$-compatible order (premises)
+			
+			\vspace{0.5em}
+			
+			\item[\color{belize} 3.] \turemp{iteratively build} Duquenne-Guigues base
 			\item[ ] \quad {\color{midnight} if $\I^{-}(A)$ \turemp{pseudo-closed}, add $\I^{-}(A) \imp \I(A)$ to the result}
 		\end{itemize}
 	
-	\item output: \turemp{canonical base}.
+	\item output: \turemp{canonical} base, complexity: $O(|\B||\I|)$.
 	
 \end{itemize}
 \end{frame}
@@ -85,21 +102,21 @@ Principle:
 
 \textsc{MaierMin}:
 \begin{itemize}
-	\item functional dependency based algorithm, Maier, 80's
+	\item functional dependency based algorithm, Maier (80's),
 	
 	\item steps:
 		\begin{itemize}
 			\item[\color{belize} 1.] \turemp{redundancy} elimination
-			\item[ ] \quad {\color{midnight}  if $B \subseteq \I^{-}(A)$, remove $A \imp B$}
+			\item[ ] \quad {\color{midnight}  if $B \subseteq \I^{-}(A)$,  $A \imp B$ is useless}
 			
 			\vspace{0.5em}
 			
-			\item[\color{belize} 2.] \turemp{equivalence classes} reduction
+			\item[\color{belize} 3.] \turemp{equivalence classes} reduction
 			\item[ ] \quad {\color{midnight} group implications by premises \turemp{closure}}
 			\item[ ] \quad {\color{midnight} reduce those classes}
 		\end{itemize}
 
-	\item output: minimum basis
+	\item output: minimum basis, complexity: $O(|\B||\I|)$.
 \end{itemize}
 
 \end{frame}
@@ -110,7 +127,7 @@ Principle:
 \begin{frame}
 \frametitle{General principle}
 
-Query learning and Angluin algorithm:
+Query learning and Angluin algorithm (90's):
 \begin{itemize}
 	\item aim: learn a theory by constructing an \turemp{hypothesis}
 	\item \turemp{oracle} answering \turemp{queries} (questions)
@@ -134,42 +151,43 @@ Query learning and Angluin algorithm:
 
 \end{frame}
 
+
+%\begin{frame}
+%\frametitle{In our case}
+
+%\begin{itemize}
+%	\item no oracle,
+	
+	%\vspace{1.2em}
+	
+	%\item no positive counter-example,
+	
+	%\vspace{1.2em}
+	
+	%\item premises are sufficient to have negative counter-example.
+%\end{itemize}
+
+
+%\end{frame}
+
 \begin{frame}
-\frametitle{In our case}
+\frametitle{AFP-Based Algorithm}
 
-\begin{itemize}
-	\item no oracle to avoid \turemp{randomness},
-	
-	\vspace{1.2em}
-	
-	\item no positive counter-example,
-	
-	\vspace{1.2em}
-	
-	\item premises are sufficient to have negative counter-example.
-\end{itemize}
-
-
-
-\end{frame}
-
-\begin{frame}
-\frametitle{AFP Algorithm}
-
-\textsc{AFP}:
+\textsc{AFP-Based}:
 \begin{itemize}
 	\item derived from Angluin, \aliemp{no proof yet},
 	\item principle:
 		\begin{itemize}
 			\item[\color{belize} 1.] take implications one by one,
 			\item[\color{belize} 2.] refine the hypothesis:
-			\item[ ] \quad {\color{midnight}  use \turemp{stack} to store possible counter-examples}
+			\item[ ] \quad {\color{midnight}  use \turemp{premises} to generate possible counter-examples}
 			\item[ ] \quad {\color{midnight} add right-closed implications
 				or refine old ones}
 			
 		\end{itemize}
 	
-	\item expected output: \turemp{canonical} base.
+	\item expected output: \turemp{canonical} base,
+	\item \aliemp{idea} of complexity: $O(|\B|^3|\I|)$.
 
 \end{itemize}
 
@@ -194,7 +212,7 @@ Query learning and Angluin algorithm:
 			\item[ ] \quad { \color{midnight} add $A \imp \I(A)$ to $\I_c$}
 			 
 		\end{itemize}
-	\item output: \turemp{canonical} base.
+	\item output: \turemp{canonical} base, complexity: $O(|\B|^2|\I|)$.
 \end{itemize}
 
 \end{frame}

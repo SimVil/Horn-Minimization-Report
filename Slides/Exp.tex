@@ -2,35 +2,62 @@
 \subsection{Experiments}
 
 \begin{frame}
-\frametitle{Context}
+\frametitle{Context 1}
 
 Practical aspect:
 \begin{itemize}
 	\item context of FCA, previous study of closure operators,	
-	\item use datasets from UCI repository:
+	\item use datasets from UCI repository (\turemp{scaling}):
 		\begin{itemize}
-			\item[\color{belize} $\triangleright$] solar flare: 49 attributes
-			\item[\color{belize} $\triangleright$] breast cancer: 23 attributes
+			\item[\color{belize} $\triangleright$] solar flare: 49 attributes,
+			\item[\color{belize} $\triangleright$] SPECT: 23 attributes,
 			
 		\end{itemize}
-	\item C++, boost.
+	\item use of \textsc{Closure} \midemp{($\simeq$ forward chaining)}
+	\item C++, boost, python.
 	
 \end{itemize}
 
-\vspace{1.2em}
+\end{frame}
 
-Theoretical considerations
+\begin{frame}[fragile]
+\frametitle{Context 2}
+
+1 dataset give rise to 5 systems:
 \begin{itemize}
-	\item using \textsc{Closure},
-	\item 1 dataset rises 5 basis
+	\item Duquenne-Guigues basis (\midemp{DG}),
+	\item minimal generators (\midemp{mingen}, right-closed),
+	\item proper implications (\midemp{proper})
+	\item Maier minimum on mingen (\midemp{min 1}, right-closed),
+	\item Maier minimum on proper (\midemp{min 2})
 \end{itemize}
+
+\begin{table}[ht]
+	\centering
+	\scriptsize
+	\begin{tabular}{| c | c | c | c |}
+		\hline \rowcolor{clouds}
+		\multicolumn{2}{|c|}{$\I$} & $|\Sg|$ & $|\B|$ \\ \hline
+		
+		\multirow{3}{*}{Flare} & minimum & \multirow{3}{*}{49} & 3382 \\
+		& mingen & & 39787 \\
+		& proper & & 10692 \\ \hline
+		
+		\multirow{3}{*}{SPECT} & minimum & \multirow{3}{*}{23} & 2169 \\
+		& mingen & & 44341 \\
+		& proper & & 8358 \\ \hline
+
+	\end{tabular}
+	\caption{Summary of real datasets characteristics}
+	\label{tab:real-DS}
+\end{table}
 
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Overhaul results}
 
-{\small
+{\scriptsize
 \begin{table}[H]
 	\centering
 	\begin{tabular}{| c | c || c | c | c | c | c |}
@@ -38,18 +65,18 @@ Theoretical considerations
 		\multicolumn{2}{c}{$\I$} & \textsc{MinCov} & \textsc{Duq} & \textsc{Maier} & \textsc{Berczi} & \textsc{AFP} \\ \hline
 		
 		\multirow{5}{*}{Flare}
-		& DG           & 0.097 & 0.117 & 0.211 & 27.922 & 115.656 \\
-		& min 1 & 0.134 & 0.194 & 0.288 & 27.750 & 116.594 \\
-		& min 2 & 0.200 & 0.190 & 0.308 & 30.063 & 108.812 \\
-		& proper       & 1.684 & 0.933 & 0.917 & 88.375 & 524.031 \\
-		& mingen       & 16.047 & 7.981 & 7.576 & 160.328 & 2810.620 \\ \hline
+		& DG     & \turemp{0.097} & 0.117 & 0.211 & 27.922 & 96.178 \\
+		& min 1  & \turemp{0.134} & 0.194 & 0.288 & 27.750 & 98.145 \\
+		& min 2  & 0.200 & 0.190 & 0.308 & 30.063 & 111.944 \\
+		& proper & 1.684 & \belemp{0.933} & \belemp{0.917} & 88.375 & 402.453 \\
+		& mingen & 16.047 & \belemp{7.981} & \belemp{7.576} & \aliemp{160.328} & \aliemp{2514.610} \\ \hline
 		
-		\multirow{5}{*}{Breast Cancer}
-		& DG           & 0.089 & 0.109 & 0.203 & 33.047 & 90.031 \\
-		& min 1 & 0.108 & 0.126 & 0.243 & 26.578 & 89.516 \\
-		& min 2 & 0.153 & 0.132 & 0.258 & 29.438 & 105.141 \\
-		& proper       & 1.920 & 0.864 & 1.014 & 93.266 & 429.844 \\
-		& mingen       & 2.006 & 1.277 & 1.444 & 102.562 & 598.172 \\ \hline
+		\multirow{5}{*}{SPECT}
+		& DG     & \turemp{0.045} & 0.066 & 0.108 & 10.328 & 22.454 \\
+		& min 1  & \turemp{0.061} & 0.080 & 0.134 & 8.156 & 19.438 \\
+		& min 2  & 0.078 & 0.070 & 0.150 & 8.250 & 26.980 \\
+		& proper & 0.930 & \belemp{0.394} & \belemp{0.451} & 51.063 & 114.564 \\
+		& mingen & 24.077 & \belemp{10.206} & \belemp{10.858} & \aliemp{194.875} & \aliemp{863.903} \\ \hline
 		
 	\end{tabular} 
 	\caption{Comparison of the algorithms on real datasets (execution in $s$)}
@@ -65,22 +92,22 @@ Theoretical considerations
 Observations \aliemp{on these data}:
 \begin{itemize}
 	\item cost of \textsc{AFP} and \textsc{BercziMin},
-	\item \textsc{DuquenneMin}, \textsc{MaierMin} efficient and similar on \turemp{non-minimum cases},
-	\item \textsc{MinCover} better on right-closed minimum cases.
+	\item \textsc{DuquenneMin}, \textsc{MaierMin} efficient on \turemp{non-minimum cases},
+	\item \textsc{MinCover} slightly better on right-closed minimum cases.
 \end{itemize}
 
 \vspace{1.2em}
 
-Test observations:
+Generating random implication (given $|\Sg|$, $|\B|$):
 \begin{itemize}
-	\item random generation
-	\item 
+	\item discrete uniform distribution on \turemp{size}, \turemp{elements},
+	\item premise $A$, conclusion $B$, yield $A - B \imp B$.
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}
-\frametitle{Some more results}
+\frametitle{Minimum tests 1}
 
 \vspace{-1.5em}
 
@@ -95,7 +122,7 @@ Test observations:
 \end{frame}
 
 \begin{frame}
-\frametitle{Some more results}
+\frametitle{Minimum tests 2}
 
 \vspace{-1.5em}
 
@@ -109,13 +136,41 @@ Test observations:
 
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Insight on random tests}
+
+\vspace{0.5em}
+
+\begin{figure}[H]
+\begin{minipage}{0.4\paperwidth}
+\hspace{-3em}
+\subfloat[Average time, $|\Sg| = 100$]{
+	\scalebox{0.4}{\input{Pictures/III/Comp/All-100attr.pgf}}
+}
+\end{minipage}
+~
+\begin{minipage}{0.4\paperwidth}
+	\hspace{-1em}
+\subfloat[Average time, $|\Sg| = 500$]{
+	\scalebox{0.4}{\input{Pictures/III/Comp/All-500attr.pgf}}	
+}
+\end{minipage}
+
+\caption{Random generated tests for fixed $|\Sg|$ (over 500 ex)}	
+	
+\end{figure}
+
+
+
+\end{frame}
+
 \begin{frame}
 \frametitle{Ideas}
 
 Observations:
 \begin{itemize}
-	\item results of \textsc{MinCover}: proper basis is worse,
-	\item redundant cases: \textsc{Duquenne}, \textsc{Maier} more efficient.
+	\item times of \textsc{MaierMin}, \textsc{DuquenneMin} on redundant cases,
+	\item first glance at random: efficiency of AFP.
 \end{itemize}
 
 \vspace{0.5em}
@@ -123,8 +178,7 @@ Observations:
 Explanations:
 \begin{itemize}
 	\item \turemp{redundancy elimination} as first step,
-	\item \turemp{right-closeness} of basis,
-	\item suggests a study of underlying \turemp{structure}.
+	\item suggests a study of underlying \turemp{structure} (AFP).
 \end{itemize}
 
 \vspace{0.5em}
