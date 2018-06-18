@@ -1,11 +1,89 @@
-\documentclass[a4paper, 10pt]{article}
+\documentclass[runningheads]{llncs}
 
-\input{../Subfiles/Packages.tex}
-\input{../Subfiles/Operators.tex}
-\input{../Subfiles/Languages.tex}
+%\input{../Subfiles/Packages.tex}
+% \input{../Subfiles/Operators.tex}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[vlined, ruled, dotocloa, english, onelanguage]{algorithm2e}
+\usepackage{amsfonts}
+\usepackage{bbm}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{color}
+\usepackage{colortbl}
+\usepackage{fancyref}
+\usepackage{fancyhdr}
+\usepackage[final]{listings}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage[titles]{tocloft}
+\usepackage{float}
+\usepackage{cancel}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{multibib}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{etoc}
+\usepackage{subfig}
+\usetikzlibrary{patterns, calc}
+\usepackage{pdfpages}
+
+\DeclareMathOperator{\f}{f}
+\DeclareMathOperator{\g}{g}
+\DeclareMathOperator{\hta}{\hat{\theta}}
+\DeclareMathOperator{\dv}{d}
+\DeclareMathOperator{\Prb}{\Ens{P}}  % Proba %
+\DeclareMathOperator{\I}{\mathcal{L}}  % Implication Basis
+\DeclareMathOperator{\Sg}{\Sigma}  % set for closure
+\DeclareMathOperator{\imp}{\longrightarrow} % shortcut for implications
+\DeclareMathOperator{\rimp}{\longleftarrow} % reverse implication shortcut.
+\DeclareMathOperator{\smimp}{\rightarrow} % small implication
+\DeclareMathOperator{\ta}{\theta}
+\DeclareMathOperator{\sm}{\overline{X}_n}
+\DeclareMathOperator{\indist}{\xrightarrow{\;\; d \;\;}}
+\DeclareMathOperator{\one}{\mathbbm{1}}
+\DeclareMathOperator{\ddv}{\xrightarrow{\; d \;}}
+\DeclareMathOperator{\B}{\mathcal{B}}
+
+% Horn minimization
+\newcommand{\body}[1]{\mathcal{B}(#1)} % B(phi)
+\newcommand{\clause}[1]{\mathcal{#1}} % B(phi)
+\newcommand{\head}[1]{\mathcal{H}(#1)} % B(phi)
+\newcommand{\rel}[1]{\mathfrak{#1}} % binary relation
+\newcommand{\equl}{\equiv_{\I}}  % equivalence relation on L
+\newcommand{\fdpath}[2]{\langle #1, \ #2 \rangle}
+
+\definecolor{alizarine}{RGB}{231, 76, 60}
+\definecolor{eightiesblood}{RGB}{255, 116, 100}
+\definecolor{silver}{RGB}{189, 195, 199}
+\definecolor{pomegranate}{RGB}{192, 57, 43}
+\definecolor{midnight}{RGB}{44, 62, 80}
+\definecolor{belize}{RGB}{0, 103, 176}
+\definecolor{sang}{RGB}{183, 28, 12}
+\definecolor{emerald}{RGB}{0, 140, 49}
+\definecolor{sunflower}{RGB}{241, 196, 15}
+\definecolor{amethyst}{RGB}{155, 89, 182}
+\definecolor{turquoise}{RGB}{0, 139, 128}
+\definecolor{asbestos}{RGB}{127, 140, 141}
+\definecolor{clouds}{RGB}{236, 240, 241}
+\definecolor{lynch}{HTML}{3E4651}
+\definecolor{clearsky}{HTML}{83D6DE}
+\definecolor{greensea}{RGB}{22, 140, 113}
+\definecolor{grass}{HTML}{97CE68}
+\definecolor{peter}{RGB}{92, 192, 255}
+\definecolor{lightmethyst}{RGB}{175, 109, 202}
+\definecolor{pumpkin}{RGB}{211, 84, 0}
 
 \title{Horn Minimization}
-\author{Obiedkov Sergei, Vilmin Simon}
+\author{Vilmin Simon}
+\institute{Higher School of Economics - Faculty of Computer Science}
 
 \begin{document}
 	
@@ -17,7 +95,7 @@ The topic is implication theories, or Horn, minimization, used in database appli
 they behave under practical test cases.
 
 We study several algorithms and review them within the context of closure
-systems. On top of providing explanations on their operation and complexity analysis, we implemented those algorithms using C++. With randomly generated systems and real data, we provide ideas on which closure operator matches the best each algorithm and which algorithm or steps are likely to be used in practice. Those results being valid within the context of our tests, suggest further research and experiments to lead in future work.
+systems. On top of providing explanations on their operation and complexity analysis, we implemented those algorithms using C++. With randomly generated systems and real data, we supply informations on which algorithm or steps are likely to be used in practice. Those results being valid within the context of our tests, suggest further research and experiments to lead in future work.
 	
 \section{Introduction}
 
@@ -40,19 +118,16 @@ are represented through Horn formulae. Interestingly, the minimization problem
 we are going to consider is the only one being polynomial time solvable. Other 
 problems are proved to be NP-Complete or NP-Hard. For more discussion on other 
 minimality definitions and their computational complexity, the reader should 
-refer to \cite{boros_strong_2017, ausiello_directed_2017, 
-	ganter_conceptual_2016, ausiello_minimal_1986, wild_joy_2017, 
-	boros_horn_1998, hammer_optimal_1993}. In subsequent explanations, we will refer to minimization with respect to the number of implications.
+refer to \cite{boros_strong_2017}, \cite{ausiello_directed_2017}, 
+	\cite{ganter_conceptual_2016}, \cite{ausiello_minimal_1986}, \cite{wild_joy_2017}, \cite{boros_horn_1998}, \cite{hammer_optimal_1993}. In subsequent explanations, we will refer to minimization with respect to the number of implications.
 
 To the best of our knowledge, the two first fields in which algorithms and 
 properties of minimality arose are Formal Concept Analysis (FCA) (see 
-\cite{ganter_formal_1999, 
-	ganter_two_2010} for an introduction) and Database Theory (DB) (see 
-\cite{maier_theory_1983}). Both sides were developed independently in the early 
+\cite{ganter_formal_1999}, \cite{ganter_two_2010} for an introduction) and Database Theory (DB) (see \cite{maier_theory_1983}). Both sides were developed independently in the early 
 80's. For the first domain, characterization of minimality goes to Duquenne and 
 Guigues \cite{guigues_familles_1986}, in which they describe the so-called 
 canonical basis (also called Duquenne-Guigues basis after its 
-authors, abbreviated DG all along this report) relying on the notion of pseudo-closed sets. For the database part, study of implications is made by Maier through functional dependencies (\cite{maier_theory_1983, maier_minimum_1980}). The polynomial time algorithm he gives for minimization heavily relies on a fast subroutine discovered by Beeri and Bernstein in \cite{beeri_computational_1979}, 1979.
+authors, abbreviated DG all along this report) relying on the notion of pseudo-closed sets. For the database part, study of implications is made by Maier through functional dependencies (\cite{maier_theory_1983}, \cite{maier_minimum_1980}). The polynomial time algorithm he gives for minimization heavily relies on a fast subroutine discovered by Beeri and Bernstein in \cite{beeri_computational_1979}, 1979.
 
 From then on, knowledge increased over years and spread out over domains. 
 Another algorithm based on a minimality theorem is given by Shock in 1986 
@@ -61,9 +136,8 @@ discussed by Wild in \cite{wild_computations_1995} the algorithm may not be
 correct in general, even though the underlying theorem is. During the same 
 period, Ausiello et al. brought the problem to graph-theoretic ground, and 
 provided new structure known as FD-Graph and algorithm to represent 
-and work on implication systems in \cite{ausiello_directed_2017, 
-	ausiello_graph_1983, ausiello_minimal_1986}. This approach has been seen in 
-graph theory as an extension of the transitive closure in graphs 
+and work on implication systems in \cite{ausiello_directed_2017}, 
+\cite{ausiello_graph_1983}, \cite{ausiello_minimal_1986}. This approach has been seen in graph theory as an extension of the transitive closure in graphs 
 (\cite{aho_transitive_2006}), but no consideration equivalent to minimization 
 task seems to have been taken beforehand, as far as we know. Still in the 1980 
 decade, Ganter expressed the canonical basis formalized by Duquenne and Guigues 
@@ -72,7 +146,7 @@ closure systems, pseudo-closed and quasi-closed sets. Also, the works of Maier a
 \cite{day_lattice_1992} to derive an algorithm based on congruence relations. 
 For in-depth knowledge of implication system within lattice terminology, we can 
 see \cite{davey_introduction_2002} as an introduction and 
-\cite{bertet_lattices_2016} for a survey. Next, Wild  (\cite{wild_implicational_1989, wild_theory_1994, wild_computations_1995}) 
+\cite{bertet_lattices_2016} for a survey. Next, Wild  (\cite{wild_implicational_1989}, \cite{wild_theory_1994}, \cite{wild_computations_1995}) 
 linked within this set-theoretic framework both the relational databases, 
 formal concept analysis and lattice-theoretic approach. In relating those 
 fields, he describes an algorithm for minimizing a basis, similar to algorithms 
@@ -83,7 +157,7 @@ study, and can be found in more recent work by Ganter \& Obiedkov in
 variations of Day's work with another algorithm in 
 \cite{duquenne_variations_2007}. More recently, Bor\`os et al. by 
 working in a boolean logic framework, exhibited a theorem on the size of
-canonical basis \cite{boros_exclusive_2010, boros_strong_2017}. They also gave
+canonical basis \cite{boros_exclusive_2010}, \cite{boros_strong_2017}. They also gave
 a general theoretic approach that algorithm should do one way or another on
 reduction purpose. Out of these papers, Berczi \& al. derived a new 
 minimization procedure based on hypergraphs in \cite{berczi_directed_2017}. 
@@ -116,7 +190,7 @@ all implications of $\I$. In fact, models of $\I$ define a closure system $\Sg^{
 		(monotone),
 		\item[(iii)] $\phi(X) = \phi(\phi(X))$ (idempotent).
 	\end{itemize}
-	$X \subseteq \Sg$ is called \belemp{closed} if $X = \phi(X)$.
+	$X \subseteq \Sg$ is called closed if $X = \phi(X)$.
 \end{definition}
 
 \begin{definition}[Closure system] Let $\Sg$ be a set, and $\Sg^{\phi}
@@ -147,12 +221,17 @@ Two systems $\I_1$, $\I_2$ are equivalent if they define the same closure system
 A well known minimum base is the canonical or Duquennes-Guigues (\cite{guigues_familles_1986}). It relies on pseudo-closed sets.
 
 \begin{definition}[Pseudo-closed set] Given $\I$ over $\Sg$, we say
-	that $P \subseteq \Sg$ is \belemp{pseudo-closed} if:
+	that $P \subseteq \Sg$ is pseudo-closed if:
 	\begin{itemize}
 		\item[(i)] $P \neq \I(P)$,
 		\item[(ii)] $Q \subset P$ and $Q$ pseudo-closed implies $\I(Q) 
 		\subseteq P$.
 	\end{itemize}
+\end{definition}
+
+\begin{definition}[Quasi-closed set] a set $Q \subseteq \Sg$ is 
+quasi-closed with respect to $\I$ if $\forall A \subseteq Q, \I(A) \subseteq Q \textit{ or } \I(A) = \I(Q) $
+	
 \end{definition}
 
 \begin{definition}[Duquenne-Guigues basis] The base $\I$ defined by
@@ -163,6 +242,8 @@ A well known minimum base is the canonical or Duquennes-Guigues (\cite{guigues_f
 	
 \end{definition}
 
+At first sight, quasi-closed set may not be useful. However, one can define
+pseudo-closed sets out of closed sets. A set $P$ is pseudo-closed if and only if it is quasi-closed and minimal (inclusion wise) among quasi-closed sets having the same closure. This property will be useful for some algorithms we will explain.
 So far we discussed several notions: implications, pseudo-closed set, 
 quasi-closed set, canonical basis and so forth. Most of them rely heavily on
 computing the closure of sets with respect to $\I$. Hence, to have practical 
@@ -173,7 +254,7 @@ procedure based on the operation $\circ$:
 \[ X^{\circ} = 
 X \cup \bigcup \{ B \; | \; A \imp B \in \I, \; A \subseteq X \} \]
 
-Repetition of this operation up to saturation leads to \textsc{Closure}. Furthermore the algorithm by Beeri and Bernstein in \cite{beeri_computational_1979} called \textsc{LinClosure} addresses this question. \textsc{LinClosure} as previously mentioned has been widely used, notably in \cite{maier_theory_1983, maier_minimum_1980, ganter_conceptual_2016, shock_computing_1986, day_lattice_1992}. Before describing those procedures, let us introduce our complexity notations:
+Repetition of this operation up to saturation leads to \textsc{Closure}. Furthermore the algorithm by Beeri and Bernstein in \cite{beeri_computational_1979} called \textsc{LinClosure} addresses this question. \textsc{LinClosure} as previously mentioned has been widely used, notably in \cite{maier_theory_1983}, \cite{maier_minimum_1980}, \cite{ganter_conceptual_2016}, \cite{shock_computing_1986}, \cite{day_lattice_1992}. Before describing those procedures, let us introduce our complexity notations:
 \begin{itemize}
 	\item[-] $|\Sg|$ will denote the size of the attribute set $\Sg$,
 	\item[-] $|\B|$ will be the number of implications in $\I$ ($\B$ stands
@@ -284,8 +365,8 @@ we will still consider \textsc{LinClosure}.
 \section{Algorithms for minimization}
 
 We are going to focus on 5 algorithms. To begin with, let us talk about an algorithm issued by A. Day in \cite{day_lattice_1992} and by Wild somehow in
-\cite{wild_implicational_1989}. It can be found as we will write it in \cite{ganter_conceptual_2016}. The principle is to perform right-saturation
-first so has to have right-closed implications. Next, it computes left-saturation to find pseudo-closed sets and remove redundant implications.
+\cite{wild_implicational_1989}. It can be found as we will write it in \cite{ganter_conceptual_2016}. The principle is to perform right-closure
+first so has to have right-closed implications. Next, it computes quasi-closure to find pseudo-closed sets and remove redundant implications.
 See algorithm \ref{alg:MinCover}.
 
 \begin{algorithm}
@@ -369,16 +450,16 @@ The second algorithm we have has been discussed by Duquenne in \cite{duquenne_va
 	\label{alg:Duquenne-min}
 \end{algorithm}
 
-In this algorithm, we first perform left-saturation as much as redundancy elimination. Doing those steps not only allows for having quasi-closed, and in particular all possible pseudo-closed sets, as premises of implications but also
-to get rid of several useless ones. Next, ordering of implications in a $\subseteq$-compatible way on premises ease the last step. It consists in iteratively build the canonical base $\I_c$ as an output. Because we have quasi-closed premises under lectic order, checking for pseudo-closedness for any premise of the input system only requires a run over the base we are building. If a premise is to be considered pseudo-closed, its corresponding implication is right-closed and added to the resulting system ($\I_c$).
+In this algorithm, we first perform left-quasi-closure as much as redundancy elimination. Doing those steps not only allows for having quasi-closed, and in particular all possible pseudo-closed sets, as premises of implications but also
+to get rid of several useless ones. Next, ordering of implications in a $\subseteq$-compatible way on premises ease the last step. We use lectic ordering $<_{\Sg}$ being total. It assumes that elements of $\Sg$ are linearly ordered (e.g: $\Sg = \{ a, b, c, d\}$ and $a < b < c < d$) and performs somehow binary enumeration of characteristic vectors over $\Sg$ (in our example we would have in order: $\emptyset$, $d$, $c$, $cd$, $b$, $bd$, $bc$, $bcd$, etc). The last step of \textsc{DuquenneMinimization}  consists in iteratively build the canonical base $\I_c$ as an output. Because we have quasi-closed premises under lectic order, checking for pseudo-closedness for any premise of the input system only requires a run over the base we are building. If a premise is to be considered pseudo-closed, its corresponding implication is right-closed and added to the resulting system ($\I_c$).
 Regarding the complexity, still thinking of \textsc{LinClosure}, the first loop,
 quite similar to the second one of \textsc{MinClosure} requires $O(|\B||\I|)$ operations. Because lectic order is total, one can use fast sorting procedure to
 perform the second step: $O(|\I|\log(|\B|))$. Finally, the building loop may
 require no more than $O(|\B||\I|)$ operations since closure computations occur out of the nested loop. Consequently, the whole algorithm runs in $O(|\B||\I|)$ as \textsc{MinCover} and ends up on the Duquenne-Guigues basis too.
 
-Next, we are interested in an algorithm quite different since coming out of Database theory. It has been proposed by Maier in \cite{maier_minimum_1980, maier_theory_1983}. Wild discussed it and its connection with closure spaces framework in \cite{wild_implicational_1989}. In our case, we keep on focusing on implications notations, see \textsc{MaierMinimization}. Here, apart from prior redundancy elimination as previously studied, we are to split implications into equivalence classes according to the closure of their premises. Then, using \textit{direct determination}, equivalence classes will be
+Next, we are interested in an algorithm quite different since coming out of Database theory. It has been proposed by Maier in \cite{maier_minimum_1980}, \cite{maier_theory_1983}. Wild discussed it and its connection with closure spaces framework in \cite{wild_implicational_1989}. In our case, we keep on focusing on implications notations, see \textsc{MaierMinimization}. Here, apart from prior redundancy elimination as previously studied, we are to split implications into equivalence classes according to the closure of their premises. Then, using \textit{direct determination}, equivalence classes will be
 reduced. In details, an implication $A \imp B$ will be removed when one can find
-an implication $C \imp D$ such that $A \imp B, \ C \imp D \in E_{\I}(A)$ and $\I - E_{\I}[A] \models A \imp C$. In this case, $A$ directly determines $C$ and
+an implication $C \imp D$ such that $A \imp B, \ C \imp D \in E_{\I}(A)$ and $\I - E_{\I}(A) \models A \imp C$, where $E_{\I}(A) = \{ C \imp D \in \I \; | \; \I(C) = \I(A) \}$. In this case, $A$ directly determines $C$ and
 $A \imp B$ can be removed if we replace $C \imp D$ by $C \imp B \cup D$ to preserve the closure system defined by $\I$. The algorithm ends up on a minimum
 cover different from the canonical basis. Indeed, observe that we do not alter 
 premises of implications, hence they may not be pseudo-closed.
@@ -452,7 +533,7 @@ the algorithm terminates on the Duquenne-Guigues base.
 Here however, we must face a higher complexity than previously exposed algorithm. The outter loop runs up to equivalence, but since we add an implication to $\I_c$ per iteration, we must end after at most $|\B|$ steps. Finding the next minimum pseudo-closed sets require closure computations under 
 both $\I$ and $\I_c$ for all premises of $\I$, hence $O(|\B||\I|)$ operations. Therefore, the algorithm has $O(|\B|^2|\I)$ time complexity. 
 
-Finally, let us focus on an algorithm derived from Angluin query-learning based approach (see \cite{angluin_learning_1992, arias_canonical_2009}). For a quick recap,  the idea is we formulate queries to an oracle knowing the basis we are trying to learn. The oracle is assumed to provide an answer to our query in constant time. Depending on the query, it might also provide information on the object we are looking for. For Angluin algorithm, we need 2 types of queries. Say we want to learn a basis $\I$ over $\Sg$:
+Finally, let us focus on an algorithm derived from Angluin query-learning based approach (see \cite{angluin_learning_1992}, \cite{arias_canonical_2009}). For a quick recap,  the idea is we formulate queries to an oracle knowing the basis we are trying to learn. The oracle is assumed to provide an answer to our query in constant time. Depending on the query, it might also provide information on the object we are looking for. For Angluin algorithm, we need 2 types of queries. Say we want to learn a basis $\I$ over $\Sg$:
 \begin{enumerate}
 	\item membership query: is $M \subseteq \Sg$ a model of $\I$? The
 	oracle may answer \textit{"yes"}, or \textit{"no"}.
@@ -587,6 +668,345 @@ Note that \textsc{BercziMinimization} can be interpreted in terms of query learn
 the input system $\I$ can generate a sufficient set of negative counter examples when taken as in \textsc{BercziMinimization}. From this point of view, it gets closer to Angluin algorithm.
 
 \section{Experiments}
+
+Those algorithms have been implemented in C++, using MinGW-64 on a 2.4GHz CPU. We used the code given in https://github.com/yazevnul/fcai developed for
+the benchmark of closure operators (see \cite{bazhanov_optimizations_2014}). It relies on a formal concept analysis background. Let us remind some definitions of FCA. Formal Concept Analysis (see \cite{ganter_formal_1999}) is a technique relying on array-like data and lattices to describe hierarchies in data. It can be used in data mining, text mining or chemistry for instance. Usually, we are given a context $\mathbb{K} = (G, M, I)$ where $G$ is a set of objects, $M$ a set of attributes and $I \subseteq G \times M$ a relation between them. 
+We can define an operation $': 2^G \imp 2^M$, associating to a set of objects $A \subseteq G$ the set $B \subseteq M$ of attributes shared by
+all elements of $A$. Conversely, we can set $': 2^M \imp 2^G$ yelling the set
+$A$ of objects sharing all attributes of some set $B$. Formally:
+
+\[ A' = \{ m \in M \ | \ \forall g \in A,\ gIm \} \quad \forall A \subseteq G \]
+\[ B' = \{ g \in G \ | \ \forall m \in B,\ gIm \} \quad \forall B \subseteq M \]
+
+
+When combined together those operators define a closure operator $'': 2^M \imp 2^M$. Pairs $(A_G, A_M)$ of closed subsets from $G \times M$ with $A_G' = A_M$ and $A_M' = A_G$ are called concepts. $A_G$ is the concept extent while $A_M$ is called concept intent. As one could expect, this operator is related with attribute implications. Indeed, given a context $(G, M, I)$ we can draw implications between subsets $A \imp B$ of attributes. Intuitively, an implication $A \imp B$ will be valid if every time we have all attributes from $A$, we also have attributes from $B$: $A' \subseteq B'$ or equivalently, $B \subseteq A''$. A set $\I$ of implications over $M$ will be complete and sound if the operator $''$ from the context coincides with $\I(\cdot)$ for all $A \subseteq M$. Because real datasets used contain multi-valued attributes, we may need FCA-scaling. Eventually, we shall discuss various possible systems one can build out of a context. We will use 5 of them: the canonical basis, the minimum basis resulting from Maier's algorithm (twice), the basis of minimal generators and the proper basis. We already discussed the two first ones. We derive them from the non minimum:
+\begin{itemize}
+	\item[(i)] minimal generators: a set $X$ is a minimal generator of its closure $\I(X)$ if it is minimal in $[ X]_{\I}$. The basis will contain
+	right-closed implications $X \imp \I(X)$ where $X$ is a minimal generator,
+	\item[(ii)] proper implications: implications $X \imp X^{\bullet}$ where 
+	$\bullet$ is a saturation operator:
+	
+	\[ X^{\bullet} = \I(X) - X \cup \bigcup \{ \I(B) \ | \ B \subset X \} \]
+	
+	in words, $X^{\bullet}$ is the set of attributes in the closure of $X$ to
+	which no proper subset of $X$ can lead. $X$ is the \textit{"minimal"} set required to get those attributes in $\I(X)$. We redirect the reader to 
+	\cite{ganter_conceptual_2016} for more details. If $X^{\bullet} = \I(X) - X$, $X^{\bullet}$ is pseudo-closed.	It is also used in \cite{duquenne_variations_2007} to prove \textsc{DuquenneMinimization}.
+\end{itemize}
+We use the theory produced by \textsc{MaierMinimization} on both proper and minimal generator basis since the results may differ. algorithms to compute those basis from a context are included in the code we got from \url{https://github.com/yazevnul/fcai}. We give pseudo-code of the algorithms here, but we will not review them in details. \textsc{MininalGeneratorBasis} (algorithm \ref{alg:MinGen}) generates minimal 
+generators. recall that $>_{M}$ is lectic ordering in $M$. Given a set we popped
+from $\mathcal{Q}$, we test all sets with only 1 more elements and lectically
+greater. Because we begin by the empty set, we are sure to go over all possible
+subsets whenever they are to be investigated. Using lectic ordering avoids testing a subset twice. Note that implications of $\I$ are indeed right-closed.
+Moreover, the conditional statement for adding an implication in $\I$ is useful
+since an equivalence class can contain only one set. This (closed) set will
+be by definition minimal, even though the corresponding implication is useless,
+whence the test.
+
+\begin{algorithm}[ht]
+	\KwIn{A context $(G, M, I)$ and a closure operator $''$}
+	\KwOut{$\I$ the basis of minimal generators}
+	
+	\BlankLine
+	
+	queue $\mathcal{Q}$ \;
+	$\I := \emptyset$ \;
+	push($\mathcal{Q}$, $\emptyset \imp \emptyset''$) \;
+	
+	
+	\While{$\mathcal{Q} \neq \emptyset$}{
+		$A \imp B :=$ pop($\mathcal{Q}$) \;
+		\textbf{if} $A \neq B$
+		\textbf{then} $\I := \I \cup \{ A \imp B \}$ \;
+		
+		
+		\ForEach{$C \subseteq M$: $(|C| = |A| + 1) \land (C >_{M} A)$}{
+			\If{$(C - c)'' \neq C''$, $\forall c \in C$}{
+				push($\mathcal{Q}$, $C \imp C''$) \;
+			}
+		}
+	}
+	
+	return $\I$\;
+	
+	\caption{\textsc{MinimalGeneratorBasis}}
+	\label{alg:MinGen}
+\end{algorithm}
+
+\begin{algorithm}[ht]
+	\KwIn{A context $(G, M, I)$ and a closure operator $''$}
+	\KwOut{$\I$ the basis of proper implications}
+	
+	
+	\BlankLine
+	
+	$\I := \emptyset \imp \emptyset''$ \;
+	
+	\ForEach{$m \in M$}{
+		$\I_t = \I$ \;
+		\ForEach{$A \imp B \in \I$}{
+			$C := A \cup \{ m \}$ \;
+			$D := C'' - C$ \;
+			
+			\If{$D \neq \emptyset$}{
+				\ForEach{$\alpha \imp \beta \in \I_t$}{
+					\textbf{if} $(A \subset \alpha) \land ( \alpha - A \subseteq D)$
+					\textbf{then} remove $\alpha \imp \beta$ from $\I_t$ \;
+					
+				}
+				
+				
+				\ForEach{$\alpha \imp \beta \in \I$}{
+					\textbf{if} $\alpha \subset C$
+					\textbf{then} $D := D - \beta$ \;
+					
+				}
+			}
+			
+			$\I := \I \cup \{ C \imp D \}$ \;
+			
+		}
+	}
+	
+	\ForEach{$A \imp B \in \I$}{
+		\textbf{if} $(A \cup B \neq \emptyset) \land (A \neq B)$ 
+		\textbf{then} $B := B - A$ \;
+	}
+	
+	return $\I$ \;
+	
+	\caption{\textsc{ProperBasis}}
+	\label{alg:proper}
+	
+\end{algorithm}
+
+Algorithm \textsc{ProperBasis} (\ref{alg:proper}) computes proper implications of a given context. Again, starting from $\emptyset \imp \emptyset''$ we cover all possibilities. For all implications of $\I$ we try to build new sets out of
+its premises and a given attribute. Observe that $D := C'' - C$ is the \textit{"first part"} of saturating $C$. If $C$ is not closed, then we may refine $D$ by removing elements so that $D = C^{\bullet}$ after the $D \neq \emptyset$ conditional statement. Especially the second for loop, which removes
+from $D$ all elements of $C''$ we would get with another implication than $C \imp D$.
+
+Before studying results, we may describe random generation.
+We would like to put the emphasis on the way we randomly generate sets and 
+implications. First, let us focus on set generation. For a set $X$, we use discrete uniform random distribution on the interval 
+$\lbrack 0 \ ; \ |\Sg| \rbrack$:
+\begin{enumerate}
+	\item determine the size $|X|$ of $X$ by drawing a number out of our 
+	distribution,
+	\item draw again $|X|$ numbers. Because of the interval, we are sure to
+	obtain valid indices of elements to set in $X$.
+\end{enumerate}
+\noindent Note that an element can be drawn more than once, resulting in 
+effective $|X|$ smaller than the one we got at the beginning. We do not consider
+this as an issue. Generating theories then is as follows:
+\begin{enumerate}
+	\item generate a conclusion randomly,
+	\item generate a premise. Because we want implications to be informative,
+	we keep as a premise the difference \textit{premise $-$ conclusion}.
+	\item because empty premise is likely to occur several times, resulting in
+	$\emptyset \imp \Sg$, we allow for no more than one empty premise. 
+\end{enumerate}
+When $|\B|$ is fixed, and $|\Sg|$ grows, especially when $|\Sg| \gg |\B|$, we may encounter the problem of generating only non-redundant basis, because we are more likely to generate disjoints sets (the attribute set being very large, for few implications) and hence non-redundant implications only. To bypass this problem, we introduce another randomisation based on Armstrong rules \cite{armstrong_dependency_1974}, \cite{ganter_conceptual_2016}. Given some implications, those rules are an inference system to derive new implications out of others. Some of them are:
+\begin{itemize}
+	\item[-] $\I \models A \imp B$, then $\I \models A \cup C \imp B$ (augmentation)
+	\item[-] $\I \models A \imp B$ and $ \I \models C \imp D$, then $\I \models A \cup C \imp B \cup D$ (union)
+	\item[-] $\I \models A \imp B$ and $ \I \models B \cup C \imp D$, then 
+	$\I \models A \cup C \imp D$ (pseudo-transitivity)
+\end{itemize}
+\noindent Therefore, when we generate theories with an increasing attribute sets, given a number of implications $|\B|$, we only generate randomly a part of (by tenth for simplicity) those implications and we use randomly Armstrong rules to generate the remainder. This creates then a certain amount of redundancy even if $|\Sg| \gg |\B|$. Nevertheless, for the other case around, redundancy is very likely to be built in, since there is much more implications than attributes. In this case we just generate the required number of implications. Ideally, we would like to supply a certain amount of non-redundancy for which we did not do enough research to find a solution. 
+
+Note that this method can be discussed and probably improved. We did not investigate further ways of generations since the main task was to test algorithms and not to study implication structures in depth. This anyway is a much interesting question for further work.
+
+As in \cite{bazhanov_optimizations_2014} we use real datasets from the UCI repository. To summarize informations on datasets we use, see table \ref{tab:real-DS}. For all of those 35 bases, we ran the 5 minimization procedure we reviewed and implemented. The value recorded is the execution time in seconds for minimizing the given basis. See the results in table \ref{tab:real-exe}. All of the algorithms use only \textsc{Closure}, based on the observations of the efficiency of \textsc{LinClosure} in \cite{bazhanov_optimizations_2014}.
+
+\begin{table}
+	\centering
+	\begin{tabular}{| c | c | c | c |}
+		\hline \rowcolor{clouds}
+		\multicolumn{2}{|c|}{$\I$} & $|\Sg|$ & $|\B|$ \\ \hline
+		\multirow{3}{*}{Zoo} & minimum & \multirow{3}{*}{28} & 141 \\
+		& generators & & 874 \\
+		& proper & & 554 \\ \hline
+		
+		\multirow{3}{*}{Flare} & minimum & \multirow{3}{*}{49} & 3382 \\
+		& generators & & 39787 \\
+		& proper & & 10692 \\ \hline
+		
+		\multirow{3}{*}{Breast cancer} & minimum & \multirow{3}{*}{43} & 3352 \\
+		& generators & & 16137 \\
+		& proper & & 11506 \\ \hline
+		
+		\multirow{3}{*}{Breast Wisconsin} & minimum & \multirow{3}{*}{91} & 10640 \\
+		& generators & & 51118 \\
+		& proper & & 45748 \\ \hline
+		
+		\multirow{3}{*}{Post operative} & minimum & \multirow{3}{*}{26} & 625 \\
+		& generators & & 3044 \\
+		& proper & & 1721 \\ \hline
+		
+		\multirow{3}{*}{SPECT} & minimum & \multirow{3}{*}{23} & 2169 \\
+		& generators & & 44341 \\
+		& proper & & 8358 \\ \hline
+		
+		\multirow{3}{*}{Vote} & minimum & \multirow{3}{*}{18} & 849 \\
+		& generators & & 8367 \\
+		& proper & & 2410 \\ \hline
+	\end{tabular}
+	\caption{Summary of real datasets characteristics}
+	\label{tab:real-DS}
+\end{table}
+
+\begin{table}
+	\centering
+	\begin{tabular}{| c | c || c | c | c | c | c |}
+		\hline \rowcolor{clouds}
+		\multicolumn{2}{c}{$\I$} & \textsc{MinCover} & \textsc{Duquenne} & \textsc{Maier} & \textsc{Berczi} & \textsc{AFP} \\ \hline
+		
+		\multirow{5}{*}{Zoo}
+		& DG           & < 0.001 & < 0.001 & < 0.001 & < 0.001 & 0.016 \\
+		& min (mingen) & < 0.001 & < 0.001 & < 0.001 & < 0.001 & 0.016 \\
+		& min (proper) & < 0.001 & < 0.001 & < 0.001 & < 0.001 & 0.016 \\
+		& proper       & 0.005   & 0.002   & 0.003   & 0.016   & 0.063 \\
+		& mingen       & 0.007   & 0.004   & 0.005   & 0.047   & 0.094 \\ \hline
+		
+		\multirow{5}{*}{Flare}
+		& DG           & 0.097 & 0.117 & 0.211 & 27.922 & 96.178 \\
+		& min (mingen) & 0.134 & 0.194 & 0.288 & 27.750 & 98.145 \\
+		& min (proper) & 0.200 & 0.190 & 0.308 & 30.063 & 111.944 \\
+		& proper       & 1.684 & 0.933 & 0.917 & 88.375 & 402.453 \\
+		& mingen       & 16.047 & 7.981 & 7.576 & 160.328 & 2514.610 \\ \hline
+		
+		\multirow{5}{*}{Breast Cancer}
+		& DG           & 0.089 & 0.109 & 0.203 & 33.047 & 90.031 \\
+		& min (mingen) & 0.108 & 0.126 & 0.243 & 26.578 & 89.516 \\
+		& min (proper) & 0.153 & 0.132 & 0.258 & 29.438 & 105.141 \\
+		& proper       & 1.920 & 0.864 & 1.014 & 93.266 & 429.844 \\
+		& mingen       & 2.006 & 1.277 & 1.444 & 102.562 & 598.172 \\ \hline
+		
+		\multirow{5}{*}{Breast Wisconsin} 
+		& DG           & 0.940 & 1.208 & 2.348 & 1005.750 & 3109.920 \\
+		& min (mingen) & 1.277 & 1.533 & 3.314 & 949.953 & 3140.940 \\
+		& min (proper) & 3.121 & 2.225 & 5.514 & 1682.03 & 5408.98 \\
+		& proper       & 67.147 & 28.053 & 30.488 & 3675.910 & 40521.0 \\
+		& mingen       & 35.488 & 30.023 & 29.295 & 2772.980 & 38310.200 \\ \hline
+		
+		\multirow{5}{*}{Operative} 
+		& DG           & 0.005 & 0.006 & 0.011 & 0.219 & 0.734 \\
+		& min (mingen) & 0.007 & 0.007 & 0.012 & 0.219 & 0.719 \\
+		& min (proper) & 0.006 & 0.007 & 0.011 & 0.234 & 0.640 \\
+		& proper       & 0.039 & 0.020 & 0.024 & 0.594 & 2.422 \\
+		& mingen       & 0.078 & 0.055 & 0.055 & 0.813 & 4.063 \\ \hline
+		
+		\multirow{5}{*}{SPECT}
+		& DG           & 0.045 & 0.066 & 0.108 & 10.328 & 22.454 \\
+		& min (mingen) & 0.061 & 0.080 & 0.134 & 8.156 & 19.438 \\
+		& min (proper) & 0.078 & 0.070 & 0.150 & 8.250 & 26.980 \\
+		& proper       & 0.930 & 0.394 & 0.451 & 51.063 & 114.564 \\
+		& mingen       & 24.077 & 10.206 & 10.858 & 194.875 & 863.903 \\ \hline
+		
+		\multirow{5}{*}{Vote}
+		& DG           & 0.006 & 0.008 & 0.015 & 0.484 & 1.579 \\ 
+		& min (mingen) & 0.007 & 0.011 & 0.016 & 0.469 & 1.516 \\
+		& min (proper) & 0.008 & 0.009 & 0.016 & 0.469 & 1.593 \\
+		& proper       & 0.076 & 0.036 & 0.049 & 1.625 & 6.203 \\
+		& mingen       & 0.584 & 0.298 & 0.331 & 4.109 & 22.875 \\ \hline
+		
+		
+	\end{tabular} 
+	\caption{Comparison of the algorithms on real datasets (execution in $s$)}
+	\label{tab:real-exe}
+\end{table}
+
+First, one can observe the wide range of performances. On the one hand,
+\textsc{MinCover}, \textsc{DuquenneMinimization}  and \textsc{MaierMinimization} do not exceed 100 seconds of execution time, while \textsc{BercziMinimization} and \textsc{AFPMinimization} can require up to several hours. The most striking case is for \textit{Breast Wisconsin}, with proper and generators basis. This is probably because of the number of implications in those cases. Anyway, while the two first algorithms require about 30 to 70 seconds for minimization, \textsc{BercziMinimization} needs roughly one hour and \textsc{AFP} up to ten or eleven hours. This stresses on the intractability of \textsc{AFP} in practice, and possibly the Angluin algorithm when we are prevented from the speed of an oracle.
+
+Regarding the difference between \textsc{MinCover} and \textsc{DuquenneMinimization}, observe that in general, the algorithm by Duquenne is faster on non-minimum bases and slightly slower on already minimum ones (but the minimum (proper) case we will consider after). In both cases, one hypothesis to explain those gaps could be both redundancy elimination and limitation of closure computations in the second loop of \textsc{DuquenneMinimization}. The number of closure computations in \textsc{MinCover} is likely to be constant whatever the case is, even though
+those operations become lighter with the reduction of the input basis. In \textsc{DuquenneMinimization} however, apart from first left-quasi-closure and
+redundancy elimination allowing for several savings in closure computations, we stop an iteration of the second loop whenever some quasi-closed premise is not
+pseudo-closed. This break point permits to omit closure computations and in practice, thanks to lectic ordering, we may not need to go over all implications of the output base to check whether an implication is redundant or not. The only case where the second loop should require more computations is when the base is already minimum, because for each step of the second loop, we have to go over all implications of the growing output system. As remarked in most of execution times, when the basis is already minimum \textsc{DuquenneMinimization} performs somehow slightly worse than 
+\textsc{MinCover}, which could be explained by the previous hypothesis. However,
+as we mentioned at the beginning of this paragraph, when it comes at minimizing
+the minimum base we obtained from the proper one, \textsc{DuquenneMinimization}
+tends to be a bit better. In fact, implications of the proper basis are not
+right-closed, therefore there is a possibility in the first loop of \textsc{MinCover} (because we use \textsc{Closure}) to run over all implications
+twice: one loop is sufficient to get the closure, but a second is required by the algorithm to exhibit no updates. And again, because of non-redundancy elimination at this step, \textsc{DuquenneMinimization} may get the point by first removing numerous redundant implications reducing the time spent in closures.
+
+One can also denote that \textsc{MaierMinimization} seems to be as efficient as \textsc{DuquenneMinimization} except in the minimum cases where it performs worse (compared to \textsc{DuquenneMinimization} and \textsc{MinCover}). Our hypothesis is the same as for the difference between \textsc{DuquenneMinimization} and \textsc{MinCover}: in fact, the first loop of Maier's algorithm is to get rid of redundant implications, therefore when a 
+basis is highly redundant, first removing them allow to spare numerous closure
+computations and reduces closure cost. This is not the case in \textsc{MinCover}
+where we compute right closure of all implications. Once the first step is done
+in both \textsc{DuquenneMinimization} and \textsc{MaierMinimization} they may perform a similar amount of operations explaining the small gap between them for
+non-minimum bases:
+\begin{itemize}
+	\item[-] \textsc{DuquenneMinimization} performs ordering and then, for 
+	all implications, either we need less than $|\B||\Sg|$ time (because we break the for loop whenever we observe a set is not pseudo-closed) or we
+	will require $|\B||\Sg|$ + the time for closing since we need to run across $\I_c$ and computing a closure, 
+	\item[-] For \textsc{MaierMinimization}, we are sure to perform at least
+	one closure for all implications, to determine equivalence classes. Nevertheless, notice that when removing direct determination, we perform 
+	another full closure only if the implication must be kept in the base,
+	otherwise we stop once we found direct determination.
+\end{itemize}
+ In both case we are likely to perform the same number of set operations if an implication has not to be removed. Still, the difference
+can rely on which of lectic ordering or determining equivalence classes (which is also a run over a $|\B|\times|\B|$ matrix!). So far, we did not find 
+the true explanations. One possible test to run in further work is using a profiler to see whether the small difference is explained by performance of 
+the computer, or by the structure of the basis we are minimizing.
+
+However, our discussion yields another idea on the worst case of minimization. In fact, the case where we would require more time given fixed parameters $|\Sg|$ and $|\B|$, is when there is no implication to remove. From our point of view, having no implication to remove maximizes the computations, because all operations of removing redundant implications, figuring out closures and so forth do not reduce the basis. To see whether our idea is interesting or not, we ran few more tests: we took the first three algorithms (because they are faster) and characteristics of the minimum bases. Then, we took the average
+minimization time over 2000 randomly generated theories of corresponding size.
+We omit \textit{"zoo"} and \textit{"Breast cancer"} datasets since the first one has very low results and the characteristics of the second one are almost
+the same as \textit{"Flare"}. Results are presented in figure \ref{fig:barplot}.
+
+\begin{figure}
+	\input{Pictures/III/Comp/WorstCase.tex}
+\end{figure}
+
+Each graph corresponds to a dataset. Inside all of them, we have a series
+of bar plots per algorithm. In order, one may find the time (in seconds) required for the Duquenne-Guigues basis, the minimum basis we had with the
+minimal generators, with proper implications and eventually the average
+time we obtained for minimization over 2000 randomly generated bases. For \textsc{DuquenneMinimization} and \textsc{MaierMinimization}, it seems like
+our hypothesis holds: on average, minimizing a redundant system is less time consuming than a base being minimum, for fixed $|\Sg|$ and $|\B|$. However,
+this does not hold for \textsc{MinCover} for which the worst case is often
+the minimum bases with non right-closed implications. Moreover reducing a redundant theory is more expensive on average than minimizing right-closed
+bases. Our idea is that right-closed results in fast closure computations, because for each implication the information we may get is maximal. In the
+case of non-closed implications, we are likely to need several runs over
+$\I$ for this task. Then, depending on the order in which we consider implications in the second loop, the execution time may vary. If all redundant
+implications are handled before others, we will spare several operations.
+On the contrary, if they are all placed at the end, we will maximize the
+cost.
+
+Last, we used our random generation tool to try to trace the evolution of
+each algorithms when one parameter is fixed, namely $|\Sg|$. One can observe
+the results in figure \ref{fig:random}. We would like to emphasize on the experimental aspect of those results: they act as a hint for further work and not as a ground for hypothesis as previous ones. Observe that in smallest case, \textsc{AFP} is faster than all other algorithms, while in the other one,
+results coincide with observed real data. It can be due to random generation only exploring one part of the system space being (for instance) highly redundant. It could also be related to the small size of the dataset we are minimizing here. Whether those observation are to be investigated or not is a matter of further study and experiment. Still, they depict interesting track to
+follow in the future on the behaviour of \textsc{AFP} as much as the underlying
+structure of our implication systems.
+
+\begin{figure}
+	\begin{minipage}{0.4\textwidth}
+		\hspace{-3em}
+		\subfloat[Average time, $|\Sg| = 100$]{
+			\scalebox{0.4}{\input{Pictures/III/Comp/All-100attr.pgf}}
+		}
+	\end{minipage}
+	~
+	\begin{minipage}{0.4\textwidth}
+		\hspace{-1em}
+		\subfloat[Average time, $|\Sg| = 500$]{
+			\scalebox{0.4}{\input{Pictures/III/Comp/All-500attr.pgf}}	
+		}
+	\end{minipage}
+	
+	\caption{Random generated tests for fixed $|\Sg|$ (over 500 ex)}	
+	
+	\label{fig:random}
+	
+\end{figure}
+
+We would like to remind that those results are valid within the scope of our tests and can be somehow related to our way of generating random data for instance. Indeed, we lack insight on whether the systems we randomly generate are a fine representation of the theories space. This highlights, with our previous observations, the interest of studying the underlying structure of the
+systems we are trying to minimize: redundancy, minimality, right-closedness and so forth which separate the algorithms we studied in practice. Still, We cannot assume our results as a general truth and they should be tested in further work on other datasets. Plus, one could enquiry about more statistical measures to sharpen the understanding of those procedures. This relativity allows for perspective in testing, trying to increase the number of real datasets, improve random generation
+
+\section{Conclusion}
+
+In this paper we provided a review of existing algorithms for horn minimization.
+Navigating in various communities we came up with 5 of them having different complexities and operations. More than explaining their theoretical aspects, we
+also tried to implement and compare them under practical testing with real data. Those tests indicated that depending on the systems we may find different behaviours. However, it also resulted that redundancy elimination seems to be in practice a step to be considered for efficient reduction. However, investigation of systems structure (hence random generation!), deeper AFP analysis are to be done in further work so that validity of our experiments overtakes the scope of our tests.
 
 \bibliographystyle{acm}
 \bibliography{Biblio.bib}

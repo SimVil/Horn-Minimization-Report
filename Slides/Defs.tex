@@ -79,16 +79,21 @@ $\I$ an implication system:
 \subsection{Minimization task}
 
 \begin{frame}
-\frametitle{Redundancy, equivalence}
+\frametitle{Redundancy, equivalence, minimality}
 
 $\I$ and $\I'$ implication systems:
 \begin{itemize}
 	\item $A \imp B \in \I$ \turemp{redundant} if $\I - \{A \imp B\} \models A \imp B$,
 	\item $\I' \models \I$: all implications of $\I$ follow from $\I'$,
 	\item $\I' \models \I$ and $\I \models \I'$: \turemp{equivalent} systems.
+	\item $\I$ \turemp{minimum} if no possible $\I'$ such that:
+		\begin{itemize}
+			\item[\color{belize} $\triangleright$] $\I'$ equivalent to $\I$,
+			\item[\color{belize} $\triangleright$] $\I'$ has fewer implications than $\I$.
+		\end{itemize}
 \end{itemize}
 
-\vspace{1.2em}
+\vspace{0.8em}
 
 \begin{lightreminder}
 	Recall property: \quad {\color{midnight} ($\I^{-} := \I - \{ A \imp B\}$)}
@@ -100,26 +105,27 @@ $\I$ and $\I'$ implication systems:
 \end{frame}
 
 \begin{frame}
-\frametitle{Minimum basis}
+\frametitle{Canonical basis}
 
-$\I$ \turemp{minimum} if no possible $\I'$ such that:
-\begin{itemize}
-	\item $\I'$ equivalent to $\I$,
-	\item $\I'$ has fewer implications than $\I$.
-\end{itemize}
-
-\vspace{1.2em}
-
-Particular minimum basis:
+Particular sets:
 \begin{itemize}
 	\item $P \subseteq \Sg$ \turemp{pseudo-closed} in $\I$ if:
 		\begin{itemize}
 			\item[\color{belize} $\triangleright$] $P \neq \I(P)$,
 			\item[\color{belize} $\triangleright$] if $Q \subset P$ and $Q$ pseudo-closed, then $\I(Q) \subseteq P$.
 		\end{itemize}
-	\item \turemp{Duquenne-Guigues} (\turemp{canonical}) base:
-		\[ \{ P \imp \I(P) \ | \ P \; \textit{pseudo-closed } \} \]
+	\item $Q \subseteq \Sg$ \turemp{quasi-closed} in $\I$ if:
+		\begin{itemize}
+			\item[\color{belize} $\triangleright$] $\forall P \subseteq Q, \I(P) \subseteq Q$ or $\I(P) = \I(Q)$,
+		\end{itemize}
+	\item pseudo-closed $\imp$ quasi-closed.
 \end{itemize} 
+
+\vspace{1.2em}
+
+\turemp{Duquenne-Guigues} (\turemp{canonical}) base:
+\[ \{ P \imp \I(P) \ | \ P \; \textit{pseudo-closed } \} \]
+
 
 \end{frame}
 
